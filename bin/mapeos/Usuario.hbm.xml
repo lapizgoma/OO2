@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping SYSTEM "../hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="model.Usuario" table="usuario">
+		<id name="email" type="string" column="email"/>
+		<property name="apellido" type="string" column="apellido"/>
+		<property name="nombre" type="string" column="nombre"/>
+		 <!-- Indicamos herencia -->
+        <joined-subclass name="model.UsuarioRegistrado" table="usuario_registrado">
+            <key column="email"/>
+            <property name="password" column="password" type="string"/>
+            <!-- Sub-subclase -->
+            <joined-subclass name="model.Empleado" table="empleado">
+                <key column="email"/>
+                <!-- No necesita propiedades extra si no tiene campos nuevos -->
+            </joined-subclass>
+        </joined-subclass>
+	</class>
+</hibernate-mapping>

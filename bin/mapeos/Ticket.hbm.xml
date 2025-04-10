@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping SYSTEM "../hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="model.Ticket" table="ticket">
+		<id column="id" name="id" type="long">
+			<generator class="identity"/>
+		</id>
+
+		<property name="asunto" type="string" column="asunto"/>
+		<property name="estado" column="estado">
+		    <type name="org.hibernate.type.EnumType">
+		        <param name="enumClass">enums.EstadosTicket</param>
+		        <param name="useNamed">true</param>
+		    </type>
+		</property>
+		<many-to-one name="cliente" class="model.Usuario" column="cliente_email" not-null="false"/>
+		<bag name="chats" table="mensaje" cascade="all">
+			<key column="ticket_id"/>
+			<one-to-many class="model.Mensaje"/>
+		</bag>
+	</class>
+</hibernate-mapping>
