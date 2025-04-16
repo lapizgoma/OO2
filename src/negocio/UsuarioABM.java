@@ -9,11 +9,6 @@ import model.Usuario;
 public class UsuarioABM implements INegocio<Usuario> {
 	
 	private UsuarioDao usuarioDao = new UsuarioDao();
-	
-	
-	public Usuario traer(String email) {
-		return usuarioDao.traer(email);
-	}
 
 	@Override
 	public List<Usuario> traer() {
@@ -42,9 +37,14 @@ public class UsuarioABM implements INegocio<Usuario> {
 	public List<Empleado> traerEmpleado() {
 		return usuarioDao.traerEmpleados();
 	}
+	
+	public void agregarEmpleado(Empleado empleado) {
+		usuarioDao.agregarEmpleado(empleado);
+	}
 
 	@Override
 	public Usuario traer(Long id) {
-		return null;
+		return usuarioDao.traer(id);
 	}
+
 }

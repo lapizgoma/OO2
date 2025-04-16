@@ -7,6 +7,6 @@
 		</id>
 		<property name="contenido" type="string" column="contenido"/>
 		<property name="fecha" column="fecha" type="java.time.LocalDate"/>
-		<many-to-one name="sender" class="model.Usuario" column="sender_email" cascade="all"/>
+		<many-to-one name="sender" class="model.Usuario" column="sender_email" not-null="true"/>
 	</class>
 </hibernate-mapping>

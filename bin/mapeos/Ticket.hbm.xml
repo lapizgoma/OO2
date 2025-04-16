@@ -1,22 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping SYSTEM "../hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	<class name="model.Ticket" table="ticket">
-		<id column="id" name="id" type="long">
-			<generator class="identity"/>
-		</id>
-
-		<property name="asunto" type="string" column="asunto"/>
-		<property name="estado" column="estado">
-		    <type name="org.hibernate.type.EnumType">
-		        <param name="enumClass">enums.EstadosTicket</param>
-		        <param name="useNamed">true</param>
-		    </type>
-		</property>
-		<many-to-one name="cliente" class="model.Usuario" column="cliente_email" not-null="false"/>
-		<bag name="chats" table="mensaje" cascade="all">
-			<key column="ticket_id"/>
-			<one-to-many class="model.Mensaje"/>
-		</bag>
-	</class>
+    <class name="model.Ticket" table="ticket">
+        <id name="id" column="id">
+            <generator class="identity"/>
+        </id>
+        <property name="asunto" column="asunto" type="string"/>
+        
+        <many-to-one name="cliente" class="model.Usuario" column="id_cliente" not-null="true"/>
+        
+        <set name="lstEmpleado" table="empleado_ticket" inverse="false" cascade="all">
+            <key column="id_ticket"/>
+            <many-to-many class="model.Empleado" column="id_empleado"/>
+        </set>
+        
+        <set name="chats" inverse="true" cascade="all">
+            <key column="id_ticket"/>
+            <one-to-many class="model.Mensaje"/>
+        </set>
+        
+        <property name="estado" column="estado">
+    	<type name="org.hibernate.type.EnumType">
+        	<param name="enumClass">enums.EstadosTicket</param>
+        	<param name="useNamed">true</param> <!-- o false para guardar el ordinal -->
+    	</type>
+</property>
+    </class>
 </hibernate-mapping>
+

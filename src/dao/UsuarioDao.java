@@ -7,7 +7,6 @@ import org.hibernate.HibernateException;
 
 import model.Empleado;
 import model.Usuario;
-import model.UsuarioRegistrado;
 
 public class UsuarioDao extends Dao<Usuario> {
 
@@ -48,28 +47,17 @@ public class UsuarioDao extends Dao<Usuario> {
 		return empleados;
 	}
 	
-	public UsuarioRegistrado traerUsuarioRegistrado(String email) throws HibernateException{
-		UsuarioRegistrado usuarioRegistrado = null;
+	public void agregarEmpleado(Empleado empleado) {
 		try {
 			iniciaOperacion();
-			usuarioRegistrado = session.createQuery("from UsuarioRegistrado u where e.email = :email",UsuarioRegistrado.class)
-					.setParameter("email", email)
-					.getSingleResult();
+			session.save(empleado);
+			tx.commit();
+		}catch(HibernateException e) {
+			manejaExcepcion(e);
+			throw e;
 		}finally {
 			session.close();
 		}
-		return usuarioRegistrado;
 	}
 	
-	public List<UsuarioRegistrado> traerUsuarioRegistrados() throws HibernateException{
-		List<UsuarioRegistrado> usuariosRegistrados = new ArrayList<UsuarioRegistrado>();
-		try {
-			iniciaOperacion();
-			usuariosRegistrados = session.createQuery("from UsuarioRegistrado e",UsuarioRegistrado.class)
-					.getResultList();
-		}finally {
-			session.close();
-		}
-		return usuariosRegistrados;
-	}
 }

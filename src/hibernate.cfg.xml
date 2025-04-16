@@ -3,18 +3,17 @@
 <hibernate-configuration>
   <session-factory>
     <property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
-    <property name="connection.url">jdbc:mysql://localhost:3306/sistema-ticket?serverTimezone=UTC</property>
-    <property name="connection.username">root</property>
-    <property name="connection.password">admin</property>
+    <property name="connection.url">${DB}</property>
+    <property name="connection.username">${USER}</property>
+    <property name="connection.password">${PASSWORD}</property>
     <property name="connection.pool_size">1</property>
     <property name="dialect">org.hibernate.dialect.MySQL8Dialect</property>
     <property name="show_sql">false</property>    <!-- en true muestra hql en consola-->
     <property name="format_sql">true</property>
-    <property name="hbm2ddl.auto">create</property>
+    <property name="hbm2ddl.auto">update</property>
     <!--Mapeo Entidades   -->
     <mapping resource="mapeos/Usuario.hbm.xml"/>
     <mapping resource="mapeos/Ticket.hbm.xml"/>
-    <mapping resource="mapeos/Dashboard.hbm.xml"/>
     <mapping resource="mapeos/Mensaje.hbm.xml"/>
   </session-factory>
 </hibernate-configuration>
