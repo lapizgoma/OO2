@@ -2,18 +2,17 @@
 <!DOCTYPE hibernate-mapping SYSTEM "../hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 	<class name="model.Usuario" table="usuario">
-		<id name="email" type="string" column="email"/>
-		<property name="apellido" type="string" column="apellido"/>
-		<property name="nombre" type="string" column="nombre"/>
-		 <!-- Indicamos herencia -->
-        <joined-subclass name="model.UsuarioRegistrado" table="usuario_registrado">
-            <key column="email"/>
-            <property name="password" column="password" type="string"/>
-            <!-- Sub-subclase -->
-            <joined-subclass name="model.Empleado" table="empleado">
-                <key column="email"/>
-                <!-- No necesita propiedades extra si no tiene campos nuevos -->
-            </joined-subclass>
-        </joined-subclass>
+		<id name="id" column="id">
+			<generator class="identity"/>
+		</id>
+		<property name="nombre" column="nombre" type="string"/>
+		<property name="apellido" column="apellido" type="string"/>
+		<property name="email" column="email" type="string"/>
+		<property name="password" column="password" type="string"/>
+		
+		<joined-subclass name="model.Empleado" table="empleado">
+			<key column="id"/>
+			<property name="legajo" column="legajo" type="string"/>
+		</joined-subclass>
 	</class>
 </hibernate-mapping>
