@@ -1,6 +1,7 @@
 package model;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import enums.EstadosTicket;
 
@@ -8,17 +9,20 @@ public class Ticket {
 	private Long id;
 	private Usuario cliente;
 	private String asunto;
-	private List<Mensaje> chats;
+	private Set<Mensaje> chats;
+	private Set<Empleado> lstEmpleado;
 	private EstadosTicket estado;
 	
 	public Ticket() {
 	}
 
-	public Ticket(Usuario cliente, String asunto, List<Mensaje> chats, EstadosTicket estado) {
+	public Ticket(Usuario cliente, String asunto,
+			EstadosTicket estado) {
 		this.cliente = cliente;
 		this.asunto = asunto;
-		this.chats = chats;
 		this.estado = estado;
+		this.chats = new HashSet<Mensaje>();
+		this.lstEmpleado = new HashSet<Empleado>();
 	}
 
 	public Long getId() {
@@ -33,8 +37,12 @@ public class Ticket {
 		return asunto;
 	}
 
-	public List<Mensaje> getChats() {
+	public Set<Mensaje> getChats() {
 		return chats;
+	}
+
+	public Set<Empleado> getLstEmpleado() {
+		return lstEmpleado;
 	}
 
 	public EstadosTicket getEstado() {
@@ -53,20 +61,30 @@ public class Ticket {
 		this.asunto = asunto;
 	}
 
-	public void setChats(List<Mensaje> chats) {
+	public void setChats(Set<Mensaje> chats) {
 		this.chats = chats;
+	}
+
+	public void setLstEmpleado(Set<Empleado> lstEmpleado) {
+		this.lstEmpleado = lstEmpleado;
 	}
 
 	public void setEstado(EstadosTicket estado) {
 		this.estado = estado;
 	}
-
-	@Override
-	public String toString() {
-		return "Ticket [id=" + id + ", cliente=" + cliente + ", asunto=" + asunto + ", chats=" + chats + ", estado="
-				+ estado + "]";
+	
+	public void agregarEmpleado(Empleado empleado) {
+	    if (lstEmpleado == null) {
+	        lstEmpleado = new HashSet<>();
+	    }
+	    lstEmpleado.add(empleado);
 	}
 	
-	
+	@Override
+	public String toString() {
+		return "Ticket [id=" + id + ", cliente=" + cliente + ", asunto=" + asunto + ", chats=" + chats
+				+ ", lstEmpleado=" + lstEmpleado + ", estado=" + estado + "]";
+	}
+
 	
 }
