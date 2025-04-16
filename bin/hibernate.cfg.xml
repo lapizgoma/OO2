@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-configuration SYSTEM "hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
   <session-factory>
-    <property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+    <property name="connection.driver_class">${DRIVER}</property>
     <property name="connection.url">${DB}</property>
     <property name="connection.username">${USER}</property>
     <property name="connection.password">${PASSWORD}</property>
