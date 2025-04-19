@@ -2,7 +2,10 @@ package test;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 import enums.EstadosTicket;
 import model.Empleado;
@@ -21,9 +24,9 @@ public class Test {
 		
 		List<Ticket> tickets = new ArrayList<Ticket>();
 		List<Usuario> usuarios = new ArrayList<Usuario>();
-		List<Mensaje> mensajes = new ArrayList<Mensaje>();
-		List<Mensaje> mensajes2 = new ArrayList<Mensaje>();
-		List<Mensaje> mensajes3 = new ArrayList<Mensaje>();
+		Set<Mensaje> mensajes = new HashSet<Mensaje>();
+		Set<Mensaje> mensajes2 = new HashSet<Mensaje>();
+		Set<Mensaje> mensajes3 = new HashSet<Mensaje>();
 		
 		usuario.agregarEmpleado(new Empleado("kevin@hotmail.com","Vittor","Kevin","222222","10101010"));
 		usuario.agregarEmpleado(new Empleado("robert@hotmail.com","Asafg","Roberto","222222","20202020"));
@@ -41,33 +44,43 @@ public class Test {
 		mensajes2.add(new Mensaje("Tuve problemas con el ticket", LocalDate.now(), usuarios.get(1)));
 		mensajes2.add(new Mensaje("Ok esperare", LocalDate.now(), usuarios.get(1)));
 		
-		mensajes2.add(new Mensaje("Tengo problemas con el producto", LocalDate.now(), usuarios.get(1)));
-		mensajes2.add(new Mensaje("Tienen que gestionar mi ticket?", LocalDate.now(), usuarios.get(1)));
+		mensajes3.add(new Mensaje("Tengo problemas con el producto", LocalDate.now(), usuarios.get(2)));
+		mensajes3.add(new Mensaje("Tienen que gestionar mi ticket?", LocalDate.now(), usuarios.get(2)));
 		
 		tickets.add(new Ticket(usuarios.get(0),"Incovenientes",EstadosTicket.CERRADO));
 		tickets.add(new Ticket(usuarios.get(1),"Incovenientes",EstadosTicket.ATENDIDO));
 		tickets.add(new Ticket(usuarios.get(2),"Incovenientes",EstadosTicket.PENDIENTE));
-		tickets.get(0).agregarEmpleado((Empleado)usuario.traer(1L));
-		tickets.get(1).agregarEmpleado((Empleado)usuario.traer(2L));
-		tickets.get(2).agregarEmpleado((Empleado)usuario.traer(1L));
 		
 		for(Usuario u: usuarios) {
 			usuario.agregar(u);
 		}
 		
-		for(Mensaje m: mensajes) {
-			mensajeABM.agregar(m);
-		}
-		for(Mensaje m: mensajes2) {
-			mensajeABM.agregar(m);
-		}
-		for(Mensaje m: mensajes3) {
-			mensajeABM.agregar(m);
-		}
+		Random rand = new Random();
 		
 		for(Ticket t: tickets) {
+			long indice = rand.nextLong(1L,usuario.traerEmpleado().size());
+			t.agregarEmpleado((Empleado)usuario.traer(indice));
 			ticketABM.agregar(t);
+			System.out.println(t);
 		}
+		
+		for(Mensaje m: mensajes) {
+		    tickets.get(0).agregarMensaje(m);
+		    m.setTicket(tickets.get(0)); // Establecer la relación inversa
+		    mensajeABM.agregar(m);
+		}
+		for(Mensaje m: mensajes2) {
+		    tickets.get(1).agregarMensaje(m);
+		    m.setTicket(tickets.get(1)); // Establecer la relación inversa
+		    mensajeABM.agregar(m);
+		}
+		for(Mensaje m: mensajes3) {
+		    tickets.get(2).agregarMensaje(m);
+		    m.setTicket(tickets.get(2)); // Establecer la relación inversa
+		    mensajeABM.agregar(m);
+		}
+
+		
 		
 	}
 }
