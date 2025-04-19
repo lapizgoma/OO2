@@ -27,6 +27,7 @@ public class Test {
 		Set<Mensaje> mensajes = new HashSet<Mensaje>();
 		Set<Mensaje> mensajes2 = new HashSet<Mensaje>();
 		Set<Mensaje> mensajes3 = new HashSet<Mensaje>();
+		Random rand = new Random();
 		
 		usuario.agregarEmpleado(new Empleado("kevin@hotmail.com","Vittor","Kevin","222222","10101010"));
 		usuario.agregarEmpleado(new Empleado("robert@hotmail.com","Asafg","Roberto","222222","20202020"));
@@ -55,7 +56,6 @@ public class Test {
 			usuario.agregar(u);
 		}
 		
-		Random rand = new Random();
 		
 		for(Ticket t: tickets) {
 			long indice = rand.nextLong(1L,usuario.traerEmpleado().size());
@@ -64,23 +64,16 @@ public class Test {
 			System.out.println(t);
 		}
 		
+		persistenciaMensaje(mensajes, mensajeABM, tickets.get(0));
+		persistenciaMensaje(mensajes2, mensajeABM, tickets.get(1));
+		persistenciaMensaje(mensajes3, mensajeABM, tickets.get(2));
+		
+	}
+	
+	public static void persistenciaMensaje(Set<Mensaje> mensajes, MensajeABM mensajeABM,Ticket ticket) {
 		for(Mensaje m: mensajes) {
-		    tickets.get(0).agregarMensaje(m);
-		    m.setTicket(tickets.get(0)); // Establecer la relación inversa
+		    ticket.agregarMensaje(m);
 		    mensajeABM.agregar(m);
 		}
-		for(Mensaje m: mensajes2) {
-		    tickets.get(1).agregarMensaje(m);
-		    m.setTicket(tickets.get(1)); // Establecer la relación inversa
-		    mensajeABM.agregar(m);
-		}
-		for(Mensaje m: mensajes3) {
-		    tickets.get(2).agregarMensaje(m);
-		    m.setTicket(tickets.get(2)); // Establecer la relación inversa
-		    mensajeABM.agregar(m);
-		}
-
-		
-		
 	}
 }

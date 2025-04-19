@@ -9,6 +9,7 @@ public class Ticket {
 	private Long id;
 	private Usuario cliente;
 	private String asunto;
+	// Relacion bidireccional con mensaje
 	private Set<Mensaje> chats;
 	private Set<Empleado> lstEmpleado;
 	private EstadosTicket estado;
@@ -84,7 +85,9 @@ public class Ticket {
 	    if (chats == null) {
 	    	chats = new HashSet<>();
 	    }
+	    // Seteamos la relacion bidireccional desde esta clase
 	    chats.add(chat);
+	    chat.setTicket(this);
 	}
 	
 	
