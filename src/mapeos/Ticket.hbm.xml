@@ -7,8 +7,6 @@
         </id>
         <property name="asunto" column="asunto" type="string"/>
         
-        <many-to-one name="cliente" class="model.Usuario" column="id_cliente" not-null="true"/>
-        
         <set name="lstEmpleado" table="empleado_ticket" inverse="false" cascade="all">
             <key column="id_ticket"/>
             <many-to-many class="model.Empleado" column="id_empleado"/>
@@ -16,7 +14,7 @@
         
         <set name="chats" inverse="true" cascade="all">
             <key column="id_ticket"/>
-            <one-to-many class="model.Mensaje"/>
+            <one-to-many  class="model.Mensaje"/>
         </set>
         
         <property name="estado" column="estado">
