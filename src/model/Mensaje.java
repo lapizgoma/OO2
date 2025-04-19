@@ -8,6 +8,7 @@ public class Mensaje {
 	private String contenido;
 	private LocalDate fecha;
 	private Usuario sender;
+	private Ticket ticket;
 	
 	public Mensaje() {
 	}
@@ -49,10 +50,20 @@ public class Mensaje {
 	public void setSender(Usuario sender) {
 		this.sender = sender;
 	}
+	
+	public Ticket getTicket() {
+		return ticket;
+	}
 
+	public void setTicket(Ticket ticket) {
+		this.ticket = ticket;
+	}
+	
 	@Override
 	public String toString() {
 		return "Mensaje [id=" + id + ", contenido=" + contenido + ", fecha=" + fecha + ", sender=" + sender + "]";
 	}
+
+
 	
 }

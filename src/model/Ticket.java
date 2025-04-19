@@ -80,6 +80,14 @@ public class Ticket {
 	    lstEmpleado.add(empleado);
 	}
 	
+	public void agregarMensaje(Mensaje chat) {
+	    if (chats == null) {
+	    	chats = new HashSet<>();
+	    }
+	    chats.add(chat);
+	}
+	
+	
 	@Override
 	public String toString() {
 		return "Ticket [id=" + id + ", cliente=" + cliente + ", asunto=" + asunto + ", chats=" + chats
