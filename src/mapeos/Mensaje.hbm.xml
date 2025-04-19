@@ -7,6 +7,7 @@
 		</id>
 		<property name="contenido" type="string" column="contenido"/>
 		<property name="fecha" column="fecha" type="java.time.LocalDate"/>
-		<many-to-one name="sender" class="model.Usuario" column="sender_email" not-null="true"/>
+		<many-to-one name="sender" class="model.Usuario" column="usuario_id" not-null="true"/>
+		<many-to-one name="ticket" class="model.Ticket" column="id_ticket" not-null="true"></many-to-one>
 	</class>
 </hibernate-mapping>
