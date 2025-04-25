@@ -10,7 +10,7 @@
     <property name="dialect">org.hibernate.dialect.MySQL8Dialect</property>
     <property name="show_sql">false</property>    <!-- en true muestra hql en consola-->
     <property name="format_sql">true</property>
-    <property name="hbm2ddl.auto">create</property>
+    <property name="hbm2ddl.auto">update</property>
     <!--Mapeo Entidades   -->
     <mapping resource="mapeos/Usuario.hbm.xml"/>
     <mapping resource="mapeos/Ticket.hbm.xml"/>
