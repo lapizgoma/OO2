@@ -7,22 +7,22 @@
         </id>
         <property name="asunto" column="asunto" type="string"/>
         
-        <set name="lstEmpleado" table="empleado_ticket" inverse="false" cascade="all">
+        <set name="lstEmpleado" table="empleado_ticket" inverse="false" cascade="all" lazy="false">
             <key column="id_ticket"/>
             <many-to-many class="model.Empleado" column="id_empleado"/>
         </set>
         
-        <set name="chats" inverse="true" cascade="all">
+        <set name="chats" inverse="true" cascade="all" lazy="false">
             <key column="id_ticket"/>
-            <one-to-many  class="model.Mensaje"/>
+            <one-to-many  class="model.Mensaje" />
         </set>
-        
+      	<many-to-one name="cliente" class="model.Usuario" column="cliente_id" cascade="all" lazy="false" not-null="false"></many-to-one>
         <property name="estado" column="estado">
     	<type name="org.hibernate.type.EnumType">
         	<param name="enumClass">enums.EstadosTicket</param>
         	<param name="useNamed">true</param> <!-- o false para guardar el ordinal -->
     	</type>
-</property>
+		</property>
     </class>
 </hibernate-mapping>
 
