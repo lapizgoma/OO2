@@ -5,14 +5,29 @@
 		<id name="id" column="id">
 			<generator class="identity"/>
 		</id>
-		<property name="nombre" column="nombre" type="string"/>
-		<property name="apellido" column="apellido" type="string"/>
-		<property name="email" column="email" type="string"/>
-		<property name="password" column="password" type="string"/>
+		<property name="nombre" column="nombre" type="string" not-null="true"/>
+		<property name="apellido" column="apellido" type="string" not-null="true"/>
+		<property name="email" column="email" type="string" not-null="true"/>
+		<property name="password" column="password" type="string" not-null="false"/>
+		<property name="deleted" column="deleted" type="boolean"></property>
 		
 		<joined-subclass name="model.Empleado" table="empleado">
 			<key column="id"/>
-			<property name="legajo" column="legajo" type="string"/>
+			<property name="createdAt" column="created_at" type="java.time.LocalDateTime"/>
+			<property name="updateAt" column="update_at" type="java.time.LocalDateTime" not-null="false"/>
+			<property name="role" column="role">
+	    	<type name="org.hibernate.type.EnumType">
+	        	<param name="enumClass">enums.EnumRole</param>
+	        	<param name="useNamed">true</param> <!-- o false para guardar el ordinal -->
+	    	</type>
+			</property>
 		</joined-subclass>
+		
+		<joined-subclass name="model.Cliente" table="cliente">
+			<key column="id"/>
+			<property name="telefono" column="telefono" type="string"></property>
+			<property name="direccion" column="direccion" type="string"></property>
+		</joined-subclass>
+		
 	</class>
 </hibernate-mapping>
