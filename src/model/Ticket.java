@@ -3,6 +3,7 @@ package model;
 import java.util.HashSet;
 import java.util.Set;
 
+import dto.TicketDTO;
 import enums.EstadosTicket;
 
 public class Ticket {
@@ -90,6 +91,20 @@ public class Ticket {
 	    chat.setTicket(this);
 	}
 	
+	public boolean existeUsuario() {
+		if(this.cliente == null) {
+			return false;
+		}
+		return true;
+	}
+	
+	public TicketDTO toDto() {
+		TicketDTO dto = new TicketDTO();
+		dto.setId(this.id);
+		dto.setAsunto(this.asunto);
+		dto.setEstado(this.estado.toString());
+		return dto;
+	}
 	
 	@Override
 	public String toString() {

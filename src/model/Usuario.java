@@ -1,5 +1,7 @@
 package model;
 
+import dto.UsuarioDTO;
+
 public class Usuario {
 	
 	protected Long id;
@@ -7,15 +9,17 @@ public class Usuario {
 	protected String apellido;
 	protected String nombre;
 	protected String password;
+	protected boolean deleted;
 	
 	public Usuario() {
 	}
 	
-	public Usuario(String email, String apellido, String nombre,String password) {
+	public Usuario(String email, String apellido, String nombre,String password,boolean deleted) {
 		this.email = email;
 		this.apellido = apellido;
 		this.nombre = nombre;
 		this.password = password;
+		this.deleted = deleted;
 	}
 
 	public Long getId() {
@@ -56,6 +60,23 @@ public class Usuario {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+	
+	public UsuarioDTO usuarioToDto() {
+		UsuarioDTO usuarioDto = new UsuarioDTO();
+		usuarioDto.setId(this.id);
+		usuarioDto.setApellido(this.apellido);
+		usuarioDto.setNombre(this.nombre);
+		usuarioDto.setEmail(this.email);
+		return usuarioDto;
 	}
 
 	@Override
