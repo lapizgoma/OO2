@@ -1,22 +1,24 @@
 package model;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import dto.MensajeDTO;
 
 public class Mensaje {
 	
 	private Long id;
 	private String contenido;
-	private LocalDate fecha;
-	private Usuario sender;
+	private LocalDateTime fecha;
+	private Usuario usuario;
 	private Ticket ticket;
 	
 	public Mensaje() {
 	}
 
-	public Mensaje(String contenido, LocalDate fecha, Usuario sender) {
+	public Mensaje(String contenido, LocalDateTime fecha, Usuario sender) {
 		this.contenido = contenido;
 		this.fecha = fecha;
-		this.sender = sender;
+		this.usuario = sender;
 	}
 
 	public Long getId() {
@@ -27,12 +29,12 @@ public class Mensaje {
 		return contenido;
 	}
 
-	public LocalDate getFecha() {
+	public LocalDateTime getFecha() {
 		return fecha;
 	}
 
-	public Usuario getSender() {
-		return sender;
+	public Usuario getUsuario() {
+		return usuario;
 	}
 
 	public void setId(Long id) {
@@ -43,12 +45,12 @@ public class Mensaje {
 		this.contenido = contenido;
 	}
 
-	public void setFecha(LocalDate fecha) {
+	public void setFecha(LocalDateTime fecha) {
 		this.fecha = fecha;
 	}
 
-	public void setSender(Usuario sender) {
-		this.sender = sender;
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 	
 	public Ticket getTicket() {
@@ -59,9 +61,16 @@ public class Mensaje {
 		this.ticket = ticket;
 	}
 	
+	public MensajeDTO mensajeToDto() {
+		MensajeDTO dto = new MensajeDTO();
+		dto.setId(this.id);
+		dto.setContenido(this.contenido);
+		return dto;
+	}
+	
 	@Override
 	public String toString() {
-		return "Mensaje [id=" + id + ", contenido=" + contenido + ", fecha=" + fecha + ", sender=" + sender + "]";
+		return "Mensaje [id=" + id + ", contenido=" + contenido + ", fecha=" + fecha + ", usuario=" + usuario + "]";
 	}
 
 
