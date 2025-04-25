@@ -6,8 +6,8 @@
 			<generator class="identity"/>
 		</id>
 		<property name="contenido" type="string" column="contenido"/>
-		<property name="fecha" column="fecha" type="java.time.LocalDate"/>
-		<many-to-one name="sender" class="model.Usuario" column="usuario_id" not-null="true"/>
-		<many-to-one name="ticket" class="model.Ticket" column="id_ticket" not-null="true"></many-to-one>
+		<property name="fecha" column="fecha" type="java.time.LocalDateTime"/>
+		<many-to-one name="usuario" class="model.Usuario" column="usuario_id" not-null="true"/>
+		<many-to-one name="ticket" class="model.Ticket" column="id_ticket" not-null="true" lazy="false"></many-to-one>
 	</class>
 </hibernate-mapping>
