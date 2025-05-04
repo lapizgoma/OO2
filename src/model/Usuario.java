@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Objects;
+
 import dto.UsuarioDTO;
 
 public class Usuario {
@@ -78,9 +80,42 @@ public class Usuario {
 		usuarioDto.setEmail(this.email);
 		return usuarioDto;
 	}
+	
+	public Cliente crearCuenta(String numTelefono, String direccion) {
+
+		if (this.isDeleted()) {
+			System.out.println("El usuario ha sido eliminado, no podemos crear la cuenta");
+			return null;
+		}
+		Cliente cliente = new Cliente(this.email, this.apellido, this.nombre, this.password, this.deleted);
+		cliente.setTelefono(numTelefono);
+		cliente.setDireccion(direccion);
+		return cliente;
+	}
 
 	@Override
 	public String toString() {
 		return "Usuario [email=" + email + ", apellido=" + apellido + ", nombre=" + nombre + "]";
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(apellido, deleted, email, id, nombre, password);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Usuario other = (Usuario) obj;
+		return Objects.equals(apellido, other.apellido) && deleted == other.deleted
+				&& Objects.equals(email, other.email) && Objects.equals(id, other.id)
+				&& Objects.equals(nombre, other.nombre) && Objects.equals(password, other.password);
+	}
+	
+	
 }

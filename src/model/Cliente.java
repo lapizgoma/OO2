@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Objects;
+
 public class Cliente extends Usuario {
 	private String telefono;
 	private String direccion;
@@ -36,6 +38,24 @@ public class Cliente extends Usuario {
 	@Override
 	public String toString() {
 		return super.toString() + " Cliente [telefono=" + telefono + ", direccion=" + direccion + "]";
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(direccion, telefono);
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Cliente other = (Cliente) obj;
+		return Objects.equals(direccion, other.direccion) && Objects.equals(telefono, other.telefono);
 	}
 	
 	
