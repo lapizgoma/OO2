@@ -10,6 +10,7 @@ import model.Usuario;
 
 public class TicketABM implements INegocio<Ticket> {
 	private TicketDao ticketDao = new TicketDao();
+	private UsuarioABM usuarioABM = new UsuarioABM();
 
 	public Ticket traer(Long id) {
 		return ticketDao.traer(id);
@@ -37,9 +38,10 @@ public class TicketABM implements INegocio<Ticket> {
 	}
 	
 	public void agregarUsuarioTicket(Ticket ticket) {
-		
 		if(ticket.getId() == null || ticket.getId() > 0) {
-			persistirCliente(ticket);			
+			if(ticket.getCliente() == null) {			
+				persistirCliente(ticket);
+			}
 			agregar(ticket);
 		}else {
 			actualizar(ticket);
@@ -52,6 +54,14 @@ public class TicketABM implements INegocio<Ticket> {
 			System.out.println(" ------ Ingrese las siguiente credenciales para generar un ticket ------");
 			ticket.setCliente(generarUsuario());
 		}
+		
+		if(existeUsuarioBd(ticket.getCliente()) != null) {
+			
+		}
+	}
+	
+	private Usuario existeUsuarioBd(Usuario usuario) {
+		return usuarioABM.traer(usuario.getId()) != null ? usuarioABM.traer(usuario.getId()) : null;
 	}
 	
 	private Usuario generarUsuario() {
