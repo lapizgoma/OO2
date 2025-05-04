@@ -3,6 +3,7 @@ package negocio;
 import java.util.List;
 
 import dao.UsuarioDao;
+import model.Cliente;
 import model.Empleado;
 import model.Usuario;
 
@@ -17,6 +18,11 @@ public class UsuarioABM implements INegocio<Usuario> {
 
 	@Override
 	public Long agregar(Usuario objeto) {
+		if(objeto instanceof Cliente c) {
+			Usuario usuario = usuarioDao.traer(objeto.getEmail());
+			usuarioDao.eliminar(usuario);				
+			return usuarioDao.agregar(c);
+		}
 		return usuarioDao.agregar(objeto);
 	}
 
