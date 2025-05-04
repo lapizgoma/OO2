@@ -43,7 +43,7 @@ public class MensajeDao extends Dao<Mensaje> {
 			iniciaOperacion();
 			mensaje = session.createQuery("from Mensaje m inner join fetch m.usuario where m.fecha = :fecha AND m.usuario = :sender",Mensaje.class)
 					.setParameter("fecha", fecha)
-					.setParameter("usuario", usuario)
+					.setParameter("sender", usuario)
 					.getResultList();
 		}finally {
 			session.close();
