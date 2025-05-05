@@ -18,12 +18,17 @@ public class UsuarioABM implements INegocio<Usuario> {
 
 	@Override
 	public Long agregar(Usuario objeto) {
-		if(objeto instanceof Cliente c) {
-			Usuario usuario = usuarioDao.traer(objeto.getEmail());
-			usuarioDao.eliminar(usuario);				
-			return usuarioDao.agregar(c);
+		if (objeto instanceof Cliente c) {
+			// TEMPORAL hasta implementar bien las relaciones usuario-cliente
+			Usuario usuario = usuarioDao.traer (objeto.getEmail());
+			usuarioDao.eliminar (usuario);				
+			usuarioDao.agregar (c);
+			objeto.setId (c.getId ());
 		}
-		return usuarioDao.agregar(objeto);
+		else {
+			usuarioDao.agregar (objeto);
+		}
+		return objeto.getId ();
 	}
 
 	@Override
