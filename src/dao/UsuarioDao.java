@@ -102,4 +102,19 @@ public class UsuarioDao extends Dao<Usuario> {
 		}
 	}
 
+	public void actualizarUsuario (Usuario u) {
+		try 
+		{
+			iniciaOperacion ();
+			session.update (u);
+			tx.commit ();
+		}
+		catch (HibernateException e) {
+			manejaExcepcion (e);
+			throw e;
+		}
+		finally {
+			session.close ();
+		}
+	}
 }
