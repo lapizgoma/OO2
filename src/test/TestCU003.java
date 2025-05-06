@@ -27,6 +27,10 @@ public class TestCU003 {
                 "CU-003@empleado.com", "empleado 2", "nombre",
                 null, false,
                 EnumRole.EMPLEADO);
+        Empleado emple_3 = new Empleado(
+                "CU-003@empleado.com", "empleado 3", "nombre",
+                null, false,
+                EnumRole.EMPLEADO);
 
         usuarioABM.agregarEmpleado(emple_1);
         usuarioABM.agregarEmpleado(emple_2);
@@ -38,8 +42,18 @@ public class TestCU003 {
         ticket.agregarEmpleado(emple_1);
         ticketAbm.agregar(ticket);
 
-        // Empleado es asignado localmente y luego la relación entre ambos es actualizada en la BD
+        // Empleado es asignado localmente y luego la relación entre ambos es
+        // actualizada en la BD
         ticket.agregarEmpleado(emple_2);
         ticketAbm.actualizar(ticket);
+
+        // Empleado es asignado directamente
+        ticketAbm.asginarEmpleado(ticket, emple_3);
+
+        // OBSERVACIONES
+        /*
+         * ¿la asignación de Empleado debería pasar por el Servie (ABM) siempre?
+         *      Porque de no ser así, se corre el riesgo de tener Empleados asignados únicamente de manera local.
+         */
     }
 }

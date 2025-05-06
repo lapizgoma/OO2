@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 import dao.TicketDao;
 import dto.TicketDTO;
+import model.Empleado;
 import model.Ticket;
 import model.Usuario;
 
@@ -30,6 +31,19 @@ public class TicketABM implements INegocio<Ticket> {
 
 	public void eliminar(Ticket objeto) {
 		ticketDao.eliminar(objeto);
+	}
+
+	// asigna un Empleado si no lo estaba antes
+	// true: se asignó, false: ya estaba asignado
+	public boolean asginarEmpleado (Ticket t, Empleado e) {
+		int set_len = t.getLstEmpleado ().size ();
+		t.getLstEmpleado ().add (e);
+		boolean added = set_len + 1 == t.getLstEmpleado ().size ();
+		if (added) {
+			this.actualizar (t);
+		}
+
+		return added;
 	}
 	
 	/// METODO IMPORTANTE PARA MOSTRARLE AL CLIENTE!
