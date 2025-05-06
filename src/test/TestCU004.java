@@ -44,7 +44,7 @@ public class TestCU004 {
         try 
         {
             // agregar debe recibir Mensaje y Ticket
-            mensajeABM.agregar(mensaje1);
+            mensajeABM.agregar(mensaje1, ticket_correcto);
             System.out.println ("Mensaje se debía añadir y se añadió.");
         }
         catch (Exception ex) 
@@ -54,7 +54,7 @@ public class TestCU004 {
 
         try 
         {
-            mensajeABM.agregar(mensaje2);
+            mensajeABM.agregar(mensaje2, ticket_correcto);
             System.out.println ("Mensaje NO se debía añadir y se añadió.");
         }
         catch (Exception ex) 
@@ -65,7 +65,9 @@ public class TestCU004 {
         // OBSERVACIONES:
         /*
          * ¿cómo se determina a qué ticket corresponde el mensaje si el Usuario está asignado a varios Tickets?
-         * 
+         * ¿dónde validamos que el Ticket esté en un Estado que pueda aceptar nuevos Mensajes?
+         * model.Ticket.agregarMensaje NO valida que el mensaje pertenezca a alguien del chat:
+         *  ¿debería ser así o que la validación la haga el Service (ABM) está bien?
          */
     }
 }
