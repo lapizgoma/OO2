@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import dao.MensajeDao;
 import model.Mensaje;
+import model.Ticket;
 import model.Usuario;
 
 public class MensajeABM implements INegocio<Mensaje>{
@@ -20,8 +21,19 @@ public class MensajeABM implements INegocio<Mensaje>{
 		return mensajeDao.traer();
 	}
 
+	@Deprecated
 	public Long agregar(Mensaje objeto) {
 		return mensajeDao.agregar(objeto);
+	}
+
+	public Long agregar(Mensaje mensaje, Ticket ticket) throws Exception {
+		if (!ticket.usuarioPertenece (mensaje.getUsuario ())) {
+			throw new Exception ("NO AUTORIZADO: El mensaje pertenece a un Usuario que no forma parte del Ticket.");
+		}
+		// acá se vinculan mensaje y ticket
+		ticket.agregarMensaje (mensaje);
+	
+		return mensajeDao.agregar (mensaje);
 	}
 
 	public void actualizar(Mensaje objeto) {
