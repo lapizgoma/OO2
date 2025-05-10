@@ -11,7 +11,7 @@ public class TicketDTO {
     private Long id;
 	private String asunto;
 	private List<EmpleadoDTO> empleados;
-	private List<MensajeDTO> mensajes;
+	private List<IntervencionDTO> intervencion;
 	private String estado;
 	private UsuarioDTO cliente;
 }

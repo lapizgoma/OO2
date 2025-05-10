@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @NoArgsConstructor @Setter @Getter
-public class MensajeDTO {
+public class IntervencionDTO {
     private Long id;
 	private String contenido;
 }
