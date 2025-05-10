@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.management.RuntimeErrorException;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.log4j.Log4j2;
@@ -22,10 +23,12 @@ public class UsuarioServiceImpl implements IService<Usuario> {
 
     private final IUsuario usuarioRepository;
     private final IEmpleado empleadoRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UsuarioServiceImpl(IUsuario usuarioRepository, IEmpleado empleadoRepository) {
+    public UsuarioServiceImpl(IUsuario usuarioRepository, IEmpleado empleadoRepository, PasswordEncoder password) {
         this.usuarioRepository = usuarioRepository;
         this.empleadoRepository = empleadoRepository;
+        this.passwordEncoder = password;
     }
 
     @Override
@@ -58,7 +61,7 @@ public class UsuarioServiceImpl implements IService<Usuario> {
     @Override
     public void save(Usuario object) {
         try{
-            Optional<Usuario> user = usuarioRepository.findByEmail(object.getEmail());
+            Optional<Usuario> user = usuarioRepository.findByContactoEmail(object.getContacto().getEmail());
             if(user.isEmpty()){
                 usuarioRepository.save(object);
             }else{
@@ -71,7 +74,7 @@ public class UsuarioServiceImpl implements IService<Usuario> {
 
     public Optional<Usuario> findByEmail(String email){
         try{
-            return usuarioRepository.findByEmail(email);
+            return usuarioRepository.findByContactoEmail(email);
         }catch(Error e){
             throw new RuntimeException("No se ha encontrado el usuario con ese email");
         }
@@ -79,7 +82,7 @@ public class UsuarioServiceImpl implements IService<Usuario> {
 	
 	public Optional<Empleado> traerEmpleado(String email){
         try{
-            return empleadoRepository.findByEmail(email);
+            return empleadoRepository.findByContactoEmail(email);
         }catch(Error e){
             throw new RuntimeException("No se ha encontrado el empleado con ese email");
         }
@@ -99,6 +102,19 @@ public class UsuarioServiceImpl implements IService<Usuario> {
         }catch(Error e){
             throw new RuntimeException("No se ha podido persistir el empleado");
         }
+    }
+
+    public boolean validarCredenciales(String email, String password){
+        Optional<Usuario> usOptional = usuarioRepository.findByContactoEmail(email);
+        log.info(email);
+        log.info(usOptional.get());
+        return usOptional.isPresent() && passwordEncoder.matches(password, usOptional.get().getPassword());
+    }
+
+    public void registrarUsuario(Usuario usuario) {
+        String passwordHash = passwordEncoder.encode(usuario.getPassword());
+        usuario.setPassword(passwordHash);
+        save(usuario);
     }
 
 }

@@ -3,10 +3,7 @@ package oo2.grupo19.SistemaTickets.services.impl;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import javax.management.RuntimeErrorException;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +15,12 @@ import oo2.grupo19.SistemaTickets.services.IService;
 @Service
 @Primary
 public class TicketServiceImpl implements IService<Ticket>{
+    
+    private final ITicket ticketRepository;
 
-    @Autowired
-    private ITicket ticketRepository;
+    public TicketServiceImpl(ITicket ticketRepository) {
+        this.ticketRepository = ticketRepository;
+    }
 
     @Override
     public void delete(Long id) {
@@ -60,7 +60,7 @@ public class TicketServiceImpl implements IService<Ticket>{
     }
 
     public TicketDTO traerPorCliente(Long idCliente){
-        return convertirATicketDTO(ticketRepository.findByClienteId(idCliente));
+        return convertirATicketDTO(ticketRepository.findByCreadoPor_Id(idCliente));
     }
 
     private TicketDTO convertirATicketDTO(Ticket ticket) {
@@ -70,11 +70,11 @@ public class TicketServiceImpl implements IService<Ticket>{
     dto.setAsunto(ticket.getAsunto());
     dto.setEstado(ticket.getEstado().toString());
 
-    dto.setCliente(ticket.getCliente().usuarioToDto());
+    dto.setCliente(ticket.getCreadoPor().usuarioToDto());
     dto.setEmpleados(ticket.getListEmpleado().stream()
         .map(t -> t.empleadoToDto())
         .collect(Collectors.toList()));
-    dto.setMensajes(ticket.getChats().stream()
+    dto.setIntervencion(ticket.getLstIntervencion().stream()
         .map(m -> m.mensajeToDto())
         .collect(Collectors.toList()));
 
