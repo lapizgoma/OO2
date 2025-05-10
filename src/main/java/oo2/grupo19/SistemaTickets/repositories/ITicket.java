@@ -4,6 +4,7 @@ import oo2.grupo19.SistemaTickets.entities.Ticket;
 
 public interface ITicket extends JpaRepository<Ticket,Long> {
     
-    Ticket findByClienteId(Long idCliente);
+    Ticket findByCreadoPor_Id(Long id);
+
 
 }
