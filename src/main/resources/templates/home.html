@@ -7,12 +7,11 @@
     <title>Inicio</title>
 </head>
 <body>
-
-    <a th:href="@{/ticket/create/user}">Crear ticket</a>
+    <a th:href="@{/ticket/create/user}" th:if="${cliente != null}">Crear ticket</a>
     <!-- A implementar estas dos por si el usuario quiere hacer un seguimiento del ticket -->
-    <a href="#">Iniciar sesion</a>
-    <a href="#">Registrarse</a>
-
+    <a th:href="@{/auth/login}">Iniciar sesion</a>
+    <a href="@{/auth/register}">Registrarse</a>
+    <span th:text="${name}"></span>
 
 </body>
 </html>
