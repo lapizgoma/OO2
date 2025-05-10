@@ -1,6 +1,8 @@
 package oo2.grupo19.SistemaTickets.entities;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +12,12 @@ import lombok.Setter;
 @Entity
 @Getter @Setter @NoArgsConstructor
 public class Cliente extends Usuario {
-    private String telefono;
-    private String direccion; 
+
+    @OneToOne
+    @JoinColumn(name = "organizacion_id",nullable = true)
+    private PersonaJuridica organizacion;
+
+    public boolean tieneOrganizacion(){
+        return this.organizacion != null;
+    }
 }
