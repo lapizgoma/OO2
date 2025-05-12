@@ -7,7 +7,7 @@
     <title>Register</title>
 </head>
 <body>
-    <form th:action="@{/auth/register}" th:object="${usuario}" method="post">
+    <form th:action="@{/auth/register}" th:object="${cliente}" method="post">
 
         <!-- Continuar!! -->
         <div>
@@ -22,14 +22,60 @@
 
         <div>
             <label for="email">Email</label>
-            <input type="text" th:field="*{email}" id="email" required>
+            <input type="text" th:field="*{contacto.email}" id="email" required>
         </div>
         
         <div>
             <label for="password">Password</label>
             <input type="password" th:field="*{password}" id="password" required>
         </div>
-            
+
+        <div>
+            <label for="dni">Dni</label>
+            <input type="text" th:field="*{dni}" id="dni" required>
+        </div>
+
+        <h3>Contacto</h3>
+
+        <div>
+            <label for="calle">Calle</label>
+            <input type="text" th:field="*{contacto.calle}">
+        </div>
+
+        <div>
+            <label for="localidad">Localidad</label>
+            <input type="text" th:field="*{contacto.localidad}">
+        </div>
+
+        <div>
+            <label for="localidad">Numero de puerta</label>
+            <input type="text" th:field="*{contacto.nroPuerta}">
+        </div>
+
+        <div>
+            <label for="telefono">Telefono</label>
+            <input type="text" th:field="*{contacto.telefono}">
+        </div>
+        
+    <!-- 
+        IMPORTANTE AGREGAR SI ES UNA PERSONA JURIDICA 
+        Recomendacion: Utilizar un checkbox si es una persona juridica, si pone que si, se le agrega un new PersonaJuridica
+    -->
+        <div>
+            <p>Es una persona juridica? </p>
+            <input type="checkbox" name="activo" value="true">
+        </div>
+
+        <div>
+            <label for="razon_social">Razon social</label>
+            <input type="text" th:field="*{organizacion.razonSocial}" name="razonSocial">
+        </div>
+
+        <div>
+            <label for="cuit">cuit</label>
+            <input type="text" th:field="*{organizacion.cuit}" name="cuit">
+        </div>
+
         <button type="submit" >Registrarse</button>
     </form>
 </body>
