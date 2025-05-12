@@ -1,4 +1,5 @@
 package oo2.grupo19.SistemaTickets.controllers;
+import org.springframework.boot.actuate.autoconfigure.metrics.MetricsProperties.Web.Client;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -11,7 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import lombok.extern.log4j.Log4j2;
-import oo2.grupo19.SistemaTickets.entities.Usuario;
+import oo2.grupo19.SistemaTickets.entities.Cliente;
+import oo2.grupo19.SistemaTickets.entities.PersonaJuridica;
+import oo2.grupo19.SistemaTickets.services.impl.ClienteServiceImpl;
 import oo2.grupo19.SistemaTickets.services.impl.UsuarioServiceImpl;
 
 @Controller
@@ -20,11 +23,13 @@ import oo2.grupo19.SistemaTickets.services.impl.UsuarioServiceImpl;
 public class AuthController {
 
     private final UsuarioServiceImpl usuarioService;
+    private final ClienteServiceImpl clienteService;
     private final AuthenticationManager authenticationManager;
     
-    public AuthController(UsuarioServiceImpl usuario, AuthenticationManager authenticationManager) {
+    public AuthController(UsuarioServiceImpl usuario, AuthenticationManager authenticationManager, ClienteServiceImpl clienteService) {
         this.usuarioService = usuario;
         this.authenticationManager = authenticationManager;
+        this.clienteService = clienteService;
     }
 
     @GetMapping("/login")
@@ -44,9 +49,15 @@ public class AuthController {
         }
     }
 
+    /*
+     * APARTADO CREAR CUENTA PARA CLIENTE !
+     */
+
     @GetMapping("/register")
     public String register(Model model){
-        model.addAttribute("usuario", new Usuario());
+        Cliente cliente = new Cliente();
+        cliente.setOrganizacion(new PersonaJuridica());
+        model.addAttribute("cliente", cliente);
         return "formsCredenciales/register";
     }
 
@@ -54,12 +65,14 @@ public class AuthController {
      * Importante agregar nombre, apellido, email y password para el registro
      */
     @PostMapping("/register")
-    public String registrarUsuario(@ModelAttribute("usuario") Usuario usuario){
-        usuarioService.registrarUsuario(usuario);
-
+    public String registrarUsuario(@ModelAttribute("cliente") Cliente cliente, @RequestParam(required = false) String activo){
+        if(activo == null){
+            cliente.setOrganizacion(null);
+        }
+        usuarioService.registrarUsuario(cliente);
         // Cuando registramos el usuario se inicia sesion automaticamente
         Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(usuario.getContacto().getEmail(), usuario.getPassword())
+            new UsernamePasswordAuthenticationToken(cliente.getContacto().getEmail(), cliente.getPassword())
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
