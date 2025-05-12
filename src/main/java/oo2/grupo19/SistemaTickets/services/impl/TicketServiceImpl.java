@@ -63,6 +63,11 @@ public class TicketServiceImpl implements IService<Ticket>{
         return convertirATicketDTO(ticketRepository.findByCreadoPor_Id(idCliente));
     }
 
+    public List<TicketDTO> traerPorClienteCerrado(String email, Long idEstado){
+        List<Ticket> ticket = ticketRepository.traerPorClienteCerrado(email, idEstado);
+        return ticket.stream().map(t -> convertirATicketDTO(t)).collect(Collectors.toList());
+    }
+
     private TicketDTO convertirATicketDTO(Ticket ticket) {
 
     TicketDTO dto = new TicketDTO();
