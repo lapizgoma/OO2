@@ -21,7 +21,10 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "empleado")
-@Getter @Setter @ToString @NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
 public class Empleado extends Usuario {
 
   @Column(name = "numero_legajo")
@@ -37,20 +40,18 @@ public class Empleado extends Usuario {
   private Role role;
 
   @ManyToMany
-  @JoinTable(name = "empleado_ticket",
-                joinColumns = @JoinColumn(name = "empleado_id", nullable = false),
-                inverseJoinColumns = @JoinColumn(name = "ticket_id"))
+  @JoinTable(name = "empleado_ticket", joinColumns = @JoinColumn(name = "empleado_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "ticket_id"))
   private List<Ticket> tickets;
 
   public EmpleadoDTO empleadoToDto() {
-		EmpleadoDTO empleadoDto = new EmpleadoDTO();
-		empleadoDto.setId(this.id);
-		empleadoDto.setNombre(this.nombre);
-		empleadoDto.setRole(this.role.toString());
-		return empleadoDto;
-	}
+    EmpleadoDTO empleadoDto = new EmpleadoDTO();
+    empleadoDto.setId(this.id);
+    empleadoDto.setNombre(this.nombre);
+    empleadoDto.setRole(this.role.toString());
+    return empleadoDto;
+  }
 
-  public void darDeBaja(){
+  public void darDeBaja() {
     this.setDeleted(true);
     this.baja = LocalDateTime.now();
   }

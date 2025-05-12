@@ -68,6 +68,7 @@ public class Ticket {
 	    // Seteamos la relacion bidireccional desde esta clase
 	    lstIntervencion.add(chat);
 	    chat.setTicket(this);
+		chat.setFecha(LocalDateTime.now());
 	}
 	
 	public boolean existeUsuario() {
@@ -83,6 +84,11 @@ public class Ticket {
 		dto.setAsunto(this.asunto);
 		dto.setEstado(this.estado.toString());
 		return dto;
+	}
+
+		// Verifica si el usuario (u) pertenece al Ticket o no
+	public boolean usuarioPertenece (Usuario u) {
+		return this.creadoPor == u || this.listEmpleado.contains(u);
 	}
 
 	@Override

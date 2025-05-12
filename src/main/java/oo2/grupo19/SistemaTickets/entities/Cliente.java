@@ -1,5 +1,6 @@
 package oo2.grupo19.SistemaTickets.entities;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
@@ -13,7 +14,7 @@ import lombok.Setter;
 @Getter @Setter @NoArgsConstructor
 public class Cliente extends Usuario {
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "organizacion_id",nullable = true)
     private PersonaJuridica organizacion;
 

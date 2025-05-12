@@ -1,7 +1,7 @@
 package oo2.grupo19.SistemaTickets.entities;
 
 import oo2.grupo19.SistemaTickets.dto.UsuarioDTO;
-
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -30,7 +30,7 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "contacto_id")
     protected Contacto contacto;
 
@@ -40,13 +40,12 @@ public class Usuario {
     @Column(length = 10)
     protected String apellido;
 
-    @Size(min = 4,max = 12)
     @Column(nullable = false)
     protected String password;
-    
-    @Size(max = 8)
+
+    @Size(min = 7, max = 8, message = "El DNI debe tener entre 7 y 8 caracteres")
     @Column(nullable = false)
-    protected int dni;
+    private String dni;
 
     protected boolean deleted;
 
@@ -59,4 +58,37 @@ public class Usuario {
 		return usuarioDto;
 	}
     
+    public Cliente toCliente(String razonSocial, String cuit){
+        Cliente cliente = new Cliente();
+        cliente.setApellido(this.apellido);
+        cliente.setContacto(this.contacto);
+        cliente.setDeleted(this.deleted);
+        cliente.setDni(this.dni);
+        cliente.setId(this.id);
+        cliente.setPassword(this.password);
+        cliente.setNombre(this.nombre);
+        PersonaJuridica personaJuridica = new PersonaJuridica();
+        personaJuridica.setCuit(cuit);
+        personaJuridica.setRazonSocial(razonSocial);
+        personaJuridica.setCliente(cliente);
+        cliente.setOrganizacion(personaJuridica);
+        return cliente;
+    }
+
+        public Cliente toCliente(){
+        Cliente cliente = new Cliente();
+        cliente.setApellido(this.apellido);
+        cliente.setContacto(this.contacto);
+        cliente.setDeleted(this.deleted);
+        cliente.setDni(this.dni);
+        cliente.setId(this.id);
+        cliente.setPassword(this.password);
+        cliente.setNombre(this.nombre);
+        return cliente;
+    }
+
+    public void asignarContactoUsuario(){
+        this.contacto.setUsuario(this);
+    }
+
 }
