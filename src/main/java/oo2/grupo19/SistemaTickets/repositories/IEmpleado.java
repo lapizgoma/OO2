@@ -15,4 +15,5 @@ public interface IEmpleado extends JpaRepository<Empleado, Long> {
     List<Empleado> findAllEmpleados();
 
     Optional<Empleado> findByNombre(String nombre);
+    
 }
