@@ -9,9 +9,11 @@ import oo2.grupo19.SistemaTickets.dto.EmpleadoDTO;
 import oo2.grupo19.SistemaTickets.entities.estados.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -35,7 +37,7 @@ public class Empleado extends Usuario {
 
   private LocalDateTime baja;
 
-  @OneToOne
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "role_id", nullable = false)
   private Role role;
 

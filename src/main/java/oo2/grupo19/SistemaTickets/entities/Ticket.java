@@ -18,6 +18,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -47,8 +48,8 @@ public class Ticket {
     @ManyToMany(mappedBy = "tickets")
     private List<Empleado> listEmpleado;
 
-	@OneToOne
-	@JoinColumn(name = "estado_ticket", nullable = false)
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "estado_ticket_id", nullable = false)
     private EstadoTicket estado;
 
 	@Column(length = 10, nullable = false)
@@ -68,7 +69,6 @@ public class Ticket {
 	    // Seteamos la relacion bidireccional desde esta clase
 	    lstIntervencion.add(chat);
 	    chat.setTicket(this);
-		chat.setFecha(LocalDateTime.now());
 	}
 	
 	public boolean existeUsuario() {
@@ -89,6 +89,11 @@ public class Ticket {
 		// Verifica si el usuario (u) pertenece al Ticket o no
 	public boolean usuarioPertenece (Usuario u) {
 		return this.creadoPor == u || this.listEmpleado.contains(u);
+	}
+
+	@PrePersist
+	private void preInsert(){
+		this.fechaHora = LocalDateTime.now();
 	}
 
 	@Override
