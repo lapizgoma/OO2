@@ -8,7 +8,6 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import oo2.grupo19.SistemaTickets.entities.Intervencion;
 
 @Entity
 @Table(name = "tipo_intervencion")
@@ -20,9 +19,6 @@ public class TipoIntervencion {
 
     @Column(nullable = false)
     private String estado;
-
-    @OneToOne(mappedBy = "tipo")
-    private Intervencion intervencion;
 
     public TipoIntervencion(Long id, String estado) {
         this.id = id;

@@ -3,12 +3,10 @@ package oo2.grupo19.SistemaTickets.entities.estados;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import oo2.grupo19.SistemaTickets.entities.Empleado;
 
 @Entity
 @Table(name = "roles")
@@ -21,8 +19,6 @@ public class Role {
     @Column(nullable = false)
     private String estado;
 
-    @OneToOne(mappedBy = "role")
-    private Empleado empleado;
 
     public Role(Long id, String estado) {
         this.id = id;
