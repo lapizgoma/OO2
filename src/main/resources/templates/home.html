@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-<html xmlns:th="http://www.thymeleaf.org"></html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml"></html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio</title>
 </head>
 <body>
-    <a th:href="@{/ticket/create/user}" th:if="${cliente != null}">Crear ticket</a>
+    <a th:href="@{/ticket/create}" th:if="${session.cliente != null}">Crear ticket</a>
     <!-- A implementar estas dos por si el usuario quiere hacer un seguimiento del ticket -->
-    <a th:href="@{/auth/login}">Iniciar sesion</a>
-    <a th:href="@{/auth/register}">Registrarse</a>
-    <span th:text="${name}"></span>
+    <a th:href="${session.cliente != null} ? @{/auth/logout} : @{/auth/login}" th:text="${session.cliente != null} ? Logout : Login"></a>
+    <a th:href="@{/auth/register}" th:if="${session.cliente == null}">Registrarse</a>
+    <h1 th:if="${session.cliente != null}">¡Bienvenido, <span th:text="${session.cliente != null ? session.cliente.nombre : Invitado}">Usuario</span>!</h1>
+
 
 </body>
 </html>
