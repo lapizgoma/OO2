@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 
 import oo2.grupo19.SistemaTickets.dto.TicketDTO;
 import oo2.grupo19.SistemaTickets.entities.Ticket;
+import oo2.grupo19.SistemaTickets.entities.Usuario;
 import oo2.grupo19.SistemaTickets.repositories.ITicket;
+import oo2.grupo19.SistemaTickets.repositories.IUsuario;
 import oo2.grupo19.SistemaTickets.services.IService;
 
 @Service
@@ -17,9 +19,11 @@ import oo2.grupo19.SistemaTickets.services.IService;
 public class TicketServiceImpl implements IService<Ticket>{
     
     private final ITicket ticketRepository;
+    private final IUsuario clienteRepository;
 
-    public TicketServiceImpl(ITicket ticketRepository) {
+    public TicketServiceImpl(ITicket ticketRepository, IUsuario clienteRepository) {
         this.ticketRepository = ticketRepository;
+        this.clienteRepository = clienteRepository;
     }
 
     @Override
@@ -52,6 +56,8 @@ public class TicketServiceImpl implements IService<Ticket>{
     @Override
     public void save(Ticket object) {
         try{
+            Usuario userDb = clienteRepository.findById(object.getCreadoPor().getId()).orElseThrow();
+            object.setCreadoPor(userDb);
             ticketRepository.save(object);
         }catch(Error e){
             throw new RuntimeErrorException(e, "Error no se ha podido actualizar/insertar el ticket");

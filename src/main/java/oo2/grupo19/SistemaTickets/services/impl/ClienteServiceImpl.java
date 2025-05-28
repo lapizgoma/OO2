@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
-import oo2.grupo19.SistemaTickets.entities.Usuario;
 import oo2.grupo19.SistemaTickets.repositories.ICliente;
 import oo2.grupo19.SistemaTickets.services.IService;
 
@@ -51,6 +50,10 @@ public class ClienteServiceImpl implements IService<Cliente> {
         }catch(Error e){
             throw new RuntimeErrorException(e,"No se ha podido actualizar/insertar el usuario");
         }
+    }
+
+    public Optional<Cliente> findByEmail(String email){
+        return clienteRepository.findByContactoEmail(email);
     }
     
 }
