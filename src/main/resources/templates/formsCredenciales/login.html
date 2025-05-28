@@ -8,7 +8,7 @@
 </head>
 <body>
     
-    <form th:action="@{/auth/login}" method="post">
+    <form th:action="@{/auth/loginProcess}" method="post">
         <div th:if="${error}" style="color:red" th:text="${error}"></div>
         <div>
             <label for="email">Email</label>
@@ -25,6 +25,14 @@
         <p><a th:href="@{/auth/register}">Registrarse</a></p>
 
         <button type="submit">Iniciar sesion</button>
+
+        <div th:if="${error != null}" >
+            Invalid username or password.
+        </div>
+
+        <div th:if="${logout != null}">
+            Session closes successfully.
+        </div>
         
     </form>
 
