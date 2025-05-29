@@ -55,10 +55,3 @@ Este método es el más directo para desarrollo local:
   ]
 }
 ```
-
-4. Reemplaza:
-   - `com.tuempresa.TuClasePrincipal` con la clase que contiene el método `main` de tu aplicación
-   - `nombre-de-tu-proyecto` con el nombre de tu proyecto
-   - Los valores de cada variable con tus datos reales
-
-5. Para ejecutar la aplicación, usa el botón "Run" en VSCode o presiona F5.
