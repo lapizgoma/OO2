@@ -6,30 +6,39 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import oo2.grupo19.SistemaTickets.entities.Contacto;
+import oo2.grupo19.SistemaTickets.entities.Empleado;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoIntervencion;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoTicket;
+import oo2.grupo19.SistemaTickets.entities.estados.Prioridad;
 import oo2.grupo19.SistemaTickets.entities.estados.Role;
-import oo2.grupo19.SistemaTickets.entities.estados.TipoIntervencion;
 import oo2.grupo19.SistemaTickets.repositories.estados.IEstadoIntervencion;
 import oo2.grupo19.SistemaTickets.repositories.estados.IEstadoTicket;
+import oo2.grupo19.SistemaTickets.repositories.estados.IPrioridad;
 import oo2.grupo19.SistemaTickets.repositories.estados.IRole;
-import oo2.grupo19.SistemaTickets.repositories.estados.ITipoIntervencion;
+import oo2.grupo19.SistemaTickets.services.impl.EmpleadoServiceImpl;
 
 @Configuration
 public class LoadEstados {
+    private final EmpleadoServiceImpl empleadoRepository;
+    
+    public LoadEstados(EmpleadoServiceImpl empleadoRepository) {
+        this.empleadoRepository = empleadoRepository;
+    }
 
 @Bean
 public CommandLineRunner cargarEstados(IEstadoIntervencion estadoIntervencionRepository,
                                         IEstadoTicket estadoTicketRepository,
                                         IRole roleRepository,
-                                        ITipoIntervencion tipoIntervencionRepository){
+                                        IPrioridad prioridadRepository){
         
     return args -> {
 
-        if (tipoIntervencionRepository.count() == 0) {
-            tipoIntervencionRepository.saveAll(List.of(
-                new TipoIntervencion(1L,"Mensaje"),
-                new TipoIntervencion(2L, "Tarea")
+        if(prioridadRepository.count() == 0){
+            prioridadRepository.saveAll(List.of(
+                new Prioridad(1L,"Alta"),
+                new Prioridad(2L,"Media"),
+                new Prioridad(3L,"Baja")
             ));
         }
 
@@ -56,7 +65,33 @@ public CommandLineRunner cargarEstados(IEstadoIntervencion estadoIntervencionRep
             ));
         }
 
+        if (empleadoRepository.traerEmpleado("empleado@empleado.com").isEmpty()) {
+            Empleado empleado = new Empleado();
+            Contacto contacto = new Contacto();
+            contacto.setCalle("2312312");
+            contacto.setEmail("empleado@empleado.com");
+            contacto.setLocalidad("SDASDAS");
+            contacto.setNroPuerta("33");
+            contacto.setTelefono("3333333");
+            empleado.setNombre("empleado");
+            empleado.setApellido("de prueba");
+            empleado.setPassword("empleado");
+            empleado.setNroLegajo("13333");
+            empleado.setDni("11111111");
+            empleado.setRole(roleRepository.findById(2L).orElseThrow());
+            empleado.setContacto(contacto);
+            empleado.asignarContactoUsuario();
+            // ... otros campos necesarios
+
+            empleadoRepository.save(empleado);
+            System.out.println("Empleado de prueba creado.");
+        } else {
+            System.out.println("Empleado de prueba ya existe.");
+        }
+
     };
+
+    
 }
 
 }
