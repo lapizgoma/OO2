@@ -6,6 +6,7 @@ import java.util.List;
 
 import oo2.grupo19.SistemaTickets.dto.TicketDTO;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoTicket;
+import oo2.grupo19.SistemaTickets.entities.estados.Prioridad;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,6 +20,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,6 +34,7 @@ public class Ticket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+	@Column(name = "fecha_hora")
 	private LocalDateTime fechaHora;
 
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -39,7 +42,8 @@ public class Ticket {
     private Usuario creadoPor;
 
     @Column(length = 20,nullable = false)
-    private String asunto;
+    @NotBlank
+	private String asunto;
 
     @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = false,mappedBy = "ticket")
     private List<Intervencion> lstIntervencion;
@@ -51,7 +55,12 @@ public class Ticket {
     @JoinColumn(name = "estado_ticket_id", nullable = false)
     private EstadoTicket estado;
 
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "prioridad_id",nullable = false)
+	private Prioridad prioridad;
+
 	@Column(length = 10, nullable = false)
+	@NotBlank
 	private String detalle;
 
     public void agregarEmpleado(Empleado empleado) {

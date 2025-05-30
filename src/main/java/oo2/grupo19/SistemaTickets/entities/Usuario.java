@@ -13,7 +13,9 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,12 +37,15 @@ public class Usuario {
     protected Contacto contacto;
 
     @Column(length = 10)
+    @NotEmpty
     protected String nombre;
-
+    
     @Column(length = 10)
+    @NotEmpty
     protected String apellido;
-
+    
     @Column(nullable = false)
+    @NotEmpty
     protected String password;
 
     @Size(min = 7, max = 8, message = "El DNI debe tener entre 7 y 8 caracteres")
@@ -70,7 +75,7 @@ public class Usuario {
         PersonaJuridica personaJuridica = new PersonaJuridica();
         personaJuridica.setCuit(cuit);
         personaJuridica.setRazonSocial(razonSocial);
-        personaJuridica.setCliente(cliente);
+        personaJuridica.getCliente().add(cliente);
         cliente.setOrganizacion(personaJuridica);
         return cliente;
     }

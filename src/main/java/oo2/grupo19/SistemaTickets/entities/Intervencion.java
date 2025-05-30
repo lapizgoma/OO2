@@ -3,7 +3,6 @@ package oo2.grupo19.SistemaTickets.entities;
 import java.time.LocalDateTime;
 import oo2.grupo19.SistemaTickets.dto.IntervencionDTO;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoIntervencion;
-import oo2.grupo19.SistemaTickets.entities.estados.TipoIntervencion;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -31,8 +30,8 @@ public class Intervencion {
   private Long id;
 
   @ManyToOne
-  @JoinColumn(nullable = false, name = "usuario_id")
-  private Usuario realizadoPor;
+  @JoinColumn(nullable = true, name = "empleado_id")
+  private Empleado realizadoPor;
 
   @ManyToOne
   @ToString.Exclude
@@ -41,16 +40,12 @@ public class Intervencion {
   @Column(name = "fecha_hora", nullable = false)
   private LocalDateTime fecha;
 
-  @Column(length = 1000, nullable = false)
+  @Column(length = 1000, nullable = true)
   private String descripcion;
 
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "estado_id", nullable = false)
   private EstadoIntervencion estado;
-
-  @ManyToOne( fetch = FetchType.EAGER)
-  @JoinColumn(name = "tipo_intervencion_id", nullable = true)
-  private TipoIntervencion tipo;
 
   public IntervencionDTO mensajeToDto() {
     IntervencionDTO dto = new IntervencionDTO();

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import javax.management.RuntimeErrorException;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import oo2.grupo19.SistemaTickets.dto.TicketDTO;
 import oo2.grupo19.SistemaTickets.entities.Ticket;
@@ -27,6 +28,7 @@ public class TicketServiceImpl implements IService<Ticket>{
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         try{
             ticketRepository.deleteById(id);
@@ -36,6 +38,7 @@ public class TicketServiceImpl implements IService<Ticket>{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Ticket> findAll() {
         try{
             return ticketRepository.findAll();
@@ -45,6 +48,7 @@ public class TicketServiceImpl implements IService<Ticket>{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Ticket> findById(Long id) {
         try{
             return ticketRepository.findById(id);
@@ -54,6 +58,7 @@ public class TicketServiceImpl implements IService<Ticket>{
     }
 
     @Override
+    @Transactional
     public void save(Ticket object) {
         try{
             Usuario userDb = clienteRepository.findById(object.getCreadoPor().getId()).orElseThrow();
@@ -65,10 +70,12 @@ public class TicketServiceImpl implements IService<Ticket>{
         
     }
 
+    @Transactional(readOnly = true)
     public TicketDTO traerPorCliente(Long idCliente){
         return convertirATicketDTO(ticketRepository.findByCreadoPor_Id(idCliente));
     }
 
+    @Transactional(readOnly = true)
     public List<TicketDTO> traerPorClienteCerrado(String email, Long idEstado){
         List<Ticket> ticket = ticketRepository.traerPorClienteCerrado(email, idEstado);
         return ticket.stream().map(t -> convertirATicketDTO(t)).collect(Collectors.toList());

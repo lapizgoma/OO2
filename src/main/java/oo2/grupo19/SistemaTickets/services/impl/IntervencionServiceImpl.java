@@ -8,6 +8,7 @@ import javax.management.RuntimeErrorException;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import oo2.grupo19.SistemaTickets.entities.Intervencion;
 import oo2.grupo19.SistemaTickets.entities.Usuario;
@@ -25,6 +26,7 @@ public class IntervencionServiceImpl implements IService<Intervencion> {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         try{
             intervencionRepository.deleteById(id);
@@ -34,6 +36,7 @@ public class IntervencionServiceImpl implements IService<Intervencion> {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Intervencion> findAll() {
         try{
             return intervencionRepository.findAll();
@@ -43,6 +46,7 @@ public class IntervencionServiceImpl implements IService<Intervencion> {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Intervencion> findById(Long id) {
         try{
             return intervencionRepository.findById(id);
@@ -52,6 +56,7 @@ public class IntervencionServiceImpl implements IService<Intervencion> {
     }
 
     @Override
+    @Transactional
     public void save(Intervencion object) {
         try{
             intervencionRepository.save(object);
@@ -60,6 +65,7 @@ public class IntervencionServiceImpl implements IService<Intervencion> {
         }
     }
 
+    @Transactional(readOnly = true)
     public List<Intervencion> traerIntervencionPorCliente(Long idCliente){
 		Optional<Usuario> usuarioOptional = Optional.of(traerUsuarioDesdeIntervencion(idCliente));
 		if(usuarioOptional.isPresent()) {			
@@ -68,10 +74,12 @@ public class IntervencionServiceImpl implements IService<Intervencion> {
 		throw new RuntimeException("El usuario no existe");
 	}
 	
+    @Transactional(readOnly = true)
 	public List<Intervencion> traerMensajePorTicket(Long idTicket){
 		return intervencionRepository.traerIntervencionPorTicket(idTicket);
 	}
-	
+
+    @Transactional(readOnly = true)
 	public List<Intervencion> traer(LocalDateTime fecha,Usuario cliente) {
 		// Verificamos que el usuario exista en la tabla Mensaje
 		Optional<Usuario> usuarioOptional = Optional.of(traerUsuarioDesdeIntervencion(cliente.getId()));
@@ -80,7 +88,8 @@ public class IntervencionServiceImpl implements IService<Intervencion> {
 		}
 		throw new RuntimeException("El usuario no existe");
 	}
-	
+    
+    @Transactional(readOnly = true)
 	public List<Intervencion> traerFecha(LocalDateTime fechaInicio, LocalDateTime fechaFinal, Long idCliente){
 		Optional<Usuario> usuarioOptional = Optional.of(traerUsuarioDesdeIntervencion(idCliente));
 		if(usuarioOptional.isPresent()) {
@@ -88,11 +97,13 @@ public class IntervencionServiceImpl implements IService<Intervencion> {
 		}
 		throw new RuntimeException("El usuario no existe");
 	}
-	
+
+	@Transactional(readOnly = true)
 	public Intervencion traerFecha(LocalDateTime fecha) {
 		return intervencionRepository.findByFecha(fecha);
 	}
-	
+
+	@Transactional(readOnly = true)
 	public Usuario traerUsuarioDesdeIntervencion(Long idCliente) {
 		// Si esta presente nos devuelve el usuario
 		return intervencionRepository.traerClienteDesdeIntervencion(idCliente);		

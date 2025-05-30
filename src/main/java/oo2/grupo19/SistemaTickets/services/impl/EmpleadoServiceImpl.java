@@ -3,18 +3,23 @@ package oo2.grupo19.SistemaTickets.services.impl;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import oo2.grupo19.SistemaTickets.entities.Empleado;
 import oo2.grupo19.SistemaTickets.repositories.IEmpleado;
+import oo2.grupo19.SistemaTickets.repositories.ITicket;
 import oo2.grupo19.SistemaTickets.services.IService;
 
+@Service
 public class EmpleadoServiceImpl implements IService<Empleado> {
     
     private final IEmpleado empleadoRepository;
+    private final ITicket ticketRepository;
 
-    public EmpleadoServiceImpl(IEmpleado empleadoRepository) {
+    public EmpleadoServiceImpl(IEmpleado empleadoRepository, ITicket ticketRepository) {
         this.empleadoRepository = empleadoRepository;
+        this.ticketRepository = ticketRepository;
     }
 
     @Override
@@ -38,6 +43,9 @@ public class EmpleadoServiceImpl implements IService<Empleado> {
     @Override
     @Transactional
     public void save(Empleado object) {
+        if(object.getId() != null && object.getId() > 0){
+            object.setTickets(ticketRepository.findAll());
+        }
         empleadoRepository.save(object);
     }
 
@@ -49,7 +57,7 @@ public class EmpleadoServiceImpl implements IService<Empleado> {
             throw new RuntimeException("No se ha encontrado el empleado con ese email");
         }
     }
-	
+
     @Transactional(readOnly = true)
 	public List<Empleado> traerEmpleados(){
         try{
@@ -62,7 +70,7 @@ public class EmpleadoServiceImpl implements IService<Empleado> {
     @Transactional
 	void agregarEmpleado(Empleado empleado){
         try{
-            empleadoRepository.save(empleado);
+            save(empleado);
         }catch(Error e){
             throw new RuntimeException("No se ha podido persistir el empleado");
         }

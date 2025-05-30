@@ -8,6 +8,7 @@ import javax.management.RuntimeErrorException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
@@ -36,6 +37,7 @@ public class UsuarioServiceImpl implements IService<Usuario> {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
        try{
             usuarioRepository.deleteById(id);
@@ -45,6 +47,7 @@ public class UsuarioServiceImpl implements IService<Usuario> {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Usuario> findAll() {
         try{
             return usuarioRepository.findAll();
@@ -54,6 +57,7 @@ public class UsuarioServiceImpl implements IService<Usuario> {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Usuario> findById(Long id) {
         try{
             return usuarioRepository.findById(id);
@@ -63,6 +67,7 @@ public class UsuarioServiceImpl implements IService<Usuario> {
     }
 
     @Override
+    @Transactional
     public void save(Usuario object) {
         try{
             Optional<Usuario> user = usuarioRepository.findByContactoEmail(object.getContacto().getEmail());
@@ -77,6 +82,7 @@ public class UsuarioServiceImpl implements IService<Usuario> {
         }
     }
 
+    @Transactional(readOnly = true)
     public Optional<Usuario> findByEmail(String email){
         try{
             return usuarioRepository.findByContactoEmail(email);

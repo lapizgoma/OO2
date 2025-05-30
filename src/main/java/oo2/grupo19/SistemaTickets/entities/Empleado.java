@@ -41,7 +41,7 @@ public class Empleado extends Usuario {
   private Role role;
 
   @ManyToMany
-  @JoinTable(name = "empleado_ticket", joinColumns = @JoinColumn(name = "empleado_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "ticket_id"))
+  @JoinTable(name = "empleado_ticket", joinColumns = @JoinColumn(name = "empleado_id", nullable = true), inverseJoinColumns = @JoinColumn(name = "ticket_id", nullable = true))
   private List<Ticket> tickets;
 
   public EmpleadoDTO empleadoToDto() {
