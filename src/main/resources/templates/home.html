@@ -1,19 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml"></html>
-
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio</title>
+    <title>Home</title>
 </head>
 <body>
-    <a th:href="@{/ticket/create}" th:if="${session.cliente != null}">Crear ticket</a>
-    <!-- A implementar estas dos por si el usuario quiere hacer un seguimiento del ticket -->
-    <a th:href="${session.cliente != null} ? @{/auth/logout} : @{/auth/login}" th:text="${session.cliente != null} ? Logout : Login"></a>
-    <a th:href="@{/auth/register}" th:if="${session.cliente == null}">Registrarse</a>
-    <h1 th:if="${session.cliente != null}">¡Bienvenido, <span th:text="${session.cliente != null ? session.cliente.nombre : Invitado}">Usuario</span>!</h1>
+    <!-- Menú dinámico (versión segura) -->
+    <div th:if="${#authorization.expression('isAuthenticated()')}">
+        <h1>¡Bienvenido, <span th:text="${#authentication.principal.nombre}">Usuario</span>!</h1>
+        <a th:href="@{/ticket/create}">Crear ticket</a>
+        <form th:action="@{/auth/logout}" method="post">
+            <button type="submit">Logout</button>
+        </form>
+    </div>
 
-
+    <div th:unless="${#authorization.expression('isAuthenticated()')}">
+        <h1>Bienvenido, Invitado!</h1>
+        <a th:href="@{auth/login}">Login</a> |
+        <a th:href="@{auth/register}">Registrarse</a>
+    </div>
 </body>
 </html>
