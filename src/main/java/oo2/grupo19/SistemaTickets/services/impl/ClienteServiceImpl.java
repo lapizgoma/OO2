@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.management.RuntimeErrorException;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
@@ -23,21 +24,25 @@ public class ClienteServiceImpl implements IService<Cliente> {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         clienteRepository.deleteById(id);
     }
-
+    
     @Override
+    @Transactional(readOnly = true)
     public List<Cliente> findAll() {
         return clienteRepository.findAll();
     }
-
+    
     @Override
+    @Transactional(readOnly = true)
     public Optional<Cliente> findById(Long id) {
         return clienteRepository.findById(id);
     }
 
     @Override
+    @Transactional
     public void save(Cliente object) {
         try{
             Optional<Cliente> user = clienteRepository.findByContactoEmail(object.getContacto().getEmail());
@@ -52,6 +57,7 @@ public class ClienteServiceImpl implements IService<Cliente> {
         }
     }
 
+    @Transactional(readOnly = true)
     public Optional<Cliente> findByEmail(String email){
         return clienteRepository.findByContactoEmail(email);
     }

@@ -3,6 +3,8 @@ package oo2.grupo19.SistemaTickets.services.impl;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import oo2.grupo19.SistemaTickets.entities.Empleado;
 import oo2.grupo19.SistemaTickets.repositories.IEmpleado;
 import oo2.grupo19.SistemaTickets.services.IService;
@@ -16,25 +18,30 @@ public class EmpleadoServiceImpl implements IService<Empleado> {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         empleadoRepository.deleteById(id);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Empleado> findAll() {
         return empleadoRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Empleado> findById(Long id) {
         return empleadoRepository.findById(id);
     }
 
     @Override
+    @Transactional
     public void save(Empleado object) {
         empleadoRepository.save(object);
     }
 
+    @Transactional(readOnly = true)
     public Optional<Empleado> traerEmpleado(String email){
         try{
             return empleadoRepository.findByContactoEmail(email);
@@ -43,6 +50,7 @@ public class EmpleadoServiceImpl implements IService<Empleado> {
         }
     }
 	
+    @Transactional(readOnly = true)
 	public List<Empleado> traerEmpleados(){
         try{
             return empleadoRepository.findAllEmpleados();
@@ -51,6 +59,7 @@ public class EmpleadoServiceImpl implements IService<Empleado> {
         }
     }
     
+    @Transactional
 	void agregarEmpleado(Empleado empleado){
         try{
             empleadoRepository.save(empleado);

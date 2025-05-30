@@ -26,41 +26,41 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class Intervencion {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @ManyToOne
-    @JoinColumn(nullable = false, name = "usuario_id")
-    private Usuario realizadoPor;
+  @ManyToOne
+  @JoinColumn(nullable = false, name = "usuario_id")
+  private Usuario realizadoPor;
 
-    @ManyToOne
-    @ToString.Exclude
-    private Ticket ticket;
+  @ManyToOne
+  @ToString.Exclude
+  private Ticket ticket;
 
-    @Column(name = "fecha_hora", nullable = false)
-    private LocalDateTime fecha;
+  @Column(name = "fecha_hora", nullable = false)
+  private LocalDateTime fecha;
 
-    @Column(length = 1000, nullable = false)
-    private String descripcion;
+  @Column(length = 1000, nullable = false)
+  private String descripcion;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "estado_id", nullable = false)
-    private EstadoIntervencion estado;
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "estado_id", nullable = false)
+  private EstadoIntervencion estado;
 
-    @ManyToOne( fetch = FetchType.EAGER)
-    @JoinColumn(name = "tipo_intervencion_id", nullable = true)
-    private TipoIntervencion tipo;
+  @ManyToOne( fetch = FetchType.EAGER)
+  @JoinColumn(name = "tipo_intervencion_id", nullable = true)
+  private TipoIntervencion tipo;
 
-    public IntervencionDTO mensajeToDto() {
-        IntervencionDTO dto = new IntervencionDTO();
-        dto.setId(this.id);
-        dto.setContenido(this.descripcion);
-        return dto;
-    }
+  public IntervencionDTO mensajeToDto() {
+    IntervencionDTO dto = new IntervencionDTO();
+    dto.setId(this.id);
+    dto.setContenido(this.descripcion);
+    return dto;
+  }
 
-    @PrePersist
-    private void prePersist() {
-      this.fecha = LocalDateTime.now();
-    }
+  @PrePersist
+  private void prePersist() {
+    this.fecha = LocalDateTime.now();
+  }
 }

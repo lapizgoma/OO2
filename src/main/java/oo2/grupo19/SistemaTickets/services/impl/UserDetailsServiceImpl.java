@@ -13,6 +13,7 @@ import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.entities.Empleado;
 import oo2.grupo19.SistemaTickets.entities.Usuario;
 import oo2.grupo19.SistemaTickets.repositories.IUsuario;
+import oo2.grupo19.SistemaTickets.security.util.CustomUserDetails;
 
 @Service
 @Log4j2
@@ -27,23 +28,20 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if(usuarioOptional.isPresent()){
             Usuario usuario = usuarioOptional.get();
             
-            log.info("Usuario: " + usuario.toString());
             String rol = "USUARIO"; // Valor por defecto
-
+            
             if (usuario instanceof Cliente) {
                 rol = "CLIENTE";
             } else if (usuario instanceof Empleado) {
                 rol = ((Empleado) usuario).getRole().toString(); // o algún valor por defecto como "EMPLEADO"
             }
 
-            return User.builder()
-                .password(usuario.getPassword())
-                .username(usuario.getContacto().getEmail())
-                .roles(rol)
-                .accountExpired(false)
-                .accountLocked(false)
-                .credentialsExpired(false)
-                .build();
+            return new CustomUserDetails(
+                usuario.getContacto().getEmail(), // email para login
+                usuario.getPassword(),
+                usuario.getNombre(), // nombre para mostrar
+                rol
+            );
         }
 
 
