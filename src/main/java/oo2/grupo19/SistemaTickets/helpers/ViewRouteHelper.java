@@ -9,6 +9,7 @@ public class ViewRouteHelper {
     public static final String FORM_TICKET = "ticket/formTicket";
     public static final String FORM_INTERVENCION = "formsCredenciales/intervencion/formIntervencion";
     public static final String ERROR_404 = "errors/404";
+    public static final String ERROR_INDEX = "errors/error";
     public static final String FORM_LISTAR_TICKET = "ticket/ver-tickets";
 
 }
