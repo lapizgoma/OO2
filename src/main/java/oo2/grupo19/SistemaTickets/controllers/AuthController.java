@@ -7,18 +7,17 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.entities.PersonaJuridica;
+import oo2.grupo19.SistemaTickets.exceptions.UserAlreadyAuthenticatedException;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 import oo2.grupo19.SistemaTickets.services.impl.ClienteServiceImpl;
 import oo2.grupo19.SistemaTickets.services.impl.UsuarioServiceImpl;
 
 @Controller
 @Log4j2
-@SessionAttributes({ "cliente", "logout" })
 @RequestMapping("/auth")
 public class AuthController {
 
@@ -43,30 +42,20 @@ public class AuthController {
 
     @GetMapping("/loginSuccess")
     public String loginCheck() {
-
         return ViewRouteHelper.INDEX;
-    }
-
-    @GetMapping("/fetch")
-    public String loading() {
-        return "redirect:/".concat(ViewRouteHelper.INDEX);
     }
 
     @GetMapping("/register")
     public String register(Model model, HttpSession session, Authentication authentication) {
 
         // Verificar si hay un usuario autenticado
-        if (authentication != null && authentication.isAuthenticated() &&
-                !authentication.getName().equals("anonymousUser")) {
-            log.info("Usuario ya autenticado: " + authentication.getName());
-            model.addAttribute("title", "Ya hay un usuario logueado");
-            return ViewRouteHelper.ERROR_404;
+        if (isUserAuthenticated(authentication)) {
+            throw new UserAlreadyAuthenticatedException("El usuario ya ha iniciado sesion");
         }else {
             Cliente cliente = new Cliente();
             cliente.setOrganizacion(new PersonaJuridica());
             model.addAttribute("cliente", cliente);
         }
-
         return ViewRouteHelper.REGISTER;
     }
 
@@ -79,19 +68,19 @@ public class AuthController {
             Authentication currentAuth) {
 
         // Verificar que no haya un usuario ya autenticado
-        if (currentAuth != null && currentAuth.isAuthenticated() &&
-                !currentAuth.getName().equals("anonymousUser")) {
-            return "redirect:/";
+        if (isUserAuthenticated(currentAuth)) {
+            throw new UserAlreadyAuthenticatedException("Ya hay un usuario autenticado");
         }
 
         if (activo == null) {
             cliente.setOrganizacion(null);
         }
-
-        log.info("Datos obtenidos en el post " + cliente);
         usuarioService.registrarUsuario(cliente);
-
         return ViewRouteHelper.INDEX;
+    }
+
+    private boolean isUserAuthenticated(Authentication auth){
+        return auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser");
     }
 
 }

@@ -12,6 +12,8 @@ import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.entities.Ticket;
 import oo2.grupo19.SistemaTickets.entities.Usuario;
+import oo2.grupo19.SistemaTickets.exceptions.NotAuthorizedException;
+import oo2.grupo19.SistemaTickets.exceptions.UserNotFounException;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 import oo2.grupo19.SistemaTickets.repositories.ICliente;
 import oo2.grupo19.SistemaTickets.repositories.IEmpleado;
@@ -50,7 +52,7 @@ public class TicketController {
     public String createTicket(Model model, Authentication authentication) {
         Ticket ticket = new Ticket();
         
-        if (authentication != null && authentication.isAuthenticated()) {
+        if (!isAuthenticated(authentication)) {
             // Obtener el email del usuario autenticado
             String email = authentication.getName();
             
@@ -60,11 +62,13 @@ public class TicketController {
             if (cliente != null) {
                 model.addAttribute("ticket", ticket);
                 return "ticket/formTicket";
+            }else{
+                throw new NotAuthorizedException("No tienes permiso para entrar aquí");
             }
+        }else{
+            throw new NotAuthorizedException("No tienes permiso para entrar aquí");
         }
         
-        model.addAttribute("title", "No tienes permiso para entrar aquí");
-        return ViewRouteHelper.ERROR_404;
     }
 
     @PostMapping("/create")
@@ -74,19 +78,17 @@ public class TicketController {
         Model model,
         @RequestParam("mensaje") String contenido) {
         
-        if (authentication == null || !authentication.isAuthenticated()) {
-            model.addAttribute("title", "Debes iniciar sesión");
-            return ViewRouteHelper.ERROR_404;
+        if (isAuthenticated(authentication)) {
+            throw new NotAuthorizedException("Debes iniciar sesión");
         }
 
         // Obtener el usuario autenticado
         String email = authentication.getName();
         Usuario clienteDb = usuarioService.findByEmail(email)
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            .orElseThrow(() -> new UserNotFounException("Usuario no encontrado"));
         
         if (!(clienteDb instanceof Cliente)) {
-            model.addAttribute("title", "Solo clientes pueden crear tickets");
-            return ViewRouteHelper.ERROR_404;
+            throw new NotAuthorizedException("Solo clientes pueden crear tickets");
         }
 
         // Detalle y realizadoPor No lo utilzamos por el momento!
@@ -101,7 +103,6 @@ public class TicketController {
         ticket.setListEmpleado(empleadoRepository.findAll());
         ticketService.save(ticket);
         
-        // return "redirect:/intervencion/form-processing-ticket?ticketId=" + ticket.getId();
         return ViewRouteHelper.TICKET_SUCCESS;
     }
 
@@ -113,5 +114,9 @@ public class TicketController {
         Ticket ticket = ticketService.findById(ticketId).orElseThrow();
 
         return "ticket/formTicketUpdate";
+    }
+
+    private boolean isAuthenticated(Authentication authentication){
+        return authentication == null || !authentication.isAuthenticated();
     }
 }
