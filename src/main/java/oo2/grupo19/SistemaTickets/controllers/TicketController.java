@@ -1,4 +1,6 @@
 package oo2.grupo19.SistemaTickets.controllers;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -48,28 +50,29 @@ public class TicketController {
 
     // ... (otros campos y constructor permanecen igual)
 
-    @GetMapping("/create")
-    public String createTicket(Model model, Authentication authentication) {
-        Ticket ticket = new Ticket();
+@GetMapping("/create")
+public String createTicket(Model model, Authentication authentication) {
+    Ticket ticket = new Ticket();
+    
+    if (isAuthenticated(authentication)) {
+        // Obtener el email del usuario autenticado
+        String email = authentication.getName();
         
-        if (!isAuthenticated(authentication)) {
-            // Obtener el email del usuario autenticado
-            String email = authentication.getName();
-            
-            // Buscar el cliente por email (ajusta según tu implementación)
-            Cliente cliente = clienteRepository.findByContactoEmail(email).orElseThrow();
-                
-            if (cliente != null) {
-                model.addAttribute("ticket", ticket);
-                return "ticket/formTicket";
-            }else{
-                throw new NotAuthorizedException("No tienes permiso para entrar aquí");
-            }
-        }else{
-            throw new NotAuthorizedException("No tienes permiso para entrar aquí");
+        // Buscar el cliente por email
+        Optional<Cliente> cliente = clienteRepository.findByContactoEmail(email);
+        
+        if (cliente.isPresent()) {
+            // Asociar el cliente al ticket si es necesario
+            ticket.setCreadoPor(cliente.get());
+            model.addAttribute("ticket", ticket);
+            return "ticket/formTicket";
+        } else {
+            throw new UserNotFounException("Usted no es un cliente para realizar esta accion");
         }
-        
+    } else {
+        throw new NotAuthorizedException("No tienes permiso para entrar aquí");
     }
+}
 
     @PostMapping("/create")
     public String postCreate(

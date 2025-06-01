@@ -17,12 +17,13 @@ import oo2.grupo19.SistemaTickets.repositories.estados.IEstadoTicket;
 import oo2.grupo19.SistemaTickets.repositories.estados.IPrioridad;
 import oo2.grupo19.SistemaTickets.repositories.estados.IRole;
 import oo2.grupo19.SistemaTickets.services.impl.EmpleadoServiceImpl;
+import oo2.grupo19.SistemaTickets.services.impl.UsuarioServiceImpl;
 
 @Configuration
 public class LoadEstados {
-    private final EmpleadoServiceImpl empleadoRepository;
+    private final UsuarioServiceImpl empleadoRepository;
     
-    public LoadEstados(EmpleadoServiceImpl empleadoRepository) {
+    public LoadEstados(UsuarioServiceImpl empleadoRepository) {
         this.empleadoRepository = empleadoRepository;
     }
 
@@ -65,7 +66,7 @@ public CommandLineRunner cargarEstados(IEstadoIntervencion estadoIntervencionRep
             ));
         }
 
-        if (empleadoRepository.traerEmpleado("empleado@empleado.com").isEmpty()) {
+        if (empleadoRepository.findByEmail("empleado@empleado.com").isEmpty()) {
             Empleado empleado = new Empleado();
             Contacto contacto = new Contacto();
             contacto.setCalle("2312312");
@@ -83,7 +84,7 @@ public CommandLineRunner cargarEstados(IEstadoIntervencion estadoIntervencionRep
             empleado.asignarContactoUsuario();
             // ... otros campos necesarios
 
-            empleadoRepository.save(empleado);
+            empleadoRepository.registrarUsuario(empleado);
             System.out.println("Empleado de prueba creado.");
         } else {
             System.out.println("Empleado de prueba ya existe.");
