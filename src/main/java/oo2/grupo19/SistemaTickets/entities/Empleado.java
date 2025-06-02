@@ -36,10 +36,6 @@ public class Empleado extends Usuario {
 
   private LocalDateTime baja;
 
-  @ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "role_id", nullable = false)
-  private Role role;
-
   @ManyToMany
   @JoinTable(name = "empleado_ticket", joinColumns = @JoinColumn(name = "empleado_id", nullable = true), inverseJoinColumns = @JoinColumn(name = "ticket_id", nullable = true))
   private List<Ticket> tickets;
@@ -48,7 +44,6 @@ public class Empleado extends Usuario {
     EmpleadoDTO empleadoDto = new EmpleadoDTO();
     empleadoDto.setId(this.id);
     empleadoDto.setNombre(this.nombre);
-    empleadoDto.setRole(this.role.toString());
     return empleadoDto;
   }
 

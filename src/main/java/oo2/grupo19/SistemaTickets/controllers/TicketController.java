@@ -2,6 +2,7 @@ package oo2.grupo19.SistemaTickets.controllers;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,31 +50,32 @@ public class TicketController {
     }
 
     // ... (otros campos y constructor permanecen igual)
-
-@GetMapping("/create")
-public String createTicket(Model model, Authentication authentication) {
-    Ticket ticket = new Ticket();
-    
-    if (isAuthenticated(authentication)) {
-        // Obtener el email del usuario autenticado
-        String email = authentication.getName();
-        
-        // Buscar el cliente por email
-        Optional<Cliente> cliente = clienteRepository.findByContactoEmail(email);
-        
-        if (cliente.isPresent()) {
-            // Asociar el cliente al ticket si es necesario
-            ticket.setCreadoPor(cliente.get());
-            model.addAttribute("ticket", ticket);
-            return "ticket/formTicket";
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/create")
+    public String createTicket(Model model, Authentication authentication) {
+        Ticket ticket = new Ticket();
+        log.info("Cliente: " + authentication.getName());
+        if (isAuthenticated(authentication)) {
+            // Obtener el email del usuario autenticado
+            String email = authentication.getName();
+            
+            // Buscar el cliente por email
+            Optional<Cliente> cliente = clienteRepository.findByContactoEmail(email);
+            
+            if (cliente.isPresent()) {
+                // Asociar el cliente al ticket si es necesario
+                ticket.setCreadoPor(cliente.get());
+                model.addAttribute("ticket", ticket);
+                return "ticket/formTicket";
+            } else {
+                throw new UserNotFounException("Usted no es un cliente para realizar esta accion");
+            }
         } else {
-            throw new UserNotFounException("Usted no es un cliente para realizar esta accion");
+            throw new NotAuthorizedException("No tienes permiso para entrar aquí");
         }
-    } else {
-        throw new NotAuthorizedException("No tienes permiso para entrar aquí");
     }
-}
-
+    
+    @PreAuthorize("hasRole('USER')")
     @PostMapping("/create")
     public String postCreate(
         @ModelAttribute Ticket ticket,
@@ -81,7 +83,7 @@ public String createTicket(Model model, Authentication authentication) {
         Model model,
         @RequestParam("mensaje") String contenido) {
         
-        if (isAuthenticated(authentication)) {
+        if (!isAuthenticated(authentication)) {
             throw new NotAuthorizedException("Debes iniciar sesión");
         }
 
@@ -93,15 +95,11 @@ public String createTicket(Model model, Authentication authentication) {
         if (!(clienteDb instanceof Cliente)) {
             throw new NotAuthorizedException("Solo clientes pueden crear tickets");
         }
-
-        // Detalle y realizadoPor No lo utilzamos por el momento!
-        // Intervencion mensaje = new Intervencion();
-        // mensaje.setDescripcion(contenido);
-        // mensaje.setEstado(estadoIntervencion.findById(1L).get())
         
         
         ticket.setEstado(estadoTicketRepository.findById(1L).get());
         ticket.setCreadoPor(clienteDb);
+        ticket.setDetalle(contenido);
         // Ser cuidadoso con esto. No esta probado, asi que puede fallar.
         ticket.setListEmpleado(empleadoRepository.findAll());
         ticketService.save(ticket);
@@ -120,6 +118,6 @@ public String createTicket(Model model, Authentication authentication) {
     }
 
     private boolean isAuthenticated(Authentication authentication){
-        return authentication == null || !authentication.isAuthenticated();
+        return authentication != null && authentication.isAuthenticated();
     }
 }

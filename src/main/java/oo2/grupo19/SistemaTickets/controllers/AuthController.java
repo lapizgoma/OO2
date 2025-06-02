@@ -13,6 +13,7 @@ import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.entities.PersonaJuridica;
 import oo2.grupo19.SistemaTickets.exceptions.UserAlreadyAuthenticatedException;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
+import oo2.grupo19.SistemaTickets.repositories.estados.IRole;
 import oo2.grupo19.SistemaTickets.services.impl.ClienteServiceImpl;
 import oo2.grupo19.SistemaTickets.services.impl.UsuarioServiceImpl;
 
@@ -22,9 +23,11 @@ import oo2.grupo19.SistemaTickets.services.impl.UsuarioServiceImpl;
 public class AuthController {
 
     private final UsuarioServiceImpl usuarioService;
+    private final IRole roleRepository;
     public AuthController(UsuarioServiceImpl usuario,
-            ClienteServiceImpl clienteService) {
+            ClienteServiceImpl clienteService, IRole roleRepository) {
         this.usuarioService = usuario;
+        this.roleRepository = roleRepository;
     }
 
     @GetMapping("/login")
@@ -46,7 +49,7 @@ public class AuthController {
     }
 
     @GetMapping("/register")
-    public String register(Model model, HttpSession session, Authentication authentication) {
+    public String register(Model model, Authentication authentication) {
 
         // Verificar si hay un usuario autenticado
         if (isUserAuthenticated(authentication)) {
@@ -75,6 +78,7 @@ public class AuthController {
         if (activo == null) {
             cliente.setOrganizacion(null);
         }
+        cliente.agregarRoles(roleRepository.findById(1L).get());
         usuarioService.registrarUsuario(cliente);
         return ViewRouteHelper.INDEX;
     }

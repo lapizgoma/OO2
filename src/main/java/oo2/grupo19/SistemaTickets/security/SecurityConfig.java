@@ -19,7 +19,7 @@ import oo2.grupo19.SistemaTickets.services.impl.UserDetailsServiceImpl;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
     
     @Autowired
