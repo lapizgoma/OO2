@@ -10,18 +10,11 @@
     <form th:action="@{/intervencion/processing-ticket}" th:object="${intervencion}" method="post">
         <input type="hidden" name="ticketId" th:value="${ticket.id}"/>
 
-        <select th:field="*{estado}" name="estadoSeleccionado" size="${estadosIntervencion.size()}">
-            <option th:each="est : ${estadosIntervencion}" th:value="${est.estado}" th:text="${est.estado}">
-
-            </option>
-        </select>
-
         <div>
             <label for="descripcion">Descripcion</label>
             <input type="text" th:field="*{descripcion}" id="descripcion">
-        </div>
-        
-        <button type="submit">Guardar</button>
+        </div>        
+    
 
     </form>
 
