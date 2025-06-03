@@ -1,5 +1,7 @@
 package oo2.grupo19.SistemaTickets.entities;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import oo2.grupo19.SistemaTickets.dto.UsuarioDTO;
 import oo2.grupo19.SistemaTickets.entities.estados.Role;
 import oo2.grupo19.SistemaTickets.entities.estados.enums.RoleType;
@@ -49,18 +51,19 @@ public class Usuario implements UserDetails {
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "contacto_id")
+    @Valid
     protected Contacto contacto;
 
     @Column(length = 10)
-    @NotEmpty
+    @NotBlank(message = "El nombre no debe estar vacio")
     protected String nombre;
     
     @Column(length = 10)
-    @NotEmpty
+    @NotBlank(message = "El apellido no debe estar vacio")
     protected String apellido;
     
     @Column(nullable = false)
-    @NotEmpty
+    @NotBlank(message = "La password no debe estar vacia")
     protected String password;
 
     @Size(min = 7, max = 8, message = "El DNI debe tener entre 7 y 8 caracteres")
@@ -69,7 +72,6 @@ public class Usuario implements UserDetails {
 
     protected boolean deleted;
 
-    @NotNull
     @ManyToMany(fetch = FetchType.EAGER, targetEntity = Role.class)
     @JoinTable(
         name = "users_role",
@@ -132,6 +134,7 @@ public class Usuario implements UserDetails {
         return this.roles.stream()
         .map(role -> new SimpleGrantedAuthority(role.getType().getPrefixedName())).collect(Collectors.toList());
     }
+
 
     @Override
     public String getUsername() {

@@ -103,7 +103,6 @@ public class IntervencionController {
                                         @RequestParam("estado.id") Long estadoId, 
                                         Authentication auth){
         if(isAuthenticated(auth)){
-
             Ticket ticket = ticketRepository.findById(ticketId).orElseThrow();
             Empleado empleado = empleadoRepository.findById(empleadoId).orElseThrow();
             EstadoIntervencion estado = estadoIntervencion.findById(estadoId).orElseThrow();

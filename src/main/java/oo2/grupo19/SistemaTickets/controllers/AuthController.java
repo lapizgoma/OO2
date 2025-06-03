@@ -1,7 +1,12 @@
 package oo2.grupo19.SistemaTickets.controllers;
+import jakarta.validation.Valid;
+import oo2.grupo19.SistemaTickets.entities.Contacto;
+import oo2.grupo19.SistemaTickets.entities.Usuario;
+import oo2.grupo19.SistemaTickets.exceptions.UserAlreadyExistException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +21,10 @@ import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 import oo2.grupo19.SistemaTickets.repositories.estados.IRole;
 import oo2.grupo19.SistemaTickets.services.impl.ClienteServiceImpl;
 import oo2.grupo19.SistemaTickets.services.impl.UsuarioServiceImpl;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @Log4j2
@@ -56,8 +65,11 @@ public class AuthController {
             throw new UserAlreadyAuthenticatedException("El usuario ya ha iniciado sesion");
         }else {
             Cliente cliente = new Cliente();
+            Contacto contacto = new Contacto();
+            cliente.setContacto(contacto);
             cliente.setOrganizacion(new PersonaJuridica());
             model.addAttribute("cliente", cliente);
+            model.addAttribute("errors",new HashMap<String,String>());
         }
         return ViewRouteHelper.REGISTER;
     }
@@ -66,12 +78,21 @@ public class AuthController {
      * Importante agregar nombre, apellido, email y password para el registro
      */
     @PostMapping("/register")
-    public String registrarUsuario(@ModelAttribute Cliente cliente,
+    public String registrarUsuario(@Valid @ModelAttribute Cliente cliente,
+            BindingResult result,
             @RequestParam(required = false) String activo,
-            Authentication currentAuth) {
+            Authentication currentAuth,
+            Model model) {
+        if(result.hasErrors()){
+            validator(model,result);
+            return ViewRouteHelper.REGISTER;
+        }
 
+        Optional<Usuario> optionalClienteBd = usuarioService.findByEmail(cliente.getContacto().getEmail());
         // Verificar que no haya un usuario ya autenticado
-        if (isUserAuthenticated(currentAuth)) {
+        if(optionalClienteBd.isPresent()){
+            throw new UserAlreadyExistException("Ya existe un usuario registrado");
+        }else if (isUserAuthenticated(currentAuth)) {
             throw new UserAlreadyAuthenticatedException("Ya hay un usuario autenticado");
         }
 
@@ -85,6 +106,17 @@ public class AuthController {
 
     private boolean isUserAuthenticated(Authentication auth){
         return auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser");
+    }
+
+    private void validator(Model model,BindingResult result){
+        Map<String,String> errors = new HashMap<>();
+        if(result.hasErrors()){
+            result.getFieldErrors().forEach(err ->{
+                errors.put(err.getField(),err.getDefaultMessage());
+            });
+            model.addAttribute("errors",errors);
+        }
+
     }
 
 }

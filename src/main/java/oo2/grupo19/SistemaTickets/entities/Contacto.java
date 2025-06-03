@@ -7,6 +7,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,17 +24,22 @@ public class Contacto {
     private Long id;
 
     @Column(unique = true,nullable = false)
+    @NotBlank(message = "El correo electronico es obligatorio")
     private String email;
 
+    @NotBlank(message = "El teléfono es obligatorio")
     @Column(nullable = false)
     private String telefono;
-    
+
+    @NotBlank(message = "La calle es obligatoria")
     @Column(nullable = false)
     private String calle;
-    
+
+    @NotBlank(message = "El numero de puerta es obligatorio")
     @Column(name = "nro_puerta", nullable = false)
     private String nroPuerta;
-    
+
+    @NotBlank(message = "La localidad es obligatoria")
     @Column(nullable = false)
     private String localidad;
 
