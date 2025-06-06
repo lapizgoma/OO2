@@ -3,6 +3,8 @@ package oo2.grupo19.SistemaTickets.controllers;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +25,8 @@ public class CorreoController {
         this.clienteService = clienteService;
     }
 
+
+
     @GetMapping("/texto")
     public String enviarTextoPlano(Authentication auth) {
         Cliente cliente = clienteService.findByEmail(auth.getName()).orElseThrow(() ->  new RuntimeException("El cliente no existe"));
@@ -32,12 +36,13 @@ public class CorreoController {
     }
 
     @GetMapping("/html")
-    public String enviarCorreoHtml(Authentication auth) {
+    public Integer enviarCorreoHtml(Authentication auth) {
         Map<String, Object> datos = new HashMap<>();
         Cliente cliente = clienteService.findByEmail(auth.getName()).orElseThrow(() ->  new RuntimeException("El cliente no existe"));
         
         datos.put("nombre", cliente.getNombre());
         emailService.enviarCorreoHtml(cliente.getContacto().getEmail(), "Correo con HTML", "email", datos);
-        return "Correo HTML enviado.";
+        return 1;
     }
+
 }

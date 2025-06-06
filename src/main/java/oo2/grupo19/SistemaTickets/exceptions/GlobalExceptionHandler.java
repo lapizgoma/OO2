@@ -30,9 +30,9 @@ public class GlobalExceptionHandler {
         return ViewRouteHelper.ERROR_INDEX;
     }
 
-    @ExceptionHandler(UserNotFounException.class)
+    @ExceptionHandler({UserNotFounException.class,NotFoundException.class})
     public String UserNotFounException(UserNotFounException ex, Model model){
-        model.addAttribute("title", "El usuario no existe en la base de datos!");
+        model.addAttribute("title", "El objeto no existe en la base de datos!");
         model.addAttribute("mensaje", ex.getMessage());
         return ViewRouteHelper.ERROR_INDEX;
     }

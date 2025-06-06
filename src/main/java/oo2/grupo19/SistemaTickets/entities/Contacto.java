@@ -1,5 +1,6 @@
 package oo2.grupo19.SistemaTickets.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -45,6 +46,7 @@ public class Contacto {
 
     @OneToOne(mappedBy = "contacto")
     @ToString.Exclude
+    @JsonIgnore
     private Usuario usuario;
 
 }

@@ -2,6 +2,7 @@ package oo2.grupo19.SistemaTickets.controllers;
 
 import java.util.Optional;
 
+import oo2.grupo19.SistemaTickets.exceptions.NotFoundException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -89,7 +90,7 @@ public class IntervencionController {
                 model.addAttribute("intervencion", new Intervencion());
                 return ViewRouteHelper.FORM_CREATE_INTERVENCION;
             }else{
-                throw new UserNotFounException("No existe ningun ticket");
+                throw new NotFoundException("No existe ningun ticket");
             }
         }
         throw new UserNotFounException("No hay un empleado autorizado");

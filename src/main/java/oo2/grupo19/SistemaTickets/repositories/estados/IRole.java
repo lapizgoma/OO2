@@ -7,5 +7,4 @@ import oo2.grupo19.SistemaTickets.entities.estados.Role;
 
 @Repository
 public interface IRole extends JpaRepository<Role,Long> {
-
 }

@@ -7,5 +7,4 @@ import oo2.grupo19.SistemaTickets.entities.estados.Prioridad;
 
 @Repository
 public interface IPrioridad extends JpaRepository<Prioridad,Long> {
-
 }
