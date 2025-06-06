@@ -56,7 +56,7 @@ public class Ticket {
     private EstadoTicket estado;
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "prioridad_id",nullable = false)
+	@JoinColumn(name = "prioridad_id",nullable = true)
 	private Prioridad prioridad;
 
 	@Column(length = 10, nullable = false)
@@ -66,8 +66,9 @@ public class Ticket {
     public void agregarEmpleado(Empleado empleado) {
 	    if (listEmpleado == null) {
 	        listEmpleado = new ArrayList<>();
-	    }
+	    }	
 	    listEmpleado.add(empleado);
+		empleado.getTickets().add(this);
 	}
 	
 	public void agregarMensaje(Intervencion chat) {

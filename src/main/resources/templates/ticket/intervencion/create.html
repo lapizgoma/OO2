@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear intervencion</title>
+</head>
+<body>
+    
+    <h1>Crear intervencion</h1>
+    <form th:action="@{/intervencion/create}" th:object="${intervencion}" method="post">
+        <input type="hidden" name="ticketId" th:value="${ticketId}">
+        <input type="hidden" name="empleadoId" th:value="${empleadoId}">
+        <div>
+            <label for="descripcion">Descripcion</label>
+            <input type="text" th:field="*{descripcion}">
+        </div>
+
+        <select th:field="*{estado.id}">
+            <option value="">Seleccione un estado</option>
+            <option th:each="est : ${intervencionEstados}" 
+                    th:value="${est.id}" 
+                    th:text="${est.estado}">
+            </option>
+        </select>
+
+        <button type="submit">Guardar</button>
+
+    </form>
+</body>
+</html>

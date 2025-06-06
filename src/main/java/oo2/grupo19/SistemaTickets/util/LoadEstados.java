@@ -12,6 +12,7 @@ import oo2.grupo19.SistemaTickets.entities.estados.EstadoIntervencion;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoTicket;
 import oo2.grupo19.SistemaTickets.entities.estados.Prioridad;
 import oo2.grupo19.SistemaTickets.entities.estados.Role;
+import oo2.grupo19.SistemaTickets.entities.estados.enums.RoleType;
 import oo2.grupo19.SistemaTickets.repositories.estados.IEstadoIntervencion;
 import oo2.grupo19.SistemaTickets.repositories.estados.IEstadoTicket;
 import oo2.grupo19.SistemaTickets.repositories.estados.IPrioridad;
@@ -45,8 +46,9 @@ public CommandLineRunner cargarEstados(IEstadoIntervencion estadoIntervencionRep
 
         if (roleRepository.count() == 0) {
             roleRepository.saveAll(List.of(
-                new Role(1L, "Administrador"),
-                new Role(2L, "Empleado")
+                new Role(1L, RoleType.USER),
+                new Role(2L, RoleType.EMPLOYEE),
+                new Role(3L, RoleType.ADMIN)
             ));
         }
 
@@ -79,7 +81,7 @@ public CommandLineRunner cargarEstados(IEstadoIntervencion estadoIntervencionRep
             empleado.setPassword("empleado");
             empleado.setNroLegajo("13333");
             empleado.setDni("11111111");
-            empleado.setRole(roleRepository.findById(2L).orElseThrow());
+            empleado.agregarRoles(roleRepository.findById(2L).get());
             empleado.setContacto(contacto);
             empleado.asignarContactoUsuario();
             // ... otros campos necesarios

@@ -1,83 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
-<html xmlns:th="http://www.thymeleaf.org"></html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
 </head>
 <body>
-    <form th:action="@{/auth/register}" th:object="${cliente}" method="post">
+<form th:action="@{/auth/register}" th:object="${cliente}" method="post">
 
-        <!-- Continuar!! -->
+    <div>
+        <label for="nombre">Nombre</label>
+        <input type="text" th:field="*{nombre}" id="nombre">
+        <div style="color:red" th:if="${#fields.hasErrors('nombre')}" th:text="${#fields.errors('nombre')}"></div>
+    </div>
+
+    <div>
+        <label for="apellido">Apellido</label>
+        <input type="text" th:field="*{apellido}" id="apellido">
+        <div style="color:red" th:if="${#fields.hasErrors('apellido')}" th:text="${#fields.errors('apellido')}"></div>
+    </div>
+
+    <div>
+        <label for="email">Email</label>
+        <input type="text" th:field="*{contacto.email}" id="email">
+        <div style="color:red" th:if="${#fields.hasErrors('contacto.email')}" th:text="${#fields.errors('contacto.email')}"></div>
+    </div>
+
+    <div>
+        <label for="password">Password</label>
+        <input type="password" th:field="*{password}" id="password">
+        <div style="color:red" th:if="${#fields.hasErrors('password')}" th:text="${#fields.errors('password')}"></div>
+    </div>
+
+    <div>
+        <label for="dni">DNI</label>
+        <input type="text" th:field="*{dni}" id="dni">
+        <div style="color:red" th:if="${#fields.hasErrors('dni')}" th:text="${#fields.errors('dni')}"></div>
+    </div>
+
+    <h3>Contacto</h3>
+
+    <div>
+        <label for="calle">Calle</label>
+        <input type="text" th:field="*{contacto.calle}" id="calle">
+        <div style="color:red" th:if="${#fields.hasErrors('contacto.calle')}" th:text="${#fields.errors('contacto.calle')}"></div>
+    </div>
+
+    <div>
+        <label for="localidad">Localidad</label>
+        <input type="text" th:field="*{contacto.localidad}" id="localidad">
+        <div style="color:red" th:if="${#fields.hasErrors('contacto.localidad')}" th:text="${#fields.errors('contacto.localidad')}"></div>
+    </div>
+
+    <div>
+        <label for="nro_puerta">Número de puerta</label>
+        <input type="text" th:field="*{contacto.nroPuerta}" id="nro_puerta">
+        <div style="color:red" th:if="${#fields.hasErrors('contacto.nroPuerta')}" th:text="${#fields.errors('contacto.nroPuerta')}"></div>
+    </div>
+
+    <div>
+        <label for="telefono">Teléfono</label>
+        <input type="text" th:field="*{contacto.telefono}" id="telefono">
+        <div style="color:red" th:if="${#fields.hasErrors('contacto.telefono')}" th:text="${#fields.errors('contacto.telefono')}"></div>
+    </div>
+
+    <div>
+        <label>
+            <input type="checkbox" name="activo" value="true"/> ¿Es una persona jurídica?
+        </label>
+    </div>
+
+    <div>
+        <h3>Organización</h3>
+
         <div>
-            <label for="name">Nombre</label>
-            <input type="text" th:field="*{nombre}" id="name" required>
-        </div>
-        
-        <div>
-            <label for="apellido">Apellido</label>
-            <input type="text" th:field="*{apellido}" id="apellido" required>
+            <label for="razon_social">Razón social</label>
+            <input type="text" th:field="*{organizacion.razonSocial}" id="razon_social">
         </div>
 
         <div>
-            <label for="email">Email</label>
-            <input type="text" th:field="*{contacto.email}" id="email" required>
+            <label for="cuit">CUIT</label>
+            <input type="text" th:field="*{organizacion.cuit}" id="cuit">
         </div>
-        
-        <div>
-            <label for="password">Password</label>
-            <input type="password" th:field="*{password}" id="password" required>
-        </div>
+    </div>
 
-        <div>
-            <label for="dni">Dni</label>
-            <input type="text" th:field="*{dni}" id="dni" required>
-        </div>
-
-        <h3>Contacto</h3>
-
-        <div>
-            <label for="calle">Calle</label>
-            <input type="text" th:field="*{contacto.calle}">
-        </div>
-
-        <div>
-            <label for="localidad">Localidad</label>
-            <input type="text" th:field="*{contacto.localidad}">
-        </div>
-
-        <div>
-            <label for="localidad">Numero de puerta</label>
-            <input type="text" th:field="*{contacto.nroPuerta}">
-        </div>
-
-        <div>
-            <label for="telefono">Telefono</label>
-            <input type="text" th:field="*{contacto.telefono}">
-        </div>
-        
-    <!-- 
-        IMPORTANTE AGREGAR SI ES UNA PERSONA JURIDICA 
-        Recomendacion: Utilizar un checkbox si es una persona juridica, si pone que si, se le agrega un new PersonaJuridica
-    -->
-        <div>
-            <p>Es una persona juridica? </p>
-            <input type="checkbox" name="activo" value="true">
-        </div>
-
-        <div>
-            <label for="razon_social">Razon social</label>
-            <input type="text" th:field="*{organizacion.razonSocial}" name="razonSocial">
-        </div>
-
-        <div>
-            <label for="cuit">cuit</label>
-            <input type="text" th:field="*{organizacion.cuit}" name="cuit">
-        </div>
-
-        <button type="submit" >Registrarse</button>
-        <p><a th:href="@{/volver}">Volver</a></p>
-    </form>
+    <button type="submit">Registrarse</button>
+    <p><a th:href="@{/volver}">Volver</a></p>
+</form>
 </body>
 </html>

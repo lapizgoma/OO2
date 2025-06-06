@@ -3,11 +3,18 @@ package oo2.grupo19.SistemaTickets.exceptions;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
+import org.springframework.security.access.AccessDeniedException;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public String AccessDeniedException(AccessDeniedException ex, Model model){
+        model.addAttribute("title", "Acceso Denegado");
+        model.addAttribute("mensaje", "No tienes permiso para acceder a este recurso");
+        return ViewRouteHelper.ERROR_INDEX;
+    }
 
     @ExceptionHandler(NotAuthorizedException.class)
     public String NotAuthorizeException(NotAuthorizedException ex, Model model){
@@ -23,9 +30,9 @@ public class GlobalExceptionHandler {
         return ViewRouteHelper.ERROR_INDEX;
     }
 
-    @ExceptionHandler(UserNotFounException.class)
+    @ExceptionHandler({UserNotFounException.class,NotFoundException.class})
     public String UserNotFounException(UserNotFounException ex, Model model){
-        model.addAttribute("title", "El usuario no existe en la base de datos!");
+        model.addAttribute("title", "El objeto no existe en la base de datos!");
         model.addAttribute("mensaje", ex.getMessage());
         return ViewRouteHelper.ERROR_INDEX;
     }

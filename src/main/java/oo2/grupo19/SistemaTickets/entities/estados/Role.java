@@ -1,29 +1,44 @@
 package oo2.grupo19.SistemaTickets.entities.estados;
 
+import java.sql.Timestamp;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+import oo2.grupo19.SistemaTickets.entities.estados.enums.RoleType;
 
 @Entity
 @Table(name = "roles")
-@Getter @Setter @NoArgsConstructor
+@Getter @Setter @NoArgsConstructor @Builder @AllArgsConstructor
 public class Role {
 
     @Id
+    @Setter(AccessLevel.NONE)
     private Long id;
 
-    @Column(nullable = false)
-    private String estado;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false, length = 80, unique = true)
+    private RoleType type;
 
+    @Column(name = "create_at_role")
+    @CreationTimestamp
+    private Timestamp createAt;
 
-    public Role(Long id, String estado) {
+    @Column(name = "update_at_role")
+    @UpdateTimestamp
+    private Timestamp updateAt;
+
+    public Role(Long id,@NotNull RoleType type){
         this.id = id;
-        this.estado = estado;
+        this.type = type;
     }
-
     
 }

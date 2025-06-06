@@ -1,6 +1,20 @@
 package oo2.grupo19.SistemaTickets.entities;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import oo2.grupo19.SistemaTickets.dto.UsuarioDTO;
+import oo2.grupo19.SistemaTickets.entities.estados.Role;
+import oo2.grupo19.SistemaTickets.entities.estados.enums.RoleType;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,9 +25,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -26,7 +43,7 @@ import lombok.ToString;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "usuario")
 @Getter @Setter @NoArgsConstructor @EqualsAndHashCode @ToString
-public class Usuario {
+public class Usuario implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,18 +51,19 @@ public class Usuario {
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "contacto_id")
+    @Valid
     protected Contacto contacto;
 
     @Column(length = 10)
-    @NotEmpty
+    @NotBlank(message = "El nombre no debe estar vacio")
     protected String nombre;
     
     @Column(length = 10)
-    @NotEmpty
+    @NotBlank(message = "El apellido no debe estar vacio")
     protected String apellido;
     
     @Column(nullable = false)
-    @NotEmpty
+    @NotBlank(message = "La password no debe estar vacia")
     protected String password;
 
     @Size(min = 7, max = 8, message = "El DNI debe tener entre 7 y 8 caracteres")
@@ -53,6 +71,14 @@ public class Usuario {
     private String dni;
 
     protected boolean deleted;
+
+    @ManyToMany(fetch = FetchType.EAGER, targetEntity = Role.class)
+    @JoinTable(
+        name = "users_role",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns= @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles;
 
 	public UsuarioDTO usuarioToDto() {
 		UsuarioDTO usuarioDto = new UsuarioDTO();
@@ -80,7 +106,7 @@ public class Usuario {
         return cliente;
     }
 
-        public Cliente toCliente(){
+    public Cliente toCliente(){
         Cliente cliente = new Cliente();
         cliente.setApellido(this.apellido);
         cliente.setContacto(this.contacto);
@@ -96,4 +122,46 @@ public class Usuario {
         this.contacto.setUsuario(this);
     }
 
+    public void agregarRoles(Role role){
+        if(this.roles == null){
+            this.roles = new HashSet<>();
+        }
+        this.roles.add(role);
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.roles.stream()
+        .map(role -> new SimpleGrantedAuthority(role.getType().getPrefixedName())).collect(Collectors.toList());
+    }
+
+
+    @Override
+    public String getUsername() {
+        return this.getContacto().getEmail();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return !this.deleted;
+    }
+
+
+    
+    
 }
