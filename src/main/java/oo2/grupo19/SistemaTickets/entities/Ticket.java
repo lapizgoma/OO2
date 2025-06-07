@@ -97,7 +97,7 @@ public class Ticket {
 
 		// Verifica si el usuario (u) pertenece al Ticket o no
 	public boolean usuarioPertenece (Usuario u) {
-		return this.creadoPor == u || this.listEmpleado.contains(u);
+		return this.creadoPor.getId().equals(u.getId()) || this.listEmpleado.stream().anyMatch(empleado -> empleado.getId().equals(u.getId()));
 	}
 
 	@PrePersist

@@ -37,6 +37,13 @@ public class GlobalExceptionHandler {
         return ViewRouteHelper.ERROR_INDEX;
     }
 
+    @ExceptionHandler ({TicketNotFoundException.class})
+    public String TicketNotFoundException(TicketNotFoundException ex, Model model){
+        model.addAttribute("title", "El Ticket no existe en la base de datos!");
+        model.addAttribute("mensaje", ex.getMessage ());
+        return ViewRouteHelper.ERROR_INDEX;
+    }
+
     @ExceptionHandler(UserAlreadyAuthenticatedException.class)
     public String UserAlreadyAuthenticatedException(UserAlreadyAuthenticatedException ex, Model model){
         model.addAttribute("title", "El usuario ya esta autenticado!");

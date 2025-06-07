@@ -8,5 +8,5 @@ import lombok.Setter;
 public class EmpleadoDTO {
     private Long id;
 	private String nombre;
-	private String role;
+	private String apellido;
 }

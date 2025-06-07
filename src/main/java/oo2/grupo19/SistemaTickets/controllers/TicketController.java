@@ -7,12 +7,21 @@ import oo2.grupo19.SistemaTickets.exceptions.NotFoundException;
 import oo2.grupo19.SistemaTickets.repositories.estados.IPrioridad;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.log4j.Log4j2;
+import oo2.grupo19.SistemaTickets.dto.TicketClientDTO;
+import oo2.grupo19.SistemaTickets.dto.TicketEmployeeDTO;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.entities.Ticket;
 import oo2.grupo19.SistemaTickets.entities.Usuario;
@@ -27,6 +36,8 @@ import oo2.grupo19.SistemaTickets.services.impl.TicketServiceImpl;
 import oo2.grupo19.SistemaTickets.services.impl.UsuarioServiceImpl;
 
 import javax.swing.text.html.Option;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @Controller
 @RequestMapping("/ticket")
@@ -142,6 +153,40 @@ public class TicketController {
         }
         throw new NotFoundException("Ticket no encontrado en la base de datos");
     }
+
+    
+    @PreAuthorize("hasAnyRole('USER', 'EMPLOYEE', 'ADMIN')")
+    @GetMapping("/{idTicket}")
+    public String verTicket(@PathVariable long idTicket, Authentication authentication, Model model) {
+        Optional<Ticket> ticket_db = ticketService.findById (idTicket);
+
+        if (authentication.getAuthorities ().stream ().anyMatch (a -> a.getAuthority ().equals ("ROLE_EMPLOYEE"))) 
+        {
+            TicketEmployeeDTO ticket = ticketService.getTicketparaEmpleado(idTicket, authentication.getName ());
+            model.addAttribute("ticketEmployeeDTO", ticket);
+        }
+        else if (authentication.getAuthorities ().stream ().anyMatch (a -> a.getAuthority ().equals ("ROLE_USER"))) 
+        {
+            TicketClientDTO ticket = ticketService.getTicketParaCliente(idTicket, authentication.getName ());
+            model.addAttribute("ticketClientDTO", ticket);
+        }
+
+        return "ticket/ticketView";
+    }
+    
+
+    @GetMapping("/pendientes")
+    public String getTicketsPendientes() {
+        return ViewRouteHelper.INDEX;
+    }
+
+    @PostMapping("/pendientes")
+    public String asignarTicket() {
+        //TODO: process POST request
+        
+        return "hola";
+    }
+    
 
     private boolean isAuthenticated(Authentication authentication){
         return authentication != null && authentication.isAuthenticated();
