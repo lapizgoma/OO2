@@ -123,8 +123,8 @@ public class TicketServiceImpl implements IService<Ticket>{
         return ticketRepository.traerPorEstado(idEstado);
     }
 
-    
 
+    @Transactional(readOnly = true)
     public TicketClientDTO getTicketParaCliente(Long ticketId, String clienteEmail) {
         Ticket ticketEntity = ticketRepository.findById  (ticketId).orElseThrow (() -> new TicketNotFoundException("No pudimos encontrar el Ticket que buscás :/"));
         Cliente clienteEntity = clienteRepository.findByContactoEmail(clienteEmail)
@@ -141,6 +141,7 @@ public class TicketServiceImpl implements IService<Ticket>{
         return TicketMapper.mapToTicketClientDto(ticketEntity);
     }
 
+    @Transactional(readOnly = true)
     public TicketEmployeeDTO getTicketparaEmpleado (Long ticketId, String empleadoEmail) {
         Ticket ticketEntity = ticketRepository.findById  (ticketId).orElseThrow (() -> new TicketNotFoundException("No pudimos encontrar el Ticket que buscás :/"));
         Empleado empleadoEntity = empleadoRepository.findByContactoEmail(empleadoEmail)
@@ -149,6 +150,7 @@ public class TicketServiceImpl implements IService<Ticket>{
         return TicketMapper.mapToTicketEmployeeDto(ticketEntity, empleadoEntity);
     }
 
+    @Transactional(readOnly = false)
     public TicketEmployeeDTO asignarTicket (Long ticketId, String empleadoEmail) 
     {
         Ticket ticketEntity = ticketRepository.findById  (ticketId).orElseThrow (() -> new TicketNotFoundException("No pudimos encontrar el Ticket que buscás :/"));
