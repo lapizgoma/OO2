@@ -13,7 +13,7 @@ import oo2.grupo19.SistemaTickets.entities.Intervencion;
 import oo2.grupo19.SistemaTickets.entities.Ticket;
 
 public class TicketMapper {
-    public static TicketEmployeeDTO mapToTicketEmployeeDto(Ticket ticket) {
+    public static TicketEmployeeDTO mapToTicketEmployeeDto(Ticket ticket, Empleado empleadoSolicitante) {
         if (ticket == null) {
             return null;
         }
@@ -32,6 +32,11 @@ public class TicketMapper {
             }
         }
         dto.setListEmpleados (empleados);
+
+        if (ticket.usuarioPertenece(empleadoSolicitante)) 
+        {
+            dto.setEmpleadoPertenece(true);
+        }
 
         List<IntervencionDTO> intervenciones = new ArrayList<>();
         if (ticket.getLstIntervencion () != null) 

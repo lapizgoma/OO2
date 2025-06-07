@@ -20,6 +20,14 @@
         <p>Asunto: <span th:text="${ticketEmployeeDTO.asunto}">Asunto</span></p>
         <p>Fecha creado: <span th:text="${ticketEmployeeDTO.fechaHoraCreado}">Fecha creado</span></p>
         <hr />
+        <p>Contacto del Cliente:</p>
+        <p>Email: <span th:text="${ticketEmployeeDTO.usuarioContactoDTO.email}">Email</span></p>
+        <p>Teléfono: <span th:text="${ticketEmployeeDTO.usuarioContactoDTO.telefono}">Teléfono</span></p>
+        <p>Dirección:
+            <span
+                th:text="${ticketEmployeeDTO.usuarioContactoDTO.calle} + ' ' + ${ticketEmployeeDTO.usuarioContactoDTO.nroPuerta} + ', ' + ${ticketEmployeeDTO.usuarioContactoDTO.localidad}">Dirección</span>
+        </p>
+        <hr />
         <p>Intervenciones:</p>
         <ul th:each="intervencion : ${ticketEmployeeDTO.intervenciones}">
             <li>
@@ -33,14 +41,9 @@
             </li>
         </ul>
         <hr />
-        <p>Contacto del Cliente:</p>
-        <p>Email: <span th:text="${ticketEmployeeDTO.usuarioContactoDTO.email}">Email</span></p>
-        <p>Teléfono: <span th:text="${ticketEmployeeDTO.usuarioContactoDTO.telefono}">Teléfono</span></p>
-        <p>Dirección:
-            <span
-                th:text="${ticketEmployeeDTO.usuarioContactoDTO.calle} + ' ' + ${ticketEmployeeDTO.usuarioContactoDTO.nroPuerta} + ', ' + ${ticketEmployeeDTO.usuarioContactoDTO.localidad}">Dirección</span>
-        </p>
+        <a th:if="${ticketEmployeeDTO.empleadoPertenece}" th:href="@{/intervencion/create/{idTicket}(idTicket=${ticketEmployeeDTO.id})}">Crear Intervención</a>
         <hr />
+
         <!-- Checkea que tenga rol ADMIN -->
         <div sec:authorize="hasRole('ADMIN')">
             <p>Empleados:</p>

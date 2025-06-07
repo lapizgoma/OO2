@@ -158,7 +158,6 @@ public class TicketController {
     @PreAuthorize("hasAnyRole('USER', 'EMPLOYEE', 'ADMIN')")
     @GetMapping("/{idTicket}")
     public String verTicket(@PathVariable long idTicket, Authentication authentication, Model model) {
-        Optional<Ticket> ticket_db = ticketService.findById (idTicket);
 
         if (authentication.getAuthorities ().stream ().anyMatch (a -> a.getAuthority ().equals ("ROLE_EMPLOYEE"))) 
         {
@@ -172,6 +171,18 @@ public class TicketController {
         }
 
         return "ticket/ticketView";
+    }
+    
+
+    @PreAuthorize("hasRole ('EMPLOYEE')")
+    // TODO: cambiar a POST cuando esté la vista de tickets
+    @GetMapping("/asignar/{idTicket}")
+    public String postMethodName(@PathVariable long idTicket, Authentication authentication, Model model) {
+        
+        TicketEmployeeDTO ticket = ticketService.asignarTicket(idTicket, authentication.getName ());
+        model.addAttribute("ticketEmployeeDTO", ticket);
+        
+        return "redirect:/ticket/" + idTicket;
     }
     
 

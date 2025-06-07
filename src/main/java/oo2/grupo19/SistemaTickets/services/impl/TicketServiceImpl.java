@@ -146,6 +146,22 @@ public class TicketServiceImpl implements IService<Ticket>{
         Empleado empleadoEntity = empleadoRepository.findByContactoEmail(empleadoEmail)
         .orElseThrow(() -> new UserNotFounException("Empleado no encontrado :/"));
 
-        return TicketMapper.mapToTicketEmployeeDto(ticketEntity);
+        return TicketMapper.mapToTicketEmployeeDto(ticketEntity, empleadoEntity);
+    }
+
+    public TicketEmployeeDTO asignarTicket (Long ticketId, String empleadoEmail) 
+    {
+        Ticket ticketEntity = ticketRepository.findById  (ticketId).orElseThrow (() -> new TicketNotFoundException("No pudimos encontrar el Ticket que buscás :/"));
+        Empleado empleadoEntity = empleadoRepository.findByContactoEmail(empleadoEmail)
+        .orElseThrow(() -> new UserNotFounException("Empleado no encontrado :/"));
+
+        if (!ticketEntity.usuarioPertenece(empleadoEntity)) 
+        {
+            ticketEntity.agregarEmpleado(empleadoEntity);
+        }
+
+        ticketRepository.save(ticketEntity);
+
+        return TicketMapper.mapToTicketEmployeeDto(ticketEntity, empleadoEntity);
     }
 }
