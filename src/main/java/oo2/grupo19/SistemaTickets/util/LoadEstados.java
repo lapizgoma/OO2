@@ -6,6 +6,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.entities.Contacto;
 import oo2.grupo19.SistemaTickets.entities.Empleado;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoIntervencion;
@@ -90,6 +91,29 @@ public CommandLineRunner cargarEstados(IEstadoIntervencion estadoIntervencionRep
             System.out.println("Empleado de prueba creado.");
         } else {
             System.out.println("Empleado de prueba ya existe.");
+        }
+
+        if (empleadoRepository.findByEmail("cliente@cliente.com").isEmpty()) {
+            Cliente cliente = new Cliente ();
+            Contacto contacto = new Contacto ();
+            contacto.setCalle ("2312312");
+            contacto.setEmail ("cliente@cliente.com");
+            contacto.setLocalidad ("SDASDAS");
+            contacto.setNroPuerta ("33");
+            contacto.setTelefono ("3333333");
+            cliente.setNombre ("Viernes");
+            cliente.setApellido ("de prueba");
+            cliente.setPassword ("cliente");
+            cliente.setDni ("1231123");
+            cliente.agregarRoles (roleRepository.findById (1L).get ());
+            cliente.setContacto (contacto);
+            cliente.asignarContactoUsuario ();
+            // ... otros campos necesarios
+
+            empleadoRepository.registrarUsuario (cliente);
+            System.out.println ("Usuario de prueba creado.");
+        } else {
+            System.out.println ("Usuario de prueba ya existe.");
         }
 
     };
