@@ -16,8 +16,8 @@ public class TicketEmployeeDTO {
 	private String asunto;
 	private String fechaHoraCreado;
 	private List<IntervencionDTO> intervenciones;
-    private List<Empleado> listEmpleados;
-	private EstadoTicket estado;
+    private List<EmpleadoDTO> listEmpleados;
+	private String estado;
 	private Prioridad prioridad;
 	private String usuarioNombre;
 	private String usuarioApellido;

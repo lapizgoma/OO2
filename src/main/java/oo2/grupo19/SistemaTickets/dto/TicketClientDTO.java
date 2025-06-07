@@ -13,7 +13,7 @@ public class TicketClientDTO {
 	private String asunto;
 	private String fechaHoraCreado;
 	private List<IntervencionDTO> intervenciones;
-	private EstadoTicket estado;
+	private String estado;
 	private String usuarioNombre;
 	private String usuarioApellido;
 }
