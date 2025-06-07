@@ -49,7 +49,9 @@ Este método es el más directo para desarrollo local:
         "DB_URL": "jdbc:mysql://localhost:3306/tu_base_de_datos",
         "DB_USERNAME": "tu_usuario",
         "DB_PASSWORD": "tu_contraseña",
-        "DB_DRIVER": "com.mysql.cj.jdbc.Driver"
+        "DB_DRIVER": "com.mysql.cj.jdbc.Driver",
+        "USER_EMAIL": "email_ticket",
+        "USER_PASSWORD": "email_password"
       }
     }
   ]
