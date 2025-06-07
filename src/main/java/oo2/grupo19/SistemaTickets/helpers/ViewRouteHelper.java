@@ -11,5 +11,6 @@ public class ViewRouteHelper {
     public static final String ERROR_404 = "errors/404";
     public static final String ERROR_INDEX = "errors/error";
     public static final String FORM_LISTAR_TICKET = "ticket/ver-tickets";
-
-}
+    public static final String EMPLEADO_REGISTER = "formsCredenciales/registerEmpleado";
+    public static final String LISTAR_EMPLEADOS = "empleados/listarEmpleados";
+ }

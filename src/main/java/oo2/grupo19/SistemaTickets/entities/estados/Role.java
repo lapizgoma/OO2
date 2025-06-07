@@ -17,12 +17,12 @@ public class Role {
     private Long id;
 
     @Column(nullable = false)
-    private String estado;
+    private String rol;
 
 
-    public Role(Long id, String estado) {
+    public Role(Long id, String rol) {
         this.id = id;
-        this.estado = estado;
+        this.rol = rol;
     }
 
     

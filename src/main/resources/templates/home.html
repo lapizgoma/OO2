@@ -2,8 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Home</title>
+    <title>FONDO RO</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <!-- Menú dinámico (versión segura) -->
     <div th:if="${#authorization.expression('isAuthenticated()')}">
@@ -17,7 +21,8 @@
     <div th:unless="${#authorization.expression('isAuthenticated()')}">
         <h1>Bienvenido, Invitado!</h1>
         <a th:href="@{auth/login}">Login</a> |
-        <a th:href="@{auth/register}">Registrarse</a>
+        <a th:href="@{auth/register}">Registrarse</a> |
+        <a th:href="@{empleados/agregar}">Empleado</a>
     </div>
 </body>
 </html>
