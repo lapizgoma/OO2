@@ -22,4 +22,5 @@ public class TicketEmployeeDTO {
 	private String usuarioNombre;
 	private String usuarioApellido;
 	private ContactoDTO usuarioContactoDTO;
+	private boolean empleadoPertenece;
 }
