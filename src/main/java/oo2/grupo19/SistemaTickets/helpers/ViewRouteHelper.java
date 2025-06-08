@@ -19,4 +19,7 @@ public class ViewRouteHelper {
 
     public static final String FORM_PERSONA_JURIDICA = "personaJuridica/create";
     public static final String SEE_PERSONA_JURIDICA = "personaJuridica/personaJuridica";
+
+    public static final String CONFIRMATION_QUESTION = "cliente/confirmationQuestion";
+    public static final String REMOVAL_SUCCESS = "cliente/accountRemovalSuccess";
 }
