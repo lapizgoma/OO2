@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
+import oo2.grupo19.SistemaTickets.exceptions.UserNotFounException;
 import oo2.grupo19.SistemaTickets.repositories.ICliente;
 import oo2.grupo19.SistemaTickets.services.IService;
 
@@ -60,6 +61,17 @@ public class ClienteServiceImpl implements IService<Cliente> {
     @Transactional(readOnly = true)
     public Optional<Cliente> findByEmail(String email){
         return clienteRepository.findByContactoEmail(email);
+    }
+
+    
+    @Transactional(readOnly = false)
+    public void eliminarCliente (String email) 
+    {
+        Cliente clienteEntity = clienteRepository.findByContactoEmail(email)
+        .orElseThrow(() -> new UserNotFounException("Cliente no encontrado :/"));
+
+        clienteEntity.setDeleted(true);
+        clienteRepository.save(clienteEntity);
     }
     
 }

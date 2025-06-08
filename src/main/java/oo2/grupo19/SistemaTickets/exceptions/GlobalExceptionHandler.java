@@ -30,6 +30,13 @@ public class GlobalExceptionHandler {
         return ViewRouteHelper.ERROR_INDEX;
     }
 
+    @ExceptionHandler(PersonaJuridicaAlreadyExists.class)
+    public String PersonaJuridicaAlreadyExists(PersonaJuridicaAlreadyExists ex, Model model){
+        model.addAttribute("title", "¡Persona Jurídica ya existe!");
+        model.addAttribute("mensaje", ex.getMessage());
+        return ViewRouteHelper.ERROR_INDEX;
+    }
+
     @ExceptionHandler({UserNotFounException.class,NotFoundException.class})
     public String UserNotFounException(UserNotFounException ex, Model model){
         model.addAttribute("title", "El objeto no existe en la base de datos!");

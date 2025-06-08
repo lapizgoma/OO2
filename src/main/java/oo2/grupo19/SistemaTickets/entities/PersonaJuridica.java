@@ -26,6 +26,7 @@ public class PersonaJuridica {
     @Column(name = "razon_social")
     private String razonSocial;
 
+    @Column(name = "cuit")
     private String cuit;
 
     @NotBlank

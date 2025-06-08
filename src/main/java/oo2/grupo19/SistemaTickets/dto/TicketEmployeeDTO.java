@@ -1,13 +1,10 @@
 package oo2.grupo19.SistemaTickets.dto;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import oo2.grupo19.SistemaTickets.entities.Empleado;
-import oo2.grupo19.SistemaTickets.entities.estados.EstadoTicket;
 import oo2.grupo19.SistemaTickets.entities.estados.Prioridad;
 
 @NoArgsConstructor @Setter @Getter
