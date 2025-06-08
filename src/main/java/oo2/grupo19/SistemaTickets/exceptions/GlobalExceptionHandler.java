@@ -51,6 +51,13 @@ public class GlobalExceptionHandler {
         return ViewRouteHelper.ERROR_INDEX;
     }
 
+    @ExceptionHandler ({PersonaJuridicaNotFound.class})
+    public String PersonaJuridicaNotFound(PersonaJuridicaNotFound ex, Model model){
+        model.addAttribute("title", "¡La Persona Jurídica no existe en la base de datos!");
+        model.addAttribute("mensaje", ex.getMessage ());
+        return ViewRouteHelper.ERROR_INDEX;
+    }
+
     @ExceptionHandler(UserAlreadyAuthenticatedException.class)
     public String UserAlreadyAuthenticatedException(UserAlreadyAuthenticatedException ex, Model model){
         model.addAttribute("title", "El usuario ya esta autenticado!");

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -38,13 +39,20 @@ public class PersonaJuridicaController {
     @PostMapping ("/crear")
     public String postAddPersonaJuridica (
         @ModelAttribute PersonaJuridicaDTO personaJuridicaDTO,
-        Model model, 
         Authentication authentication) 
     {
         personaJuridicaDTO = personaJuridicaService.crearPersonaJuridica (personaJuridicaDTO);
 
-        model.addAttribute("personaJuridicaDTO", personaJuridicaDTO);
+        return "redirect:/grupo/" + personaJuridicaDTO.getCodigoAcceso ();
+    }
 
-        return ViewRouteHelper.SEE_PERSONA_JURIDICA;
+    @PreAuthorize ("hasRole ('ADMIN')")
+    @GetMapping ("/{code}")
+    public String verPersonaJuridica (@PathVariable String code, Model model) 
+    {
+        PersonaJuridicaDTO dto = personaJuridicaService.buscarPersonaJuridica(code);
+        model.addAttribute("personaJuridicaDTO", dto);
+
+        return ViewRouteHelper.VIEW_PERSONA_JURIDICA;
     }
 }
