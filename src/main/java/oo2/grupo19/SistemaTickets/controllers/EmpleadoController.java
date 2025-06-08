@@ -64,16 +64,10 @@ public class EmpleadoController {
             BindingResult result,
             Authentication auth,
             Model model) {
-                log.info("entro la balubi");
-        if(isAuthenticated(auth)){
-            log.info("llego");
-            empleado.setRole(roleRepository.findById(rolId).orElseThrow());
-            log.info("rol: " + empleado.getRole());
-            usuarioService.registrarUsuario(empleado);
-            return ViewRouteHelper.EMPLEADO_REGISTRADO;
-        }else{
-            throw new NotAuthorizedException("No estas autorizado para agregar empleados");
-        }
+        Role role = roleRepository.findById(rolId).orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+        empleado.agregarRoles(role); // Usar el método existente en Usuario
+        usuarioService.registrarUsuario(empleado);
+        return ViewRouteHelper.EMPLEADO_REGISTRADO;
     }
     
     @PutMapping("/{empleadoId}")

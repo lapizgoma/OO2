@@ -38,10 +38,10 @@
         </div>
 
         <div>
-            <label for="rol">Rol</label>
-            <select th:field="*{role.id}">
+            <label for="rolId">Rol</label>
+            <select name="role.id" id="rolId">
                 <option value="">Seleccione un Rol</option>
-                <option th:each="rolOption : ${rolRepository}" th:value="${rolOption.id}" th:text="${rolOption.rol}"></option>
+                <option th:each="rolOption : ${rolRepository}" th:value="${rolOption.id}" th:text="${rolOption.type}"></option>
             </select>
         </div>
 
