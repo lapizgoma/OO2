@@ -5,13 +5,16 @@ import java.util.Optional;
 
 import javax.management.RuntimeErrorException;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
+import oo2.grupo19.SistemaTickets.entities.Usuario;
 import oo2.grupo19.SistemaTickets.exceptions.UserNotFounException;
 import oo2.grupo19.SistemaTickets.repositories.ICliente;
+import oo2.grupo19.SistemaTickets.repositories.IUsuario;
 import oo2.grupo19.SistemaTickets.services.IService;
 
 @Service
@@ -19,9 +22,11 @@ import oo2.grupo19.SistemaTickets.services.IService;
 public class ClienteServiceImpl implements IService<Cliente> {
 
     private final ICliente clienteRepository;
+    private final IUsuario usuarioRepository;
 
-    public ClienteServiceImpl(ICliente clienteRepository) {
+    public ClienteServiceImpl(ICliente clienteRepository, IUsuario usuarioRepository) {
         this.clienteRepository = clienteRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @Override
@@ -64,14 +69,15 @@ public class ClienteServiceImpl implements IService<Cliente> {
     }
 
     
+    @Modifying
     @Transactional(readOnly = false)
     public void eliminarCliente (String email) 
     {
         Cliente clienteEntity = clienteRepository.findByContactoEmail(email)
         .orElseThrow(() -> new UserNotFounException("Cliente no encontrado :/"));
 
-        clienteEntity.setDeleted(true);
-        clienteRepository.save(clienteEntity);
+        ((Usuario) clienteEntity).setDeleted(true);
+        usuarioRepository.save(clienteEntity);
     }
     
 }

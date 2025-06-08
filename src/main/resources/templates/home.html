@@ -12,6 +12,9 @@
         <form th:action="@{/auth/logout}" method="post">
             <button type="submit">Logout</button>
         </form>
+        <div sec:authorize="hasRole('USER')">
+            <a th:href="@{/cuenta/eliminar}">Eliminar cuenta</a>
+        </div>
     </div>
 
     <div th:unless="${#authorization.expression('isAuthenticated()')}">
