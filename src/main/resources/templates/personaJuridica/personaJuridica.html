@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Persona Jurídica</title>
+</head>
+<body>
+    <h1>Persona Jurídica</h1>
+    <div th:object="${personaJuridicaDTO}">
+        <p>Razón Social: <span th:text="*{razonSocial}">Razón Social</span></p>
+        <p>CUIT: <span th:text="*{cuit}">CUIT</span></p>
+        <p>Código de Acceso: <span th:text="*{codigoAcceso}">Código de Acceso</span></p>
+    </div>
+</body>
+</html>
