@@ -10,5 +10,5 @@ import oo2.grupo19.SistemaTickets.entities.PersonaJuridica;
 public interface IPersonaJuridica extends JpaRepository<PersonaJuridica,Long> {
 
     Optional<PersonaJuridica> findByCuit(String cuit);
-
+    Optional<PersonaJuridica> findByCodigoAcceso (String codigoAcceso);
 }

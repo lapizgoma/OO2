@@ -11,6 +11,7 @@ import oo2.grupo19.SistemaTickets.dto.PersonaJuridicaDTO;
 import oo2.grupo19.SistemaTickets.dto.mappers.PersonaJuridicaMapper;
 import oo2.grupo19.SistemaTickets.entities.PersonaJuridica;
 import oo2.grupo19.SistemaTickets.exceptions.PersonaJuridicaAlreadyExists;
+import oo2.grupo19.SistemaTickets.exceptions.PersonaJuridicaNotFound;
 import oo2.grupo19.SistemaTickets.repositories.IPersonaJuridica;
 import oo2.grupo19.SistemaTickets.services.IService;
 
@@ -62,6 +63,14 @@ public class PersonaJuridicaService implements IService<PersonaJuridica> {
         repository.save (personaJuridicaEntity);
 
         return personaJuridicaDTO;
+    }
+
+    @Transactional(readOnly = true)
+    public PersonaJuridicaDTO buscarPersonaJuridica (String code) 
+    {
+        PersonaJuridica personaJuridicaEntity = repository.findByCodigoAcceso(code).orElseThrow(() -> new PersonaJuridicaNotFound ("No hay una Persona Jurídica bajo con ese código :/"));
+        
+        return PersonaJuridicaMapper.mapToPersonaJuridicaDto(personaJuridicaEntity);
     }
     
 }

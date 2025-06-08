@@ -170,7 +170,7 @@ public class TicketController {
             model.addAttribute("ticketClientDTO", ticket);
         }
 
-        return "ticket/ticketView";
+        return ViewRouteHelper.VIEW_TICKET;
     }
     
 
@@ -186,17 +186,17 @@ public class TicketController {
     }
     
 
-    @GetMapping("/pendientes")
-    public String getTicketsPendientes() {
-        return ViewRouteHelper.INDEX;
-    }
+    // @GetMapping("/pendientes")
+    // public String getTicketsPendientes() {
+    //     return ViewRouteHelper.INDEX;
+    // }
 
-    @PostMapping("/pendientes")
-    public String asignarTicket() {
-        //TODO: process POST request
+    // @PostMapping("/pendientes")
+    // public String asignarTicket() {
+    //     //TODO: process POST request
         
-        return "hola";
-    }
+    //     return "hola";
+    // }
     
 
     private boolean isAuthenticated(Authentication authentication){

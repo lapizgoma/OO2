@@ -15,6 +15,9 @@
         <div sec:authorize="hasRole('USER')">
             <a th:href="@{/cuenta/eliminar}">Eliminar cuenta</a>
         </div>
+        <div sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/grupo/crear}">Añadir Persona Jurídica</a>
+        </div>
     </div>
 
     <div th:unless="${#authorization.expression('isAuthenticated()')}">

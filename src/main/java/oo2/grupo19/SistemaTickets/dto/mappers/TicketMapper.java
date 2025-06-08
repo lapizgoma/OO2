@@ -22,6 +22,7 @@ public class TicketMapper {
 
         dto.setId (ticket.getId());
         dto.setAsunto (ticket.getAsunto());
+        dto.setDetalle (ticket.getDetalle ());
         dto.setFechaHoraCreado (ticket.getFechaHora ().format (DateTimeFormatter.ofPattern ("dd/MM/yyyy HH:mm")));
         List<EmpleadoDTO> empleados = new ArrayList<>();
         if (ticket.getListEmpleado () != null)
@@ -67,6 +68,7 @@ public class TicketMapper {
 
         dto.setId (ticket.getId ());
         dto.setAsunto (ticket.getAsunto ());
+        dto.setDetalle (ticket.getDetalle ());
         dto.setFechaHoraCreado (ticket.getFechaHora ().format (DateTimeFormatter.ofPattern ("dd/MM/yyyy HH:mm")));
 
         List<IntervencionDTO> intervenciones = new ArrayList<>();

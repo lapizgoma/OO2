@@ -11,6 +11,7 @@ import oo2.grupo19.SistemaTickets.entities.estados.Prioridad;
 public class TicketEmployeeDTO {
     private Long id;
 	private String asunto;
+	private String detalle;
 	private String fechaHoraCreado;
 	private List<IntervencionDTO> intervenciones;
     private List<EmpleadoDTO> listEmpleados;

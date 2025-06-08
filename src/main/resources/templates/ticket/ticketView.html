@@ -18,6 +18,7 @@
         <p>Nombre: <span th:text="${ticketEmployeeDTO.usuarioNombre}">Nombre</span></p>
         <p>Apellido: <span th:text="${ticketEmployeeDTO.usuarioApellido}">Apellido</span></p>
         <p>Asunto: <span th:text="${ticketEmployeeDTO.asunto}">Asunto</span></p>
+        <p>Detalle: <span th:text="${ticketEmployeeDTO.detalle}">Detalle</span></p>
         <p>Fecha creado: <span th:text="${ticketEmployeeDTO.fechaHoraCreado}">Fecha creado</span></p>
         <hr />
         <p>Contacto del Cliente:</p>
@@ -63,6 +64,7 @@
         <p>Fecha creado: <span th:text="${ticketClientDTO.fechaHoraCreado}">Fecha creado</span></p>
         <p>Estado: <span th:text="${ticketClientDTO.estado}">Estado</span></p>
         <p>Asunto: <span th:text="${ticketClientDTO.asunto}">Asunto</span></p>
+        <p>Detalle: <span th:text="${ticketClientDTO.detalle}">Detalle</span></p>
         <hr />
         <p>Intervenciones:</p>
         <ul th:each="intervencion : ${ticketClientDTO.intervenciones}">
