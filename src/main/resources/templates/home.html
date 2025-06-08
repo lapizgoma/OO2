@@ -12,7 +12,8 @@
     <!-- Menú dinámico (versión segura) -->
     <div th:if="${#authorization.expression('isAuthenticated()')}">
         <h1>¡Bienvenido, <span th:text="${#authentication.principal.nombre}">Usuario</span>!</h1>
-        <a th:href="@{/ticket/create}">Crear ticket</a>
+        <a th:href="@{/ticket/create}">Crear ticket</a> |
+        <a th:href="@{/empleados}">Ver Empleados</a>
         <form th:action="@{/auth/logout}" method="post">
             <button type="submit">Logout</button>
         </form>
@@ -21,8 +22,7 @@
     <div th:unless="${#authorization.expression('isAuthenticated()')}">
         <h1>Bienvenido, Invitado!</h1>
         <a th:href="@{auth/login}">Login</a> |
-        <a th:href="@{auth/register}">Registrarse</a> |
-        <a th:href="@{empleados/agregar}">Empleado</a>
+        <a th:href="@{auth/register}">Registrarse</a>
     </div>
 </body>
 </html>

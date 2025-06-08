@@ -22,6 +22,12 @@
                 <td th:text="${empleado.nombre}"></td>
                 <td th:text="${empleado.apellido}"></td>
                 <!-- Agrega más campos según sea necesario -->
+                 <td>
+                <form th:action="@{/empleados/{id}(id=${empleado.id})}" method="post">
+                    <input type="hidden" name="_method" value="put">
+                    <button type="submit">Dar de Baja</button>
+                </form>
+                </td>
             </tr>
         </tbody>
     </table>

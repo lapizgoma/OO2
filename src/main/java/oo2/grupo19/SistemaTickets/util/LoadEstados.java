@@ -103,7 +103,7 @@ public CommandLineRunner cargarEstados(IEstadoIntervencion estadoIntervencionRep
             empleado.setPassword("admin");
             empleado.setNroLegajo("13333");
             empleado.setDni("11111111");
-            empleado.setRole(roleRepository.findById(2L).orElseThrow());
+            empleado.setRole(roleRepository.findById(1L).orElseThrow());
             empleado.setContacto(contacto);
             empleado.asignarContactoUsuario();
             // ... otros campos necesarios

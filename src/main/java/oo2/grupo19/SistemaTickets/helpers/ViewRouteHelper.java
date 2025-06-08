@@ -13,4 +13,6 @@ public class ViewRouteHelper {
     public static final String FORM_LISTAR_TICKET = "ticket/ver-tickets";
     public static final String EMPLEADO_REGISTER = "formsCredenciales/registerEmpleado";
     public static final String LISTAR_EMPLEADOS = "empleados/listarEmpleados";
+    public static final String EMPLEADO_REGISTRADO = "empleados/registerSuccessfull";
+    public static final String EMPLEADO_BORRADO = "empleados/deletedSuccessfull";
  }

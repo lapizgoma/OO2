@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.validation.Valid;
+import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.entities.Empleado;
+import oo2.grupo19.SistemaTickets.entities.estados.Role;
 import oo2.grupo19.SistemaTickets.exceptions.NotAuthorizedException;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 import oo2.grupo19.SistemaTickets.repositories.estados.IRole;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 
 @Controller
+@Log4j2
 @RequestMapping("/empleados")
 public class EmpleadoController {
     
@@ -49,29 +52,34 @@ public class EmpleadoController {
 
     @GetMapping("/agregar")
     public String obtenerVistaEmpleado(Model model) {
-        model.addAttribute("empleadoRoles", roleRepository.findAll());
+        model.addAttribute("rolRepository", roleRepository.findAll());
         model.addAttribute("empleado", new Empleado());
+        model.addAttribute("rol", new Role());
         return ViewRouteHelper.EMPLEADO_REGISTER;
     }
 
     @PostMapping("/agregar")
     public String postMethodName(@Valid @ModelAttribute Empleado empleado,
-            @RequestParam("rolOption.id") Long rolId,
+            @RequestParam("role.id") Long rolId,
             BindingResult result,
             Authentication auth,
             Model model) {
+                log.info("entro la balubi");
         if(isAuthenticated(auth)){
+            log.info("llego");
+            empleado.setRole(roleRepository.findById(rolId).orElseThrow());
+            log.info("rol: " + empleado.getRole());
             usuarioService.registrarUsuario(empleado);
-            return "/empleados/";
+            return ViewRouteHelper.EMPLEADO_REGISTRADO;
         }else{
-            throw new NotAuthorizedException("No estas autorizado para realizar una intervencion");
+            throw new NotAuthorizedException("No estas autorizado para agregar empleados");
         }
     }
     
     @PutMapping("/{empleadoId}")
     public String darBajaEmpleado(@PathVariable Long empleadoId) {
         empleadoService.darBajaEmpleado(empleadoId);
-        return "/empleados/";
+        return ViewRouteHelper.EMPLEADO_BORRADO;
     }
 
     private boolean isAuthenticated(Authentication auth){
