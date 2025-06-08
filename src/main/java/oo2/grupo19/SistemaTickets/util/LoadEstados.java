@@ -93,6 +93,30 @@ public CommandLineRunner cargarEstados(IEstadoIntervencion estadoIntervencionRep
             System.out.println("Empleado de prueba ya existe.");
         }
 
+        if (empleadoRepository.findByEmail("admin@admin.com").isEmpty()) {
+            Empleado admin = new Empleado();
+            Contacto contacto = new Contacto();
+            contacto.setCalle("123123");
+            contacto.setEmail("admin@admin.com");
+            contacto.setLocalidad("aaaaaa");
+            contacto.setNroPuerta("44");
+            contacto.setTelefono("44442244");
+            admin.setNombre("admin");
+            admin.setApellido("de prueba");
+            admin.setPassword("admin");
+            admin.setNroLegajo("4444");
+            admin.setDni("44444444");
+            admin.agregarRoles(roleRepository.findById(3L).get());
+            admin.setContacto(contacto);
+            admin.asignarContactoUsuario();
+            // ... otros campos necesarios
+
+            empleadoRepository.registrarUsuario(admin);
+            System.out.println("admin de prueba creado.");
+        } else {
+            System.out.println("admin de prueba ya existe.");
+        }
+
         if (empleadoRepository.findByEmail("cliente@cliente.com").isEmpty()) {
             Cliente cliente = new Cliente ();
             Contacto contacto = new Contacto ();
