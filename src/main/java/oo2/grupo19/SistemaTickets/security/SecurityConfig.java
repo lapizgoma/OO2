@@ -15,6 +15,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.web.filter.HiddenHttpMethodFilter;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
@@ -34,8 +36,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/home", "/auth/*", "/errors/*","/api/**").permitAll();
-                    auth.requestMatchers("/ticket/**").permitAll();
+                    auth.requestMatchers("/home", "/auth/*", "/errors/*","/api/**","/css/*", "/empleados/*").permitAll();
+                    auth.requestMatchers("/ticket/*").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .formLogin(form -> {
@@ -75,7 +77,12 @@ public class SecurityConfig {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(); // Usamos hash seguro
+    }
+
+    @Bean
+    public HiddenHttpMethodFilter hiddenHttpMethodFilter() {
+        return new HiddenHttpMethodFilter();
     }
 }

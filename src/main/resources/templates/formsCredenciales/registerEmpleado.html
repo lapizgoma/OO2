@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org"></html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Empleado</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+</head>
+<body>
+    <form th:action="@{/empleados/agregar}" th:object="${empleado}" method="post">
+
+        <div>
+            <label for="name">Nombre</label>
+            <input type="text" th:field="*{nombre}" id="name" required>
+        </div>
+        
+        <div>
+            <label for="apellido">Apellido</label>
+            <input type="text" th:field="*{apellido}" id="apellido" required>
+        </div>
+
+        <div>
+            <label for="email">Email</label>
+            <input type="text" th:field="*{contacto.email}" id="email" required>
+        </div>
+        
+        <div>
+            <label for="password">Password</label>
+            <input type="password" th:field="*{password}" id="password" required>
+        </div>
+
+        <div>
+            <label for="dni">Dni</label>
+            <input type="text" th:field="*{dni}" id="dni" required>
+        </div>
+
+        <div>
+            <label for="rol">Rol</label>
+            <select th:field="*{role.id}">
+                <option value="">Seleccione un Rol</option>
+                <option th:each="rolOption : ${rolRepository}" th:value="${rolOption.id}" th:text="${rolOption.rol}"></option>
+            </select>
+        </div>
+
+        <h3>Contacto</h3>
+
+        <div>
+            <label for="calle">Calle</label>
+            <input type="text" th:field="*{contacto.calle}">
+        </div>
+
+        <div>
+            <label for="localidad">Localidad</label>
+            <input type="text" th:field="*{contacto.localidad}">
+        </div>
+
+        <div>
+            <label for="localidad">Numero de puerta</label>
+            <input type="text" th:field="*{contacto.nroPuerta}">
+        </div>
+
+        <div>
+            <label for="telefono">Telefono</label>
+            <input type="text" th:field="*{contacto.telefono}">
+        </div>
+
+        <button type="submit" >Registrarse</button>
+        <p><a th:href="@{/empleados}">Volver</a></p>
+    </form>
+</body>
+</html>

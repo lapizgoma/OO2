@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-SistemaTicketsApplication<SistemaTickets>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "oo2.grupo19.SistemaTickets.SistemaTicketsApplication",
+            "projectName": "SistemaTickets",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "env": {
+                "DB_URL": "jdbc:mysql://localhost:3306/spring_sistema_ticket?createDatabaseIfNotExist=true",
+                "DB_USERNAME": "root",
+                "DB_PASSWORD": "admin",
+                "DB_DRIVER": "com.mysql.cj.jdbc.Driver",
+                "USER_EMAIL": "sistematicketv1@gmail.com",
+                "USER_PASSWORD": "bdmh umvj sxnb lcby"
+              }
+        }
+    ]
+}
