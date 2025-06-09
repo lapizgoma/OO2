@@ -69,9 +69,18 @@ public class EmpleadoServiceImpl implements IService<Empleado> {
             throw new RuntimeException("No se hay podido mostrar los empleados");
         }
     }
+
+    @Transactional(readOnly = true)
+	public List<Empleado> traerEmpleadosActivos(){
+        try{
+            return empleadoRepository.findAllByDeletedFalse();
+        }catch(Error e){
+            throw new RuntimeException("No se hay podido mostrar los empleados");
+        }
+    }
     
     @Transactional
-	void agregarEmpleado(Empleado empleado){
+	public void agregarEmpleado(Empleado empleado){
         try{
             long ultimoLegajo;
 		

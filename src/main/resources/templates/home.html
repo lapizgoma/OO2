@@ -1,35 +1,171 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>FONDO RO</title>
+    <title>Sistema de Tickets UNLa</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- CSS personalizado -->
     <link rel="stylesheet" th:href="@{/css/styles.css}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
 </head>
-
 <body>
-    <!-- Menú dinámico (versión segura) -->
-    <div th:if="${#authorization.expression('isAuthenticated()')}">
-        <h1>¡Bienvenido, <span th:text="${#authentication.principal.nombre}">Usuario</span>!</h1>
-        <a th:href="@{/ticket/create}">Crear ticket</a> |
-        <a th:href="@{/empleados}">Ver Empleados</a>
-        <form th:action="@{/auth/logout}" method="post">
-            <button type="submit">Logout</button>
-        </form>
-        <div sec:authorize="hasRole('USER')">
-            <a th:href="@{/cuenta/eliminar}">Eliminar cuenta</a>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <!-- Izquierda: Bienvenido o título -->
+            <div th:if="${#authorization.expression('isAuthenticated()')}">
+                <span class="navbar-brand">Bienvenido, <span th:text="${#authentication.principal.nombre}">Usuario</span>!</span>
+            </div>
+            <div th:unless="${#authorization.expression('isAuthenticated()')}">
+                <a class="navbar-brand" href="#">Sistema de Tickets UNLa</a>
+            </div>
+
+            <!-- Botón hamburguesa para mobile -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Derecha: Opciones según rol o login/register -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <!-- Opciones para usuarios autenticados -->
+                    <div th:if="${#authorization.expression('isAuthenticated()')}">
+                        <!-- Rol USER -->
+                        <div sec:authorize="hasRole('USER')">
+                            <li class="nav-item">
+                                <a class="nav-link" th:href="@{/ticket/create}">Crear Ticket</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" th:href="@{/ticket/history}">Ver Historial de Tickets</a>
+                            </li>
+                        </div>
+                        <!-- Rol EMPLEADO -->
+                        <div sec:authorize="hasRole('EMPLEADO')">
+                            <li class="nav-item">
+                                <a class="nav-link" th:href="@{/tickets}">Ver Tickets</a>
+                            </li>
+                        </div>
+                        <!-- Rol ADMIN -->
+                        <div sec:authorize="hasRole('ADMIN')">
+                            <li class="nav-item">
+                                <a class="nav-link" th:href="@{/tickets}">Ver Tickets</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" th:href="@{/empleados}">Ver Empleados</a>
+                            </li>
+                        </div>
+                        <!-- Logout -->
+                        <li class="nav-item">
+                            <form th:action="@{/auth/logout}" method="post" class="d-inline">
+                                <button type="submit" class="nav-link btn btn-link text-white">Logout</button>
+                            </form>
+                        </li>
+                    </div>
+                    <!-- Opciones para no autenticados -->
+                    <div th:unless="${#authorization.expression('isAuthenticated()')}">
+                        <li class="nav-item d-flex">
+                            <a class="nav-link btn btn-login me-2" th:href="@{/auth/login}">Login</a>
+                            <a class="nav-link btn btn-register" th:href="@{/auth/register}">Registrarse</a>
+                        </li>
+                    </div>
+                </ul>
+            </div>
         </div>
-        <div sec:authorize="hasRole('ADMIN')">
-            <a th:href="@{/grupo/crear}">Añadir Persona Jurídica</a>
+    </nav>
+
+    <!-- Contenido del body -->
+    <div class="container mt-5 text-center vh-100 d-flex flex-column justify-content-center">
+        <!-- Para usuarios autenticados -->
+        <div th:if="${#authorization.expression('isAuthenticated()')}">
+            <h1 class="mb-4">Panel de Control</h1>
+            <div class="alert alert-info">
+                <p>Bienvenido al Sistema de Tickets UNLa, <span th:text="${#authentication.principal.nombre}">Usuario</span>.</p>
+                <p>Selecciona una opción desde la barra de navegación para continuar.</p>
+            </div>
+            <!-- Accesos rápidos según rol -->
+            <div sec:authorize="hasRole('USER')">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Accesos Rápidos</h5>
+                        <a th:href="@{/ticket/create}" class="btn btn-primary me-2">Crear Ticket</a>
+                        <a th:href="@{/ticket/history}" class="btn btn-secondary">Ver Historial</a>
+                    </div>
+                </div>
+            </div>
+            <div sec:authorize="hasRole('EMPLEADO')">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Accesos Rápidos</h5>
+                        <a th:href="@{/tickets}" class="btn btn-primary">Ver Tickets</a>
+                    </div>
+                </div>
+            </div>
+            <div sec:authorize="hasRole('ADMIN')">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Accesos Rápidos</h5>
+                        <a th:href="@{/tickets}" class="btn btn-primary me-2">Ver Tickets</a>
+                        <a th:href="@{/empleados}" class="btn btn-secondary">Ver Empleados</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Para usuarios no autenticados (Landing Page) -->
+        <div th:unless="${#authorization.expression('isAuthenticated()')}">
+            <!-- Hero Section -->
+            <div class="text-center">
+                <h1 class="display-4 fw-bold text-white">Sistema de Tickets UNLa</h1>
+                <p class="lead text-white-50">Una solución eficiente para gestionar tickets de soporte en la Universidad Nacional de Lanús.</p>
+            </div>
+
+            <!-- Características -->
+            <div class="my-5">
+                <h2 class="text-center mb-4 text-white">Características</h2>
+                <div class="row justify-content-center">
+                    <div class="col-md-4 mb-4">
+                        <h5 class="text-primary">Creación de Tickets</h5>
+                        <p class="text-white-50">Crea tickets de soporte de manera rápida y sencilla, con seguimiento en tiempo real.</p>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <h5 class="text-primary">Gestión por Roles</h5>
+                        <p class="text-white-50">Diferentes permisos para usuarios, empleados y administradores, optimizando la gestión.</p>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <h5 class="text-primary">Historial y Reportes</h5>
+                        <p class="text-white-50">Accede al historial de tickets y genera reportes para un mejor seguimiento.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tecnologías -->
+            <div class="my-5">
+                <h2 class="text-center mb-4 text-white">Tecnologías Utilizadas</h2>
+                <div class="row justify-content-center text-center">
+                    <div class="col-md-3 mb-4">
+                        <h5 class="text-primary">Spring Boot</h5>
+                        <p class="text-white-50">Backend robusto y escalable para gestionar la lógica del sistema.</p>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <h5 class="text-primary">Thymeleaf</h5>
+                        <p class="text-white-50">Motor de plantillas para una integración fluida con el backend.</p>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <h5 class="text-primary">Bootstrap</h5>
+                        <p class="text-white-50">Diseño moderno y responsive para una experiencia de usuario óptima.</p>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <h5 class="text-primary">Java</h5>
+                        <p class="text-white-50">Lenguaje principal para el desarrollo del backend.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div th:unless="${#authorization.expression('isAuthenticated()')}">
-        <h1>Bienvenido, Invitado!</h1>
-        <a th:href="@{auth/login}">Login</a> |
-        <a th:href="@{auth/register}">Registrarse</a>
-    </div>
-
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

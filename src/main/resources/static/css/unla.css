@@ -1,0 +1,93 @@
+/* src/main/resources/static/css/custom-unla.css */
+
+/* Aplicar fuente Inter */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #F5F5F5; /* Fondo gris claro, casi blanco, para no ser puro blanco */
+  color: #000000; /* Texto negro */
+}
+
+/* Ajustar navbar */
+.navbar-dark {
+  background-color: #8C1D40 !important; /* Granate UNLa */
+}
+
+.navbar-brand {
+  font-weight: 700;
+  color: #FFFFFF !important; /* Blanco para contraste */
+}
+
+/* Botones en la navbar */
+.navbar-nav .nav-link {
+  color: #FFFFFF !important;
+}
+
+.navbar-nav .btn-outline-light {
+  border-color: #FFFFFF;
+  color: #FFFFFF;
+}
+
+.navbar-nav .btn-outline-light:hover {
+  background-color: #FFFFFF;
+  color: #8C1D40;
+}
+
+/* Sección hero */
+.bg-light {
+  background-color: #FFFFFF !important; /* Blanco para la sección hero */
+  border: 1px solid #8C1D40; /* Borde granate */
+}
+
+/* Tarjetas */
+.card {
+  border: 1px solid #8C1D40;
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-title {
+  color: #8C1D40; /* Granate para títulos */
+}
+
+/* Botones primarios */
+.btn-primary {
+  background-color: #8C1D40;
+  border-color: #8C1D40;
+}
+
+.btn-primary:hover {
+  background-color: #6B152F;
+  border-color: #6B152F;
+}
+
+/* Botones secundarios */
+.btn-secondary {
+  background-color: #000000;
+  border-color: #000000;
+}
+
+.btn-secondary:hover {
+  background-color: #333333;
+  border-color: #333333;
+}
+
+/* Alertas */
+.alert-info {
+  background-color: #E6E6E6;
+  border-color: #8C1D40;
+  color: #000000;
+}
+
+/* Mejorar botones en mobile */
+@media (max-width: 576px) {
+  .navbar-nav .nav-link {
+    padding: 10px 0;
+  }
+  .navbar-nav .d-flex {
+    flex-direction: column;
+    gap: 10px;
+  }
+}

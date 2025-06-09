@@ -44,7 +44,7 @@ public class EmpleadoController {
     
     @GetMapping("")
     public String listarEmpleados(Model model) {
-        List<Empleado> empleados = empleadoService.listarTodos();
+        List<Empleado> empleados = empleadoService.traerEmpleadosActivos();
         model.addAttribute("empleados", empleados);
         return ViewRouteHelper.LISTAR_EMPLEADOS;
     }
@@ -66,7 +66,7 @@ public class EmpleadoController {
             Model model) {
         Role role = roleRepository.findById(rolId).orElseThrow(() -> new RuntimeException("Rol no encontrado"));
         empleado.agregarRoles(role); // Usar el método existente en Usuario
-        usuarioService.registrarUsuario(empleado);
+        empleadoService.agregarEmpleado(empleado);
         return ViewRouteHelper.EMPLEADO_REGISTRADO;
     }
     
