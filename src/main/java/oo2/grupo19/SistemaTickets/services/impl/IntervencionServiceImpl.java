@@ -11,18 +11,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import oo2.grupo19.SistemaTickets.entities.Intervencion;
+import oo2.grupo19.SistemaTickets.entities.Ticket;
 import oo2.grupo19.SistemaTickets.entities.Usuario;
+import oo2.grupo19.SistemaTickets.entities.estados.EstadoIntervencion;
+import oo2.grupo19.SistemaTickets.exceptions.TicketNotFound;
 import oo2.grupo19.SistemaTickets.repositories.IIntervencion;
-import oo2.grupo19.SistemaTickets.services.IService;
+import oo2.grupo19.SistemaTickets.repositories.ITicket;
+import oo2.grupo19.SistemaTickets.services.IIntervencionService;
 
 @Service
 @Qualifier("mensajeService")
-public class IntervencionServiceImpl implements IService<Intervencion> {
+public class IntervencionServiceImpl implements IIntervencionService{
 
     private final IIntervencion intervencionRepository;
+    private final ITicket ticketRepository;
 
-    public IntervencionServiceImpl(IIntervencion mensajeRepository) {
-        this.intervencionRepository = mensajeRepository;
+    public IntervencionServiceImpl(IIntervencion intervencionRepository, ITicket ticketRepository) {
+        this.intervencionRepository = intervencionRepository;
+        this.ticketRepository = ticketRepository;
     }
 
     @Override
@@ -108,5 +114,21 @@ public class IntervencionServiceImpl implements IService<Intervencion> {
 		// Si esta presente nos devuelve el usuario
 		return intervencionRepository.traerClienteDesdeIntervencion(idCliente);		
 	}
-    
+
+    @Override
+    @Transactional
+    public void actualizarEstadoIntervencion(Long empleadoId, Long ticketId, Long intervencionId, EstadoIntervencion nuevoEstado) {
+       Ticket ticket = ticketRepository.traerPorEmpleadoYId(empleadoId, ticketId);
+       if (ticket == null) {
+       throw new TicketNotFound("No se ha encontrado el ticket o no tiene permiso");
+       }
+
+        Intervencion intervencion = ticket.getLstIntervencion().stream().filter(i -> i.getId().equals(intervencionId)).findFirst()
+        .orElseThrow(() -> new RuntimeException("Intervención no encontrada"));
+
+    intervencion.setEstado(nuevoEstado);
+    intervencionRepository.save(intervencion);
+    }
+
+
 }

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Actualizar Estado del Ticket</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <h1>Actualizar Estado del Ticket</h1>
+
+    <form th:action="@{/ticket/update-ticket}" th:object="${ticket}" method="post">
+        <input type="hidden" th:field="*{id}" />
+
+        <label for="asunto">Asunto</label>
+        <input type="text" th:field="*{asunto}" id="asunto" readonly>
+        <strong>Estado actual:</strong> <span th:text="${ticket.estado.estado}"></span>
+        <label for="estado"> Cambiar estado</label>
+        <select th:field="*{estado.id}" id="estado">
+            <!-- Tipos de estado(a cambiar) -->
+            <option value="1">Pendiente</option>
+            <option value="2">Atendido</option>
+            <option value="3">Cerrado</option>
+        </select>
+
+        <button type="submit">Actualizar Ticket</button>
+    </form>
+    <th:block th:if="${ticket.lstIntervencion != null}">
+    <div th:each="intervencion : ${ticket.lstIntervencion}">
+        <p>
+            <strong>Intervención:</strong> <span th:text="${intervencion.descripcion}"></span><br/>
+            <strong>Estado actual:</strong> <span th:text="${intervencion.estado.estado}"></span>
+        </p>
+
+        <form th:action="@{/intervencion/processing-ticket/update-intervencion}" method="post">
+            <input type="hidden" name="id" th:value="${ticket.id}" />
+            <input type="hidden" name="intervencionId" th:value="${intervencion.id}" />
+
+            <label for="estadoIntervencionSelect" >Cambiar estado:</label>
+            <select name="estado">
+            <option th:each="estadoIntervencion : ${estadosIntervencion}"
+                    th:value="${estadoIntervencion.id}"
+                    th:text="${estadoIntervencion.estado}"
+                    th:selected="${estadoIntervencion.id == intervencion.estado.id}">
+                opcion
+            </option>
+            </select>
+
+            <button type="submit">Actualizar Estado</button>
+        </form>
+
+        <hr/>
+    </div>
+    </th:block>
+    <p th:if="${mensaje}" th:text="${mensaje}" style="color: green;"></p>
+    <p><a th:href="@{/home}">Volver</a></p>
+    
+</body>
+</html>

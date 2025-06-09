@@ -7,46 +7,50 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public class CustomUserDetails implements UserDetails {
-    private final String email;
-    private final String password;
-    private final String nombre; // Nuevo campo
-    private final String rol;
-    private final boolean accountNonExpired;
-    private final boolean accountNonLocked;
-    private final boolean credentialsNonExpired;
-    private final boolean enabled;
+import oo2.grupo19.SistemaTickets.entities.Cliente;
+import oo2.grupo19.SistemaTickets.entities.Empleado;
+import oo2.grupo19.SistemaTickets.entities.Usuario;
 
-    public CustomUserDetails(String email, String password, String nombre, String rol) {
-        this.email = email;
-        this.password = password;
-        this.nombre = nombre;
-        this.rol = rol;
-        this.accountNonExpired = true;
-        this.accountNonLocked = true;
-        this.credentialsNonExpired = true;
-        this.enabled = true;
+public class CustomUserDetails implements UserDetails {
+   
+    private final Usuario usuario;
+    
+    public CustomUserDetails(Usuario usuario) {
+        this.usuario = usuario;
+    }
+    public Usuario getUsuario() {
+        return this.usuario;
     }
 
     // Getters estándar de UserDetails
     @Override
     public String getUsername() {
-        return email; // Para login
+        return usuario.getContacto().getEmail(); // Para login
     }
 
     // Nuevo getter para el nombre
     public String getNombre() {
-        return nombre;
+        return usuario.getNombre();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + rol));
+        if (usuario instanceof Empleado empleado) {
+            return List.of(new SimpleGrantedAuthority("ROLE_" + empleado.getRole().getEstado()));
+        } else if (usuario instanceof Cliente) {
+            return List.of(new SimpleGrantedAuthority("ROLE_CLIENTE"));
+        }
+        return List.of();
     }
+
 
     @Override
     public String getPassword() {
-        return password;
+        return usuario.getPassword();
     }
+    @Override public boolean isAccountNonExpired() { return true; }
+    @Override public boolean isAccountNonLocked() { return true; }
+    @Override public boolean isCredentialsNonExpired() { return true; }
+    @Override public boolean isEnabled() { return true; }
 
 }

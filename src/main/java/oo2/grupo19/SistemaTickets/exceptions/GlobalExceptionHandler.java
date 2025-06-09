@@ -36,4 +36,11 @@ public class GlobalExceptionHandler {
         model.addAttribute("mensaje", ex.getMessage());
         return ViewRouteHelper.ERROR_INDEX;
     }
+
+    @ExceptionHandler(TicketNotFound.class)
+    public String TicketNotFound(TicketNotFound ex, Model model){
+        model.addAttribute("title", "El ticket no se ha encontrado!");
+        model.addAttribute("mensaje", ex.getMessage());
+        return ViewRouteHelper.ERROR_INDEX;
+    }
 }

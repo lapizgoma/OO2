@@ -2,12 +2,16 @@ package oo2.grupo19.SistemaTickets.util;
 
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import oo2.grupo19.SistemaTickets.entities.Contacto;
 import oo2.grupo19.SistemaTickets.entities.Empleado;
+import oo2.grupo19.SistemaTickets.entities.Cliente;
+import oo2.grupo19.SistemaTickets.entities.Ticket;
+import oo2.grupo19.SistemaTickets.entities.Usuario;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoIntervencion;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoTicket;
 import oo2.grupo19.SistemaTickets.entities.estados.Prioridad;
@@ -16,15 +20,23 @@ import oo2.grupo19.SistemaTickets.repositories.estados.IEstadoIntervencion;
 import oo2.grupo19.SistemaTickets.repositories.estados.IEstadoTicket;
 import oo2.grupo19.SistemaTickets.repositories.estados.IPrioridad;
 import oo2.grupo19.SistemaTickets.repositories.estados.IRole;
+import oo2.grupo19.SistemaTickets.repositories.ITicket;
 import oo2.grupo19.SistemaTickets.services.impl.EmpleadoServiceImpl;
 import oo2.grupo19.SistemaTickets.services.impl.UsuarioServiceImpl;
 
 @Configuration
+
 public class LoadEstados {
     private final UsuarioServiceImpl empleadoRepository;
+    private final UsuarioServiceImpl clienteRepository;
+    private final IEstadoTicket estadoTicketRepository;
+    private final ITicket ticketRepository;
     
-    public LoadEstados(UsuarioServiceImpl empleadoRepository) {
+    public LoadEstados(UsuarioServiceImpl empleadoRepository, UsuarioServiceImpl clienteRepository,IEstadoTicket estadoTicketRepository, ITicket ticketRepository) {
         this.empleadoRepository = empleadoRepository;
+        this.estadoTicketRepository = estadoTicketRepository;
+        this.ticketRepository = ticketRepository;
+        this.clienteRepository = clienteRepository;
     }
 
 @Bean
@@ -37,9 +49,9 @@ public CommandLineRunner cargarEstados(IEstadoIntervencion estadoIntervencionRep
 
         if(prioridadRepository.count() == 0){
             prioridadRepository.saveAll(List.of(
-                new Prioridad(1L,"Alta"),
+                new Prioridad(1L,"Baja"),
                 new Prioridad(2L,"Media"),
-                new Prioridad(3L,"Baja")
+                new Prioridad(3L,"Alta")
             ));
         }
 
@@ -60,8 +72,8 @@ public CommandLineRunner cargarEstados(IEstadoIntervencion estadoIntervencionRep
 
         if (estadoTicketRepository.count() == 0) {
             estadoTicketRepository.saveAll(List.of(
-                new EstadoTicket(1L, "Atendido"),
-                new EstadoTicket(2L, "Pendiente"),
+                new EstadoTicket(1L, "Pendiente"),
+                new EstadoTicket(2L, "Atendido"),
                 new EstadoTicket(3L, "Cerrado")
             ));
         }
@@ -88,6 +100,27 @@ public CommandLineRunner cargarEstados(IEstadoIntervencion estadoIntervencionRep
             System.out.println("Empleado de prueba creado.");
         } else {
             System.out.println("Empleado de prueba ya existe.");
+        }
+        if (clienteRepository.findByEmail("cliente@cliente.com").isEmpty()) {
+            Cliente cliente = new Cliente();
+            Contacto contacto = new Contacto();
+            contacto.setCalle("2312");
+            contacto.setEmail("cliente@cliente.com");
+            contacto.setLocalidad("asdsad");
+            contacto.setNroPuerta("323");
+            contacto.setTelefono("443333");
+            cliente.setNombre("cliente");
+            cliente.setApellido("de prueba");
+            cliente.setPassword("cliente");
+            cliente.setDni("22222222");
+            cliente.setContacto(contacto);
+            cliente.asignarContactoUsuario();
+            // ... otros campos necesarios
+
+            clienteRepository.registrarUsuario(cliente);
+            System.out.println("Cliente de prueba creado.");
+        } else {
+            System.out.println("Cliente de prueba ya existe.");
         }
 
     };

@@ -26,24 +26,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Optional<Usuario> usuarioOptional = usuarioRepository.findByContactoEmail(email);
         if(usuarioOptional.isPresent()){
             Usuario usuario = usuarioOptional.get();
-            
-            String rol = "USUARIO"; // Valor por defecto
-            
-            if (usuario instanceof Cliente) {
-                rol = "CLIENTE";
-            } else if (usuario instanceof Empleado) {
-                rol = ((Empleado) usuario).getRole().toString(); // o algún valor por defecto como "EMPLEADO"
-            }
-
-            return new CustomUserDetails(
-                usuario.getContacto().getEmail(), // email para login
-                usuario.getPassword(),
-                usuario.getNombre(), // nombre para mostrar
-                rol
-            );
+            return new CustomUserDetails(usuario);
         }
-
-
         throw new UsernameNotFoundException("Usuario no encontrado: ");
     }
 

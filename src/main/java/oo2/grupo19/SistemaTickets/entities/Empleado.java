@@ -1,9 +1,12 @@
 package oo2.grupo19.SistemaTickets.entities;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Set;
+import java.util.HashSet;
 import org.hibernate.annotations.CreationTimestamp;
+import java.util.Objects;
 
 import oo2.grupo19.SistemaTickets.dto.EmpleadoDTO;
 import oo2.grupo19.SistemaTickets.entities.estados.Role;
@@ -40,9 +43,12 @@ public class Empleado extends Usuario {
   @JoinColumn(name = "role_id", nullable = false)
   private Role role;
 
+  @ManyToMany(mappedBy = "listEmpleado")
+  private Set<Ticket> tickets = new HashSet<>();
+  /* 
   @ManyToMany
   @JoinTable(name = "empleado_ticket", joinColumns = @JoinColumn(name = "empleado_id", nullable = true), inverseJoinColumns = @JoinColumn(name = "ticket_id", nullable = true))
-  private List<Ticket> tickets;
+  private List<Ticket> tickets;*/
 
   public EmpleadoDTO empleadoToDto() {
     EmpleadoDTO empleadoDto = new EmpleadoDTO();
@@ -56,5 +62,23 @@ public class Empleado extends Usuario {
     this.setDeleted(true);
     this.baja = LocalDateTime.now();
   }
+
+  public void agregarTicket(Ticket ticket) {
+    if (!tickets.contains(ticket)) {
+        tickets.add(ticket);
+    }
+}
+@Override
+public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Empleado)) return false;
+    Empleado other = (Empleado) o;
+    return id != null && id.equals(other.getId());
+}
+
+@Override
+public int hashCode() {
+    return Objects.hash(id);
+}
 
 }

@@ -1,5 +1,6 @@
 package oo2.grupo19.SistemaTickets.services.impl;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,7 +45,7 @@ public class EmpleadoServiceImpl implements IService<Empleado> {
     @Transactional
     public void save(Empleado object) {
         if(object.getId() != null && object.getId() > 0){
-            object.setTickets(ticketRepository.findAll());
+            object.setTickets(new HashSet<>(ticketRepository.findAll()));
         }
         empleadoRepository.save(object);
     }

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista de Tickets</title>
+</head>
+<body>
+    <h1>Lista de Tickets Filtrados</h1>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Asunto</th>
+                <th>Estado</th>
+                <th>Cliente</th>
+                <th>Intervencion</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="ticket : ${tickets}">
+                <td th:text="${ticket.id}"></td>
+                <td th:text="${ticket.asunto}"></td>
+                <td th:text="${ticket.estado.estado}"></td>
+                <td th:text="${ticket.creadoPor == null ? 'Sin asignar' : ticket.creadoPor.nombre + ' ' + ticket.creadoPor.apellido}"></td>
+                <td>
+                    <ul>
+                        <li th:each="interv : ${ticket.lstIntervencion}"
+                            th:text="${interv.descripcion + ' (' + interv.estado.estado + ')'}">
+                        </li>
+                    </ul>
+                </td>
+                <td th:text="${ticket.fechaHora}"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="/ticket/form-filtrar-tickets">Volver a filtros</a>
+</body>
+</html>

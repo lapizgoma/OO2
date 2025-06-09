@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
+import oo2.grupo19.SistemaTickets.entities.Empleado;
 import oo2.grupo19.SistemaTickets.entities.PersonaJuridica;
+import oo2.grupo19.SistemaTickets.entities.Usuario;
 import oo2.grupo19.SistemaTickets.exceptions.UserAlreadyAuthenticatedException;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 import oo2.grupo19.SistemaTickets.services.impl.ClienteServiceImpl;
@@ -83,4 +85,9 @@ public class AuthController {
         return auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser");
     }
 
+
+
 }
+
+
+

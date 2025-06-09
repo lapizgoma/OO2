@@ -2,8 +2,10 @@ package oo2.grupo19.SistemaTickets.entities;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
+import java.util.Objects;
 import oo2.grupo19.SistemaTickets.dto.TicketDTO;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoTicket;
 import oo2.grupo19.SistemaTickets.entities.estados.Prioridad;
@@ -15,6 +17,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -41,15 +44,19 @@ public class Ticket {
     @JoinColumn(name = "cliente_id")
     private Usuario creadoPor;
 
-    @Column(length = 20,nullable = false)
+    @Column(length = 150,nullable = false)
     @NotBlank
 	private String asunto;
 
     @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = false,mappedBy = "ticket")
-    private List<Intervencion> lstIntervencion;
+    private Set<Intervencion> lstIntervencion = new HashSet<>();
 
+	@ManyToMany
+	@JoinTable(name = "empleado_ticket", joinColumns = @JoinColumn(name = "ticket_id"), inverseJoinColumns = @JoinColumn(name = "empleado_id"))
+	private Set<Empleado> listEmpleado = new HashSet<>();
+	/* 
     @ManyToMany(mappedBy = "tickets")
-    private List<Empleado> listEmpleado;
+    private List<Empleado> listEmpleado;*/
 
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "estado_ticket_id", nullable = false)
@@ -59,20 +66,22 @@ public class Ticket {
 	@JoinColumn(name = "prioridad_id",nullable = false)
 	private Prioridad prioridad;
 
-	@Column(length = 10, nullable = false)
+	@Column(length = 1000, nullable = false)
 	@NotBlank
 	private String detalle;
 
-    public void agregarEmpleado(Empleado empleado) {
-	    if (listEmpleado == null) {
-	        listEmpleado = new ArrayList<>();
-	    }
-	    listEmpleado.add(empleado);
+
+	public void agregarEmpleado(Empleado empleado) {
+    	if (!listEmpleado.contains(empleado)) {
+       	 	listEmpleado.add(empleado);
+       	 	empleado.agregarTicket(this); 
+    	}
 	}
 	
+
 	public void agregarMensaje(Intervencion chat) {
 	    if (lstIntervencion == null) {
-	    	lstIntervencion = new ArrayList<>();
+	    	lstIntervencion = new HashSet<>();
 	    }
 	    // Seteamos la relacion bidireccional desde esta clase
 	    lstIntervencion.add(chat);
@@ -108,5 +117,22 @@ public class Ticket {
 	public String toString() {
 		return "Ticket{id=" + id + ", asunto='" + asunto + "', usuario=" + (creadoPor != null ? creadoPor.toString() : "null") + "}";
 	}
+
+	@Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Ticket)) return false;
+        Ticket ticket = (Ticket) o;
+        return id != null && id.equals(ticket.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    public Long getId() {
+        return id;
+    }
 
 }
