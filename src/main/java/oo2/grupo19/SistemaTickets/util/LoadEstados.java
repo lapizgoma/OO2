@@ -116,6 +116,7 @@ public CommandLineRunner cargarEstados(IEstadoIntervencion estadoIntervencionRep
             cliente.setApellido("de prueba");
             cliente.setPassword("cliente");
             cliente.setDni("22222222");
+            cliente.agregarRoles(roleRepository.findById(1L).get());
             cliente.setContacto(contacto);
             cliente.asignarContactoUsuario();
             // ... otros campos necesarios

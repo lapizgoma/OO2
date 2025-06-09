@@ -16,15 +16,18 @@ import oo2.grupo19.SistemaTickets.services.IService;
 @Service
 public class EmpleadoServiceImpl implements IService<Empleado> {
     
-    private final IEmpleado empleadoRepository;
+   private final IEmpleado empleadoRepository;
     private final ITicket ticketRepository;
     private final IRole roleRepository;
+    private final UsuarioServiceImpl usuarioService;
 
-    public EmpleadoServiceImpl(IEmpleado empleadoRepository, ITicket ticketRepository, IRole roleRepository) {
+    public EmpleadoServiceImpl(IEmpleado empleadoRepository, ITicket ticketRepository, IRole roleRepository, UsuarioServiceImpl usuarioService) {
         this.empleadoRepository = empleadoRepository;
         this.ticketRepository = ticketRepository;
         this.roleRepository = roleRepository;
+        this.usuarioService = usuarioService;
     }
+
 
     @Override
     @Transactional
@@ -80,18 +83,17 @@ public class EmpleadoServiceImpl implements IService<Empleado> {
         }
     }
     
-    @Transactional
-	public void agregarEmpleado(Empleado empleado){
+    public void agregarEmpleado(Empleado empleado){
         try{
             long ultimoLegajo;
-		
-		    if(traerEmpleados().isEmpty()) {
-			    ultimoLegajo = 10000;
-		    } else {
-			    ultimoLegajo = Long.parseLong(traerEmpleados().getLast().getNroLegajo()) + 1;
-		    }
+
+            if(traerEmpleados().isEmpty()) {
+                ultimoLegajo = 10000;
+            } else {
+                ultimoLegajo = Long.parseLong(traerEmpleados().getLast().getNroLegajo()) + 1;
+            }
             empleado.setNroLegajo(Long.toString(ultimoLegajo));
-            save(empleado);
+            usuarioService.registrarUsuario(empleado);
         }catch(Error e){
             throw new RuntimeException("No se ha podido persistir el empleado");
         }
@@ -111,5 +113,6 @@ public class EmpleadoServiceImpl implements IService<Empleado> {
     public List<Empleado> listarTodos() {
         return empleadoRepository.findAll();
     }
+
 
 }

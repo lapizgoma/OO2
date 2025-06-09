@@ -43,7 +43,7 @@ import oo2.grupo19.SistemaTickets.services.IEstadoIntervencionService;
 @RequestMapping("/intervencion")
 public class IntervencionController {
 
-    private final IntervencionServiceImpl intervencionRepository;
+    private final IIntervencionService intervencionRepository;
     private final ITicket ticketRepository;
     private final IEmpleado empleadoRepository;
     private final IPrioridad prioridadRepository;
@@ -52,17 +52,21 @@ public class IntervencionController {
     private final IIntervencionService intervencionService;
     private final IEstadoIntervencionService estadoIntervencionService;
 
-    public IntervencionController(IIntervencion intervencionRepository, IEmpleado empleadoRepository,ITicket ticketRepository, IPrioridad prioridadRepository, SecurityService securityService, ITicketService ticketService, IIntervencionService intervencionService, IEstadoIntervencionService estadoIntervencionService) {
+    
+    public IntervencionController(IIntervencionService intervencionRepository, ITicket ticketRepository,
+            IEmpleado empleadoRepository, IPrioridad prioridadRepository, SecurityService securityService,
+            ITicketService ticketService, IIntervencionService intervencionService,
+            IEstadoIntervencionService estadoIntervencionService) {
         this.intervencionRepository = intervencionRepository;
-        this.empleadoRepository = empleadoRepository;
         this.ticketRepository = ticketRepository;
+        this.empleadoRepository = empleadoRepository;
         this.prioridadRepository = prioridadRepository;
         this.securityService = securityService;
         this.ticketService = ticketService;
         this.intervencionService = intervencionService;
         this.estadoIntervencionService = estadoIntervencionService;
     }
-    
+
     /*
      * ATENCION!
      * Esto deberia obtener el ticket en base al TicketController. El empleado va a poder ver los tickets y seleccionar los tickets
@@ -131,7 +135,7 @@ public class IntervencionController {
             if(tOptional.isPresent()){
                 model.addAttribute("ticketId", idTicket);
                 model.addAttribute("empleadoId", empleadoRepository.findByContactoEmail(auth.getName()).orElseThrow().getId());
-                model.addAttribute("intervencionEstados", estadoIntervencion.findAll());
+                model.addAttribute("intervencionEstados", estadoIntervencionService.findAll());
                 model.addAttribute("intervencion", new Intervencion());
                 return ViewRouteHelper.FORM_CREATE_INTERVENCION;
             }else{
@@ -151,7 +155,7 @@ public class IntervencionController {
         if(isAuthenticated(auth)){
             Ticket ticket = ticketRepository.findById(ticketId).orElseThrow();
             Empleado empleado = empleadoRepository.findById(empleadoId).orElseThrow();
-            EstadoIntervencion estado = estadoIntervencion.findById(estadoId).orElseThrow();
+            EstadoIntervencion estado = estadoIntervencionService.findById(estadoId).orElseThrow();
             ticket.agregarEmpleado(empleado);
             ticket.agregarMensaje(intervencion);
             intervencion.setRealizadoPor(empleado);

@@ -11,7 +11,6 @@ import oo2.grupo19.SistemaTickets.exceptions.NotFoundException;
 import oo2.grupo19.SistemaTickets.repositories.estados.IPrioridad;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -85,7 +84,9 @@ public class TicketController {
     @GetMapping("/create")
     public String createTicket(Model model, Authentication authentication) {
         Ticket ticket = new Ticket();
-        log.info("Cliente: " + authentication.getName());
+        clienteRepository.findByContactoEmail(authentication.getName()).get().getRoles().stream().forEach(c -> {
+            log.info("Role: " + c.getType().toString());
+        });
         if (isAuthenticated(authentication)) {
             // Obtener el email del usuario autenticado
             String email = authentication.getName();
@@ -202,23 +203,11 @@ public class TicketController {
     }
     
 
-    // @GetMapping("/pendientes")
-    // public String getTicketsPendientes() {
-    //     return ViewRouteHelper.INDEX;
-    // }
-
-    // @PostMapping("/pendientes")
-    // public String asignarTicket() {
-    //     //TODO: process POST request
-        
-    //     return "hola";
-    // }
-    
-
     private boolean isAuthenticated(Authentication authentication){
-        return authentication == null || !authentication.isAuthenticated();
+        return authentication != null && authentication.isAuthenticated();
     }
-     @GetMapping("/update-ticket")
+
+    @GetMapping("/update-ticket-estado")
     public String showUpdateStatusForm(@RequestParam Long ticketId, Authentication auth, Model model){
         Long empleadoId = securityService.getIdEmpleado(auth);
         Ticket ticket = ticketService.findByIdAndEmpleado(empleadoId, ticketId);
@@ -231,7 +220,7 @@ public class TicketController {
         return "ticket/formTicketUpdateStatus";
     }
 
-    @PostMapping("/update-ticket")
+    @PostMapping("/update-ticket-estado")
     public String processUpdateStatus(@ModelAttribute Ticket ticket, Authentication auth,Model model) {
         Long empleadoId = securityService.getIdEmpleado(auth);
         ticketService.actualizarEstadoTicket(empleadoId, ticket.getId(), ticket.getEstado());

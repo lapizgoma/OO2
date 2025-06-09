@@ -39,10 +39,6 @@ public class Empleado extends Usuario {
 
   private LocalDateTime baja;
 
-  @ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "role_id", nullable = false)
-  private Role role;
-
   @ManyToMany(mappedBy = "listEmpleado")
   private Set<Ticket> tickets = new HashSet<>();
   /* 

@@ -60,7 +60,7 @@ public class EmpleadoController {
 
     @PostMapping("/agregar")
     public String postMethodName(@Valid @ModelAttribute Empleado empleado,
-            @RequestParam("role.id") Long rolId,
+            @RequestParam("roles") Long rolId,
             BindingResult result,
             Authentication auth,
             Model model) {

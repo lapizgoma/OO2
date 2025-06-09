@@ -15,7 +15,7 @@
                 <th>Cliente</th>
                 <th>Intervenciones</th>
                 <th>Empleados</th>
-                <th>Prioridad</th>
+                <th>Prioridad</th> 
                 <th>Fecha</th>
             </tr>
         </thead>
@@ -33,7 +33,7 @@
                     </ul>
                 </td>
                 <td th:each="empleado, iterStat : ${ticket.listEmpleado}"th:text="${empleado.contacto.email} + ${!iterStat.last ? ', ' : ''}"></td>
-                <td th:text="${ticket.prioridad.prioridad}"></td>
+                <td th:text="${ticket.prioridad == null ? 'Sin prioridad' : ticket.prioridad.prioridad}"></td>
                 <td th:text="${ticket.fechaHora}"></td>
             </tr>
         </tbody>

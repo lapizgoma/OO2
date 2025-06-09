@@ -19,4 +19,5 @@ public interface IIntervencionService extends IService<Intervencion>{
     Intervencion traerFecha(LocalDateTime fecha);
     Usuario traerUsuarioDesdeIntervencion(Long idCliente);
     public void actualizarEstadoIntervencion(Long empleadoId, Long ticketId, Long intervencionId, EstadoIntervencion nuevoEstado);
+    
 }
