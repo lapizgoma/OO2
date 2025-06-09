@@ -2,7 +2,13 @@ package oo2.grupo19.SistemaTickets.controllers;
 
 import java.util.Optional;
 
-import oo2.grupo19.SistemaTickets.exceptions.NotFoundException;
+import static oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotAuthorizedException;
+import static oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
+import static oo2.grupo19.SistemaTickets.exceptions.UserCustomExceptions.UserNotFoundException;
+import static oo2.grupo19.SistemaTickets.exceptions.TicketCustomExceptions.TicketNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -14,27 +20,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
-import java.util.Set;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.entities.Empleado;
 import oo2.grupo19.SistemaTickets.entities.Intervencion;
 import oo2.grupo19.SistemaTickets.entities.Ticket;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoIntervencion;
-import oo2.grupo19.SistemaTickets.exceptions.NotAuthorizedException;
-import oo2.grupo19.SistemaTickets.exceptions.UserNotFounException;
-import oo2.grupo19.SistemaTickets.exceptions.TicketNotFound;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
-import oo2.grupo19.SistemaTickets.repositories.IEmpleado;
-import oo2.grupo19.SistemaTickets.repositories.IIntervencion;
-import oo2.grupo19.SistemaTickets.repositories.ITicket;
-import oo2.grupo19.SistemaTickets.repositories.estados.IPrioridad;
-import oo2.grupo19.SistemaTickets.services.impl.IntervencionServiceImpl;
 import oo2.grupo19.SistemaTickets.security.SecurityService;
-import oo2.grupo19.SistemaTickets.services.ITicketService;
 import oo2.grupo19.SistemaTickets.services.IIntervencionService;
-import oo2.grupo19.SistemaTickets.entities.estados.EstadoIntervencion;
 import oo2.grupo19.SistemaTickets.services.IEstadoIntervencionService;
+import oo2.grupo19.SistemaTickets.services.impl.EmpleadoServiceImpl;
+import oo2.grupo19.SistemaTickets.services.impl.TicketServiceImpl;
 /*
  * Este controlador no esta terminado.
  */
@@ -43,27 +40,20 @@ import oo2.grupo19.SistemaTickets.services.IEstadoIntervencionService;
 @RequestMapping("/intervencion")
 public class IntervencionController {
 
-    private final IIntervencionService intervencionRepository;
-    private final ITicket ticketRepository;
-    private final IEmpleado empleadoRepository;
-    private final IPrioridad prioridadRepository;
-    private final SecurityService securityService;
-    private final ITicketService ticketService;
     private final IIntervencionService intervencionService;
+    private final TicketServiceImpl ticketServiceImpl;
+    private final EmpleadoServiceImpl empleadoService;
+    private final SecurityService securityService;
     private final IEstadoIntervencionService estadoIntervencionService;
+    private static final Logger logger = LoggerFactory.getLogger(IntervencionController.class);
 
-    
-    public IntervencionController(IIntervencionService intervencionRepository, ITicket ticketRepository,
-            IEmpleado empleadoRepository, IPrioridad prioridadRepository, SecurityService securityService,
-            ITicketService ticketService, IIntervencionService intervencionService,
-            IEstadoIntervencionService estadoIntervencionService) {
-        this.intervencionRepository = intervencionRepository;
-        this.ticketRepository = ticketRepository;
-        this.empleadoRepository = empleadoRepository;
-        this.prioridadRepository = prioridadRepository;
-        this.securityService = securityService;
-        this.ticketService = ticketService;
+    public IntervencionController(IIntervencionService intervencionService, TicketServiceImpl ticketServiceImpl,
+                                  EmpleadoServiceImpl empleadoService, SecurityService securityService,
+                                  IEstadoIntervencionService estadoIntervencionService) {
         this.intervencionService = intervencionService;
+        this.ticketServiceImpl = ticketServiceImpl;
+        this.empleadoService = empleadoService;
+        this.securityService = securityService;
         this.estadoIntervencionService = estadoIntervencionService;
     }
 
@@ -74,15 +64,13 @@ public class IntervencionController {
      */
     @GetMapping("/form-processing-ticket")
     public String getProcesarTicket(Model model, @RequestParam Long ticketId){
-        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow();
-        if(ticket != null){
-            Intervencion intervencion = new Intervencion();
-            model.addAttribute("intervencion", intervencion);
-            model.addAttribute("estadosIntervencion",  estadoIntervencionService.findAll());
-            model.addAttribute("ticket", ticket);
-            
-        }
-            return ViewRouteHelper.FORM_INTERVENCION;
+        Ticket ticket = ticketServiceImpl.findById(ticketId).orElseThrow(() -> new NotFoundException("Ticket no encontrado"));
+        Intervencion intervencion = new Intervencion();
+        model.addAttribute("intervencion", intervencion);
+        model.addAttribute("estadosIntervencion",  estadoIntervencionService.findAll());
+        model.addAttribute("ticket", ticket);
+        logger.info("Acceso a procesamiento de ticket: {}", ticketId);
+        return ViewRouteHelper.FORM_INTERVENCION;
     }
 
     @PostMapping("/processing-ticket")
@@ -90,59 +78,52 @@ public class IntervencionController {
                                 Authentication authentication,
                                 Model model,
                                 @RequestParam Long ticketId){
-
         if (authentication == null || !authentication.isAuthenticated()) {
+            logger.warn("Intento de procesar ticket sin autenticación");
             throw new NotAuthorizedException("Debes iniciar sesion, no estas autorizado");
         }
-
-        Empleado empleado = empleadoRepository.findByContactoEmail(authentication.getName()).orElseThrow();
-        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow();
-        if(ticket != null){
-            intervencion.setRealizadoPor(empleado);
-            ticket.agregarMensaje(intervencion);
-        }
-
+        Empleado empleado = empleadoService.traerEmpleado(authentication.getName()).orElseThrow(() -> new UserNotFoundException("Empleado no encontrado"));
+        Ticket ticket = ticketServiceImpl.findById(ticketId).orElseThrow(() -> new NotFoundException("Ticket no encontrado"));
+        intervencion.setRealizadoPor(empleado);
+        ticket.agregarMensaje(intervencion);
+        logger.info("Intervención procesada para ticket: {} por empleado: {}", ticketId, empleado.getId());
         return "ticket/update-ticket?ticketId=" + ticketId;
-        
     }
 
     @PostMapping("/processing-ticket/update-intervencion")
     public String processUpdateStatusIntervencion(@ModelAttribute Ticket ticket, @RequestParam Long intervencionId, Authentication auth, Model model,  @RequestParam Long estado) {
         Long empleadoId = securityService.getIdEmpleado(auth);
         intervencionService.actualizarEstadoIntervencion(empleadoId, ticket.getId(), intervencionId, estadoIntervencionService.findById(estado).orElseThrow());
-        Ticket ticketDB = ticketService.findByIdAndEmpleado(empleadoId, ticket.getId());
+        Ticket ticketDB = ticketServiceImpl.findByIdAndEmpleado(empleadoId, ticket.getId());
         List<EstadoIntervencion> estadosIntervencion = estadoIntervencionService.findAll();
         if (ticketDB == null) {
-            throw new TicketNotFound("No se ha encontrado el ticket");
+            throw new TicketNotFoundException("No se ha encontrado el ticket");
         }
         model.addAttribute("ticket", ticketDB);
         model.addAttribute("estadosIntervencion", estadosIntervencion);
         model.addAttribute("mensaje", "Intervención actualizada correctamente");
-
         return "ticket/formTicketUpdateStatus"; 
-}
+    }
 
-   /*  
-     * ATENCION!
-     * Esto deberia obtener el ticket en base al TicketController. El empleado va a poder ver los tickets y seleccionar los tickets para modificar la intervencion
-     */
-    // ARREGLAR LAS EXCEPCIONES!
     @PreAuthorize("hasRole('EMPLOYEE')")
     @GetMapping("/create/{idTicket}")
     public String crearIntervencion(@PathVariable Long idTicket, Model model, Authentication auth){
-        Optional<Ticket> tOptional = ticketRepository.findById(idTicket);
-        if(isAuthenticated(auth)){
+        Optional<Ticket> tOptional = ticketServiceImpl.findById(idTicket);
+        if(auth != null && auth.isAuthenticated()){
             if(tOptional.isPresent()){
                 model.addAttribute("ticketId", idTicket);
-                model.addAttribute("empleadoId", empleadoRepository.findByContactoEmail(auth.getName()).orElseThrow().getId());
+                model.addAttribute("empleadoId", empleadoService.traerEmpleado(auth.getName()).orElseThrow(() -> new UserNotFoundException("Empleado no encontrado")).getId());
                 model.addAttribute("intervencionEstados", estadoIntervencionService.findAll());
                 model.addAttribute("intervencion", new Intervencion());
+                logger.info("Creación de intervención para ticket: {} por empleado: {}", idTicket, auth.getName());
                 return ViewRouteHelper.FORM_CREATE_INTERVENCION;
             }else{
+                logger.warn("Intento de crear intervención para ticket inexistente: {}", idTicket);
                 throw new NotFoundException("No existe ningun ticket");
             }
         }
-        throw new UserNotFounException("No hay un empleado autorizado");
+        logger.warn("Intento de crear intervención sin autenticación");
+        throw new NotAuthorizedException("No hay un empleado autorizado");
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")
@@ -152,25 +133,22 @@ public class IntervencionController {
                                         @RequestParam Long empleadoId,
                                         @RequestParam("estado.id") Long estadoId, 
                                         Authentication auth){
-        if(isAuthenticated(auth)){
-            Ticket ticket = ticketRepository.findById(ticketId).orElseThrow();
-            Empleado empleado = empleadoRepository.findById(empleadoId).orElseThrow();
-            EstadoIntervencion estado = estadoIntervencionService.findById(estadoId).orElseThrow();
+        if(auth != null && auth.isAuthenticated()){
+            Ticket ticket = ticketServiceImpl.findById(ticketId).orElseThrow(() -> new NotFoundException("Ticket no encontrado"));
+            Empleado empleado = empleadoService.findById(empleadoId).orElseThrow(() -> new UserNotFoundException("Empleado no encontrado"));
+            EstadoIntervencion estado = estadoIntervencionService.findById(estadoId).orElseThrow(() -> new NotFoundException("Estado de intervención no encontrado"));
             ticket.agregarEmpleado(empleado);
             ticket.agregarMensaje(intervencion);
             intervencion.setRealizadoPor(empleado);
             intervencion.setEstado(estado);
-            log.info("Ticket: " + intervencion.getTicket());
-            intervencionRepository.save(intervencion);
-            ticketRepository.save(ticket);
+            logger.info("Intervención creada para ticket: {} por empleado: {}", ticketId, empleadoId);
+            intervencionService.save(intervencion);
+            ticketServiceImpl.save(ticket);
             return ViewRouteHelper.INTERVENCION_SUCCESS;
         }else{
+            logger.warn("Intento de crear intervención sin autenticación");
             throw new NotAuthorizedException("No estas autorizado para realizar una intervencion");
         }
-    }
-
-    private boolean isAuthenticated(Authentication auth){
-        return auth != null && auth.isAuthenticated();
     }
 
 }

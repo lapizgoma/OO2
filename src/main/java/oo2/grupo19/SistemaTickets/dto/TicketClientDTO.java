@@ -2,11 +2,19 @@ package oo2.grupo19.SistemaTickets.dto;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
-@NoArgsConstructor @Setter @Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 public class TicketClientDTO {
     private Long id;
 	private String asunto;

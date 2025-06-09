@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import oo2.grupo19.SistemaTickets.dto.UsuarioDTO;
 import oo2.grupo19.SistemaTickets.entities.estados.Role;
-import oo2.grupo19.SistemaTickets.entities.estados.enums.RoleType;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -29,10 +28,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -54,11 +50,11 @@ public class Usuario implements UserDetails {
     @Valid
     protected Contacto contacto;
 
-    @Column(length = 10)
+    @Column(length = 20)
     @NotBlank(message = "El nombre no debe estar vacio")
     protected String nombre;
     
-    @Column(length = 10)
+    @Column(length = 20)
     @NotBlank(message = "El apellido no debe estar vacio")
     protected String apellido;
     

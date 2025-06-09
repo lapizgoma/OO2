@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import javax.management.RuntimeErrorException;
-
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +12,7 @@ import oo2.grupo19.SistemaTickets.entities.Intervencion;
 import oo2.grupo19.SistemaTickets.entities.Ticket;
 import oo2.grupo19.SistemaTickets.entities.Usuario;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoIntervencion;
-import oo2.grupo19.SistemaTickets.exceptions.TicketNotFound;
+import oo2.grupo19.SistemaTickets.exceptions.TicketCustomExceptions;
 import oo2.grupo19.SistemaTickets.repositories.IIntervencion;
 import oo2.grupo19.SistemaTickets.repositories.ITicket;
 import oo2.grupo19.SistemaTickets.services.IIntervencionService;
@@ -36,8 +34,8 @@ public class IntervencionServiceImpl implements IIntervencionService{
     public void delete(Long id) {
         try{
             intervencionRepository.deleteById(id);
-        }catch(Error e){
-            throw new RuntimeErrorException(e, "Error no se ha podido eliminar el mensaje");
+        }catch(Exception e){
+            throw new TicketCustomExceptions.IntervencionDeleteException("Error: no se ha podido eliminar la intervención", e);
         }
     }
 
@@ -46,8 +44,8 @@ public class IntervencionServiceImpl implements IIntervencionService{
     public List<Intervencion> findAll() {
         try{
             return intervencionRepository.findAll();
-        }catch(Error e){
-            throw new RuntimeErrorException(e, "Error no se ha podido mostrar la lista de mensajes");
+        }catch(Exception e){
+            throw new TicketCustomExceptions.IntervencionListException("Error: no se ha podido mostrar la lista de intervenciones", e);
         }
     }
 
@@ -56,8 +54,8 @@ public class IntervencionServiceImpl implements IIntervencionService{
     public Optional<Intervencion> findById(Long id) {
         try{
             return intervencionRepository.findById(id);
-        }catch(Error e){
-            throw new RuntimeErrorException(e, "Error no se ha podido mostrar el Intervencion");
+        }catch(Exception e){
+            throw new TicketCustomExceptions.IntervencionNotFoundException("Error: no se ha podido mostrar la intervención", e);
         }
     }
 
@@ -66,19 +64,23 @@ public class IntervencionServiceImpl implements IIntervencionService{
     public void save(Intervencion object) {
         try{
             intervencionRepository.save(object);
-        }catch(Error e){
-            throw new RuntimeErrorException(e, "Error no se ha podido actualizar/insertar el Intervencion");
+        }catch(Exception e){
+            throw new TicketCustomExceptions.IntervencionSaveException("Error: no se ha podido actualizar/insertar la intervención", e);
         }
     }
 
     @Transactional(readOnly = true)
     public List<Intervencion> traerIntervencionPorCliente(Long idCliente){
-		Optional<Usuario> usuarioOptional = Optional.of(traerUsuarioDesdeIntervencion(idCliente));
-		if(usuarioOptional.isPresent()) {			
-			return intervencionRepository.traerIntervencionPorCliente(idCliente);
-		}
-		throw new RuntimeException("El usuario no existe");
-	}
+        try {
+            Optional<Usuario> usuarioOptional = Optional.of(traerUsuarioDesdeIntervencion(idCliente));
+            if(usuarioOptional.isPresent()) {            
+                return intervencionRepository.traerIntervencionPorCliente(idCliente);
+            }
+            throw new TicketCustomExceptions.IntervencionNotFoundException("El usuario no existe", null);
+        } catch(Exception e) {
+            throw new TicketCustomExceptions.IntervencionNotFoundException("Error al traer intervenciones por cliente", e);
+        }
+    }
 	
     @Transactional(readOnly = true)
 	public List<Intervencion> traerMensajePorTicket(Long idTicket){
@@ -87,21 +89,28 @@ public class IntervencionServiceImpl implements IIntervencionService{
 
     @Transactional(readOnly = true)
 	public List<Intervencion> traer(LocalDateTime fecha,Usuario cliente) {
-		// Verificamos que el usuario exista en la tabla Mensaje
-		Optional<Usuario> usuarioOptional = Optional.of(traerUsuarioDesdeIntervencion(cliente.getId()));
-		if(usuarioOptional.isPresent()) {
-			return intervencionRepository.traer(fecha, cliente);			
-		}
-		throw new RuntimeException("El usuario no existe");
+		try {
+            Optional<Usuario> usuarioOptional = Optional.of(traerUsuarioDesdeIntervencion(cliente.getId()));
+            if(usuarioOptional.isPresent()) {
+                return intervencionRepository.traer(fecha, cliente);            
+            }
+            throw new TicketCustomExceptions.IntervencionNotFoundException("El usuario no existe", null);
+        } catch(Exception e) {
+            throw new TicketCustomExceptions.IntervencionNotFoundException("Error al traer intervenciones por fecha y cliente", e);
+        }
 	}
     
     @Transactional(readOnly = true)
 	public List<Intervencion> traerFecha(LocalDateTime fechaInicio, LocalDateTime fechaFinal, Long idCliente){
-		Optional<Usuario> usuarioOptional = Optional.of(traerUsuarioDesdeIntervencion(idCliente));
-		if(usuarioOptional.isPresent()) {
-			return intervencionRepository.traerFecha(fechaInicio, fechaFinal,idCliente);		
-		}
-		throw new RuntimeException("El usuario no existe");
+		try {
+            Optional<Usuario> usuarioOptional = Optional.of(traerUsuarioDesdeIntervencion(idCliente));
+            if(usuarioOptional.isPresent()) {
+                return intervencionRepository.traerFecha(fechaInicio, fechaFinal,idCliente);        
+            }
+            throw new TicketCustomExceptions.IntervencionNotFoundException("El usuario no existe", null);
+        } catch(Exception e) {
+            throw new TicketCustomExceptions.IntervencionNotFoundException("Error al traer intervenciones por rango de fecha", e);
+        }
 	}
 
 	@Transactional(readOnly = true)
@@ -120,14 +129,14 @@ public class IntervencionServiceImpl implements IIntervencionService{
     public void actualizarEstadoIntervencion(Long empleadoId, Long ticketId, Long intervencionId, EstadoIntervencion nuevoEstado) {
        Ticket ticket = ticketRepository.traerPorEmpleadoYId(empleadoId, ticketId);
        if (ticket == null) {
-       throw new TicketNotFound("No se ha encontrado el ticket o no tiene permiso");
+           throw new TicketCustomExceptions.TicketNotFoundException("No se ha encontrado el ticket o no tiene permiso");
        }
 
         Intervencion intervencion = ticket.getLstIntervencion().stream().filter(i -> i.getId().equals(intervencionId)).findFirst()
-        .orElseThrow(() -> new RuntimeException("Intervención no encontrada"));
+        .orElseThrow(() -> new TicketCustomExceptions.IntervencionNotFoundException("Intervención no encontrada", null));
 
-    intervencion.setEstado(nuevoEstado);
-    intervencionRepository.save(intervencion);
+        intervencion.setEstado(nuevoEstado);
+        intervencionRepository.save(intervencion);
     }
 
 

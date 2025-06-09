@@ -1,22 +1,15 @@
 package oo2.grupo19.SistemaTickets.entities;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 import org.hibernate.annotations.CreationTimestamp;
 import java.util.Objects;
 
 import oo2.grupo19.SistemaTickets.dto.EmpleadoDTO;
-import oo2.grupo19.SistemaTickets.entities.estados.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

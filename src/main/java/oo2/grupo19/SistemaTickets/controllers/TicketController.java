@@ -1,14 +1,16 @@
 package oo2.grupo19.SistemaTickets.controllers;
 import java.util.Optional;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.time.LocalDate;
 
-import jakarta.validation.Valid;
-import jakarta.websocket.server.PathParam;
-import oo2.grupo19.SistemaTickets.exceptions.NotFoundException;
-import oo2.grupo19.SistemaTickets.repositories.estados.IPrioridad;
+import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotAuthorizedException;
+import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
+import oo2.grupo19.SistemaTickets.exceptions.UserCustomExceptions.UserNotFoundException;
+import oo2.grupo19.SistemaTickets.exceptions.TicketCustomExceptions.TicketNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -20,8 +22,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
 import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.dto.TicketClientDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketEmployeeDTO;
@@ -31,20 +31,12 @@ import oo2.grupo19.SistemaTickets.entities.Usuario;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoIntervencion;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoTicket;
 import oo2.grupo19.SistemaTickets.entities.estados.Prioridad;
-import oo2.grupo19.SistemaTickets.exceptions.NotAuthorizedException;
-import oo2.grupo19.SistemaTickets.exceptions.TicketNotFound;
-import oo2.grupo19.SistemaTickets.exceptions.UserNotFounException;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
-import oo2.grupo19.SistemaTickets.repositories.ICliente;
-import oo2.grupo19.SistemaTickets.repositories.IEmpleado;
-import oo2.grupo19.SistemaTickets.repositories.estados.IEstadoIntervencion;
-import oo2.grupo19.SistemaTickets.repositories.estados.IEstadoTicket;
 import oo2.grupo19.SistemaTickets.security.SecurityService;
 import oo2.grupo19.SistemaTickets.services.ITicketService;
 import oo2.grupo19.SistemaTickets.services.impl.UsuarioServiceImpl;
-
-import javax.swing.text.html.Option;
-import org.springframework.web.bind.annotation.RequestBody;
+import oo2.grupo19.SistemaTickets.services.impl.ClienteServiceImpl;
+import oo2.grupo19.SistemaTickets.services.impl.EmpleadoServiceImpl;
 
 
 import oo2.grupo19.SistemaTickets.services.IEstadoTicketService;
@@ -57,56 +49,45 @@ public class TicketController {
 
     private final ITicketService ticketService;
     private final UsuarioServiceImpl usuarioService;
-    private final IEmpleado empleadoRepository;
-    private final ICliente clienteRepository;
-    private final IEstadoTicket estadoTicketRepository;
+    private final EmpleadoServiceImpl empleadoService;
+    private final ClienteServiceImpl clienteService;
+    private final IEstadoTicketService estadoTicketService;
     private final IEstadoIntervencionService estadoIntervencionService;
     private final SecurityService securityService;
-    private final IEstadoTicketService estadoTicketService;
     private final IPrioridadService prioridadService;
     // Crear un cliente - Crear un ticket - Login cliente
 
     // Agregue Qualifier para identificar a cada uno.
-    public TicketController(ITicketService ticketService, @Qualifier("usuarioService") UsuarioServiceImpl usuarioService, IPrioridadService prioridadService, IEstadoTicket estadoTicketRepository, IEstadoIntervencionService estadoIntervencionService, ICliente clienteRepository,IEmpleado empleadoRepository, SecurityService securityService, IEstadoTicketService estadoTicketService) {
+    public TicketController(ITicketService ticketService, @Qualifier("usuarioService") UsuarioServiceImpl usuarioService, IPrioridadService prioridadService, IEstadoIntervencionService estadoIntervencionService, ClienteServiceImpl clienteService, EmpleadoServiceImpl empleadoService, SecurityService securityService, IEstadoTicketService estadoTicketService) {
         this.ticketService = ticketService;
         this.usuarioService = usuarioService;
-        this.estadoTicketRepository = estadoTicketRepository;
         this.estadoIntervencionService = estadoIntervencionService;
-        this.clienteRepository = clienteRepository;
-        this.empleadoRepository = empleadoRepository;
+        this.clienteService = clienteService;
+        this.empleadoService = empleadoService;
         this.securityService = securityService;
         this.estadoTicketService = estadoTicketService;
         this.prioridadService = prioridadService;
     }
 
-    // ... (otros campos y constructor permanecen igual)
+    private static final Logger logger = LoggerFactory.getLogger(TicketController.class);
+
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/create")
     public String createTicket(Model model, Authentication authentication) {
         Ticket ticket = new Ticket();
-        clienteRepository.findByContactoEmail(authentication.getName()).get().getRoles().stream().forEach(c -> {
-            log.info("Role: " + c.getType().toString());
-        });
-        if (isAuthenticated(authentication)) {
-            // Obtener el email del usuario autenticado
-            String email = authentication.getName();
-            
-            // Buscar el cliente por email
-            Optional<Cliente> cliente = clienteRepository.findByContactoEmail(email);
-            
-            if (cliente.isPresent()) {
-                // Asociar el cliente al ticket si es necesario
-                ticket.setCreadoPor(cliente.get());
-                model.addAttribute("ticket", ticket);
-                return "ticket/formTicket";
-            } else {
-                throw new UserNotFounException("Usted no es un cliente para realizar esta accion");
-            }
+        String email = authentication.getName();
+        Optional<Cliente> cliente = clienteService.findByEmail(email);
+        if (cliente.isPresent()) {
+            ticket.setCreadoPor(cliente.get());
+            model.addAttribute("ticket", ticket);
+            logger.info("Formulario de creación de ticket accedido por: {}", email);
+            return "ticket/formTicket";
         } else {
-            throw new NotAuthorizedException("No tienes permiso para entrar aquí");
+            logger.warn("Intento de crear ticket por usuario no cliente: {}", email);
+            throw new UserNotFoundException("Usted no es un cliente para realizar esta acción");
         }
     }
-    
+
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/create")
     public String postCreate(
@@ -114,26 +95,27 @@ public class TicketController {
         Authentication authentication,
         Model model,
         @RequestParam("mensaje") String contenido) {
-        
-        if (!isAuthenticated(authentication)) {
-            throw new NotAuthorizedException("Debes iniciar sesión");
-        }
-
-        // Obtener el usuario autenticado
         String email = authentication.getName();
-        Usuario clienteDb = usuarioService.findByEmail(email)
-            .orElseThrow(() -> new UserNotFounException("Usuario no encontrado"));
-        
+        Optional<Usuario> usuarioOpt = usuarioService.findByEmail(email);
+        if (!usuarioOpt.isPresent()) {
+            logger.warn("Intento de crear ticket por usuario no encontrado: {}", email);
+            throw new UserNotFoundException("Usuario no encontrado");
+        }
+        Usuario clienteDb = usuarioOpt.get();
         if (!(clienteDb instanceof Cliente)) {
+            logger.warn("Intento de crear ticket por usuario no cliente: {}", email);
             throw new NotAuthorizedException("Solo clientes pueden crear tickets");
         }
-        
-        
-        ticket.setEstado(estadoTicketRepository.findById(1L).get());
+        EstadoTicket estado = estadoTicketService.findById(1L).orElse(null);
+        if(estado == null) {
+            throw new NotFoundException("Estado no encontrado");
+        }
+        ticket.setEstado(estado);
         ticket.setCreadoPor(clienteDb);
         ticket.setDetalle(contenido);
-        ticket.setListEmpleado(new HashSet<>(empleadoRepository.findAll()));
+        ticket.setListEmpleado(new HashSet<>(empleadoService.findAll()));
         ticketService.save(ticket);
+        logger.info("Ticket creado exitosamente por: {}", email);
         model.addAttribute("title","Ticket create");
         model.addAttribute("titulo-h1","El ticket ha sido creado con exito!! Puede volver al home");
         return ViewRouteHelper.TICKET_SUCCESS;
@@ -142,14 +124,19 @@ public class TicketController {
     @PreAuthorize("hasRole('EMPLOYEE')")
     @GetMapping("/update-ticket/{ticketId}")
     public String updateTicket(@PathVariable Long ticketId, Model model){
-        Ticket ticket = ticketService.findById(ticketId).orElseThrow();
+        Ticket ticket = ticketService.findById(ticketId).orElse(null);
+        if(ticket == null) {
+            throw new NotFoundException("Ticket no encontrado");
+        }
         if(ticket.getLstIntervencion().isEmpty()){
+            logger.warn("Intento de actualizar ticket sin intervenciones previas: {}", ticketId);
             throw new NotFoundException("No existe ninguna intervencion previa! No se puede actualizar el ticket");
         }
-        model.addAttribute("ticketEstado",estadoTicketRepository.findAll());
+        model.addAttribute("ticketEstado",estadoTicketService.findAll());
         model.addAttribute("estadoPrioridad",prioridadService.findAll());
         model.addAttribute("ticket",ticket);
         model.addAttribute("title","Modificar prioridad");
+        logger.info("Vista de actualización de ticket accedida para ticket: {}", ticketId);
         return "ticket/formTicketUpdate";
     }
 
@@ -158,20 +145,22 @@ public class TicketController {
     public String postUpdateTicket(@RequestParam("ticketId") Long idTicket,
                                    Model model,
                                    @RequestParam("prioridad.id") Long prioridadId){
-
-        Optional<Ticket> ticket = ticketService.findById(idTicket);
-        if(ticket.isPresent()){
-            ticket.get().setPrioridad(prioridadService.findById(prioridadId).orElseThrow());
-            log.info("Ticket: " + ticket.get());
-            ticketService.save(ticket.get());
-            model.addAttribute("title","Ticket update");
-            model.addAttribute("tituloh1","La prioridad / estado ha sido actualizado con exito!");
-            return ViewRouteHelper.TICKET_SUCCESS;
+        Ticket ticket = ticketService.findById(idTicket).orElse(null);
+        if(ticket == null) {
+            throw new NotFoundException("Ticket no encontrado");
         }
-        throw new NotFoundException("Ticket no encontrado en la base de datos");
+        Prioridad prioridad = prioridadService.findById(prioridadId).orElse(null);
+        if(prioridad == null) {
+            throw new NotFoundException("Prioridad no encontrada");
+        }
+        ticket.setPrioridad(prioridad);
+        logger.info("Ticket actualizado: {} con nueva prioridad: {}", idTicket, prioridadId);
+        ticketService.save(ticket);
+        model.addAttribute("title","Ticket update");
+        model.addAttribute("tituloh1","La prioridad / estado ha sido actualizado con exito!");
+        return ViewRouteHelper.TICKET_SUCCESS;
     }
 
-    
     @PreAuthorize("hasAnyRole('USER', 'EMPLOYEE', 'ADMIN')")
     @GetMapping("/{idTicket}")
     public String verTicket(@PathVariable long idTicket, Authentication authentication, Model model) {
@@ -203,17 +192,14 @@ public class TicketController {
     }
     
 
-    private boolean isAuthenticated(Authentication authentication){
-        return authentication != null && authentication.isAuthenticated();
-    }
-
     @GetMapping("/update-ticket-estado")
     public String showUpdateStatusForm(@RequestParam Long ticketId, Authentication auth, Model model){
         Long empleadoId = securityService.getIdEmpleado(auth);
         Ticket ticket = ticketService.findByIdAndEmpleado(empleadoId, ticketId);
         List<EstadoIntervencion> estadosIntervencion = estadoIntervencionService.findAll();
         if (ticket == null) {
-            throw new TicketNotFound("No se ha encontrado el ticket o no tiene permiso");
+            logger.warn("Intento de actualizar estado de ticket no encontrado o sin permiso: {}", ticketId);
+            throw new TicketNotFoundException("No se ha encontrado el ticket o no tiene permiso");
         }
         model.addAttribute("ticket", ticket);
         model.addAttribute("estadosIntervencion", estadosIntervencion);
@@ -298,4 +284,3 @@ public class TicketController {
     return "ticket/formTicketsFiltrar";  // La vista con los formularios de filtro 
     }
 }
-    

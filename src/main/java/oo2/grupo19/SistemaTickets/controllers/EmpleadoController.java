@@ -1,8 +1,6 @@
 package oo2.grupo19.SistemaTickets.controllers;
 import java.util.List;
-import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,12 +16,14 @@ import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.entities.Empleado;
 import oo2.grupo19.SistemaTickets.entities.estados.Role;
-import oo2.grupo19.SistemaTickets.exceptions.NotAuthorizedException;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 import oo2.grupo19.SistemaTickets.repositories.estados.IRole;
 import oo2.grupo19.SistemaTickets.services.impl.EmpleadoServiceImpl;
-import oo2.grupo19.SistemaTickets.services.impl.UsuarioServiceImpl;
 import org.springframework.web.bind.annotation.PutMapping;
+import static oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 
 
@@ -33,50 +33,62 @@ import org.springframework.web.bind.annotation.PutMapping;
 public class EmpleadoController {
     
     private final EmpleadoServiceImpl empleadoService;
-    private final UsuarioServiceImpl usuarioService;
     private final IRole roleRepository;
 
-    public EmpleadoController(EmpleadoServiceImpl empleadoService, UsuarioServiceImpl usuarioService, IRole roleRepository) {
+    private static final Logger logger = LoggerFactory.getLogger(EmpleadoController.class);
+
+    public EmpleadoController(EmpleadoServiceImpl empleadoService, IRole roleRepository) {
         this.empleadoService = empleadoService;
-        this.usuarioService = usuarioService;
         this.roleRepository = roleRepository;
     }
     
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("")
-    public String listarEmpleados(Model model) {
+    public String listarEmpleados(Model model, Authentication auth) {
         List<Empleado> empleados = empleadoService.traerEmpleadosActivos();
         model.addAttribute("empleados", empleados);
+        logger.info("Listado de empleados accedido por: {}", auth.getName());
         return ViewRouteHelper.LISTAR_EMPLEADOS;
     }
     
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/agregar")
-    public String obtenerVistaEmpleado(Model model) {
+    public String obtenerVistaEmpleado(Model model, Authentication auth) {
         model.addAttribute("rolRepository", roleRepository.findAll());
         model.addAttribute("empleado", new Empleado());
         model.addAttribute("rol", new Role());
+        logger.info("Vista de registro de empleado accedida por: {}", auth.getName());
         return ViewRouteHelper.EMPLEADO_REGISTER;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/agregar")
     public String postMethodName(@Valid @ModelAttribute Empleado empleado,
             @RequestParam("roles") Long rolId,
             BindingResult result,
             Authentication auth,
             Model model) {
-        Role role = roleRepository.findById(rolId).orElseThrow(() -> new RuntimeException("Rol no encontrado"));
-        empleado.agregarRoles(role); // Usar el método existente en Usuario
+        if(result.hasErrors()){
+            logger.warn("Errores de validación en registro de empleado: {}", result.getAllErrors());
+            model.addAttribute("rolRepository", roleRepository.findAll());
+            return ViewRouteHelper.EMPLEADO_REGISTER;
+        }
+        Role role = roleRepository.findById(rolId).orElseThrow(() -> {
+            logger.error("Rol no encontrado para id: {}", rolId);
+            return new NotFoundException("Rol no encontrado");
+        });
+        empleado.agregarRoles(role);
         empleadoService.agregarEmpleado(empleado);
+        logger.info("Empleado registrado exitosamente (ID): {} por {}", empleado.getId(), auth.getName());
         return ViewRouteHelper.EMPLEADO_REGISTRADO;
     }
     
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{empleadoId}")
-    public String darBajaEmpleado(@PathVariable Long empleadoId) {
+    public String darBajaEmpleado(@PathVariable Long empleadoId, Authentication auth) {
         empleadoService.darBajaEmpleado(empleadoId);
+        logger.info("Empleado dado de baja: {} por {}", empleadoId, auth.getName());
         return ViewRouteHelper.EMPLEADO_BORRADO;
     }
 
-    private boolean isAuthenticated(Authentication auth){
-        return auth != null && auth.isAuthenticated();
-    }
 }

@@ -3,12 +3,11 @@ package oo2.grupo19.SistemaTickets.services.impl;
 import java.util.List;
 import java.util.Optional;
 
-import javax.management.RuntimeErrorException;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoIntervencion;
+import oo2.grupo19.SistemaTickets.exceptions.TicketCustomExceptions;
 import oo2.grupo19.SistemaTickets.repositories.estados.IEstadoIntervencion;
 import oo2.grupo19.SistemaTickets.services.IEstadoIntervencionService;
 
@@ -26,8 +25,8 @@ public class EstadoIntervencionServiceImpl implements IEstadoIntervencionService
     public void delete(Long id) {
         try {
             estadoRepository.deleteById(id);
-        } catch (Error e) {
-            throw new RuntimeErrorException(e, "Error: no se ha podido eliminar el estado de intervención");
+        } catch (Exception e) {
+            throw new TicketCustomExceptions.EstadoIntervencionDeleteException("Error: no se ha podido eliminar el estado de intervención", e);
         }
     }
 
@@ -36,8 +35,8 @@ public class EstadoIntervencionServiceImpl implements IEstadoIntervencionService
     public List<EstadoIntervencion> findAll() {
         try {
             return estadoRepository.findAll();
-        } catch (Error e) {
-            throw new RuntimeErrorException(e, "Error: no se ha podido mostrar la lista de estados de intervención");
+        } catch (Exception e) {
+            throw new TicketCustomExceptions.EstadoIntervencionListException("Error: no se ha podido mostrar la lista de estados de intervención", e);
         }
     }
 
@@ -46,8 +45,8 @@ public class EstadoIntervencionServiceImpl implements IEstadoIntervencionService
     public Optional<EstadoIntervencion> findById(Long id) {
         try {
             return estadoRepository.findById(id);
-        } catch (Error e) {
-            throw new RuntimeErrorException(e, "Error: no se ha podido mostrar el estado de intervención");
+        } catch (Exception e) {
+            throw new TicketCustomExceptions.EstadoIntervencionNotFoundException("Error: no se ha podido mostrar el estado de intervención", e);
         }
     }
 
@@ -56,8 +55,8 @@ public class EstadoIntervencionServiceImpl implements IEstadoIntervencionService
     public void save(EstadoIntervencion object) {
         try {
             estadoRepository.save(object);
-        } catch (Error e) {
-            throw new RuntimeErrorException(e, "Error: no se ha podido guardar el estado de intervención");
+        } catch (Exception e) {
+            throw new TicketCustomExceptions.EstadoIntervencionSaveException("Error: no se ha podido guardar el estado de intervención", e);
         }
     }
 }

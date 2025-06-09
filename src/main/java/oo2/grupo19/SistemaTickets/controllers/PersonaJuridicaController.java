@@ -15,11 +15,15 @@ import oo2.grupo19.SistemaTickets.dto.PersonaJuridicaDTO;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 import oo2.grupo19.SistemaTickets.services.impl.PersonaJuridicaService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Controller
 @RequestMapping("/grupo")
 @Log4j2
 public class PersonaJuridicaController {
     private PersonaJuridicaService personaJuridicaService;
+    private static final Logger logger = LoggerFactory.getLogger(PersonaJuridicaController.class);
 
     public PersonaJuridicaController (PersonaJuridicaService personaJuridicaService) {
         this.personaJuridicaService = personaJuridicaService;
@@ -29,6 +33,7 @@ public class PersonaJuridicaController {
     @GetMapping ("/crear")
     public String addPersonaJuridica (Model model, Authentication authentication) 
     {
+        logger.info("Acceso a formulario de creación de persona jurídica por: {}", authentication != null ? authentication.getName() : "desconocido");
         PersonaJuridicaDTO dto = new PersonaJuridicaDTO ();
         model.addAttribute("personaJuridicaDTO", dto);
 
@@ -42,6 +47,7 @@ public class PersonaJuridicaController {
         Authentication authentication) 
     {
         personaJuridicaDTO = personaJuridicaService.crearPersonaJuridica (personaJuridicaDTO);
+        logger.info("Persona jurídica creada con código: {} por: {}", personaJuridicaDTO.getCodigoAcceso(), authentication != null ? authentication.getName() : "desconocido");
 
         return "redirect:/grupo/" + personaJuridicaDTO.getCodigoAcceso ();
     }
@@ -52,6 +58,7 @@ public class PersonaJuridicaController {
     {
         PersonaJuridicaDTO dto = personaJuridicaService.buscarPersonaJuridica(code);
         model.addAttribute("personaJuridicaDTO", dto);
+        logger.info("Vista de persona jurídica accedida para código: {}", code);
 
         return ViewRouteHelper.VIEW_PERSONA_JURIDICA;
     }
