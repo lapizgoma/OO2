@@ -7,6 +7,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.entities.Contacto;
 import oo2.grupo19.SistemaTickets.entities.Empleado;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
@@ -16,6 +17,7 @@ import oo2.grupo19.SistemaTickets.entities.estados.EstadoIntervencion;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoTicket;
 import oo2.grupo19.SistemaTickets.entities.estados.Prioridad;
 import oo2.grupo19.SistemaTickets.entities.estados.Role;
+import oo2.grupo19.SistemaTickets.entities.estados.enums.RoleType;
 import oo2.grupo19.SistemaTickets.repositories.estados.IEstadoIntervencion;
 import oo2.grupo19.SistemaTickets.repositories.estados.IEstadoTicket;
 import oo2.grupo19.SistemaTickets.repositories.estados.IPrioridad;
@@ -57,8 +59,9 @@ public CommandLineRunner cargarEstados(IEstadoIntervencion estadoIntervencionRep
 
         if (roleRepository.count() == 0) {
             roleRepository.saveAll(List.of(
-                new Role(1L, "Administrador"),
-                new Role(2L, "Empleado")
+                new Role(1L, RoleType.USER),
+                new Role(2L, RoleType.EMPLOYEE),
+                new Role(3L, RoleType.ADMIN)
             ));
         }
 
@@ -91,7 +94,7 @@ public CommandLineRunner cargarEstados(IEstadoIntervencion estadoIntervencionRep
             empleado.setPassword("empleado");
             empleado.setNroLegajo("13333");
             empleado.setDni("11111111");
-            empleado.setRole(roleRepository.findById(2L).orElseThrow());
+            empleado.agregarRoles(roleRepository.findById(2L).get());
             empleado.setContacto(contacto);
             empleado.asignarContactoUsuario();
             // ... otros campos necesarios
@@ -121,6 +124,53 @@ public CommandLineRunner cargarEstados(IEstadoIntervencion estadoIntervencionRep
             System.out.println("Cliente de prueba creado.");
         } else {
             System.out.println("Cliente de prueba ya existe.");
+        }
+
+        if (empleadoRepository.findByEmail("admin@admin.com").isEmpty()) {
+            Empleado admin = new Empleado();
+            Contacto contacto = new Contacto();
+            contacto.setCalle("123123");
+            contacto.setEmail("admin@admin.com");
+            contacto.setLocalidad("aaaaaa");
+            contacto.setNroPuerta("44");
+            contacto.setTelefono("44442244");
+            admin.setNombre("admin");
+            admin.setApellido("de prueba");
+            admin.setPassword("admin");
+            admin.setNroLegajo("4444");
+            admin.setDni("44444444");
+            admin.agregarRoles(roleRepository.findById(3L).get());
+            admin.setContacto(contacto);
+            admin.asignarContactoUsuario();
+            // ... otros campos necesarios
+
+            empleadoRepository.registrarUsuario(admin);
+            System.out.println("admin de prueba creado.");
+        } else {
+            System.out.println("admin de prueba ya existe.");
+        }
+
+        if (empleadoRepository.findByEmail("cliente@cliente.com").isEmpty()) {
+            Cliente cliente = new Cliente ();
+            Contacto contacto = new Contacto ();
+            contacto.setCalle ("2312312");
+            contacto.setEmail ("cliente@cliente.com");
+            contacto.setLocalidad ("SDASDAS");
+            contacto.setNroPuerta ("33");
+            contacto.setTelefono ("3333333");
+            cliente.setNombre ("Viernes");
+            cliente.setApellido ("de prueba");
+            cliente.setPassword ("cliente");
+            cliente.setDni ("1231123");
+            cliente.agregarRoles (roleRepository.findById (1L).get ());
+            cliente.setContacto (contacto);
+            cliente.asignarContactoUsuario ();
+            // ... otros campos necesarios
+
+            empleadoRepository.registrarUsuario (cliente);
+            System.out.println ("Usuario de prueba creado.");
+        } else {
+            System.out.println ("Usuario de prueba ya existe.");
         }
 
     };

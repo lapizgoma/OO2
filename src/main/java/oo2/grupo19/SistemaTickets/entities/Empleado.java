@@ -54,7 +54,6 @@ public class Empleado extends Usuario {
     EmpleadoDTO empleadoDto = new EmpleadoDTO();
     empleadoDto.setId(this.id);
     empleadoDto.setNombre(this.nombre);
-    empleadoDto.setRole(this.role.toString());
     return empleadoDto;
   }
 

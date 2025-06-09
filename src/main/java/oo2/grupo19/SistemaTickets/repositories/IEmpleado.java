@@ -14,6 +14,8 @@ public interface IEmpleado extends JpaRepository<Empleado, Long> {
     @Query("SELECT e FROM Empleado e")
     List<Empleado> findAllEmpleados();
 
+    List<Empleado> findAllByDeletedFalse();
+
     Optional<Empleado> findByNombre(String nombre);
     
 }

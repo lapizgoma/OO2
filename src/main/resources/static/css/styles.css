@@ -1,48 +1,164 @@
-/* Archivo: /static/css/styles.css*/
+/* src/main/resources/static/css/styles.css */
 
-:root {
-    --color-bg: #0f172a;  
-    --color-text: #f1f5f9; 
-    --color-accent: #3b82f6;   
-    --color-hover: #2563eb;
-    --font-body: 'Inter', sans-serif;
-}
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
+/* Aplicar fuente Inter */
 body {
-    background-color: var(--color-bg);
-    color: var(--color-text);
-    font-family: var(--font-body);
-    line-height: 1.6;
-    min-height: 100vh;
-    display: flex;
+  font-family: 'Inter', sans-serif;
+  background-color: #1A1A1A; /* Fondo gris oscuro */
+  color: #E5E7EB; /* Blanco roto para texto */
+}
+
+/* Ajustar navbar */
+.navbar-dark {
+  background-color: #343A40 !important; /* Gris medio para la navbar */
+}
+
+.navbar-brand {
+  font-weight: 700;
+  color: #E5E7EB !important;
+}
+
+/* Estilo general para los enlaces de la navbar, sin afectar botones */
+.navbar-nav .nav-link:not(.btn) {
+  color: #E5E7EB !important;
+}
+
+/* Estilo para el botón Login */
+.btn-login {
+  background-color: #4A90E2 !important; /* Azul suave */
+  border-color: #4A90E2 !important;
+  color: #1A1A1A !important; /* Texto oscuro para contraste */
+}
+
+.btn-login:hover {
+  background-color: #357ABD !important; /* Azul más oscuro al hover */
+  border-color: #357ABD !important;
+}
+
+/* Estilo para el botón Registrarse */
+.btn-register {
+  background-color: #E5E7EB !important; /* Blanco roto */
+  border-color: #E5E7EB !important;
+  color: #1A1A1A !important; /* Texto oscuro */
+}
+
+.btn-register:hover {
+  background-color: #CBD5E1 !important; /* Blanco roto más claro al hover */
+  border-color: #CBD5E1 !important;
+}
+
+/* Estilo para el botón Logout */
+.btn-logout {
+  background-color: #6C757D !important; /* Gris oscuro */
+  border-color: #6C757D !important;
+  color: #FFFFFF !important; /* Texto blanco */
+}
+
+.btn-logout:hover {
+  background-color: #565E64 !important; /* Gris más oscuro al hover */
+  border-color: #565E64 !important;
+}
+
+/* Estilos para botones */
+.btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  text-decoration: none;
+}
+
+.btn-primary {
+  background-color: #4A90E2 !important;
+  border-color: #4A90E2 !important;
+}
+
+.btn-primary:hover {
+  background-color: #357ABD !important;
+  border-color: #357ABD !important;
+}
+
+.btn-secondary {
+  background-color: #6C757D !important;
+  border-color: #6C757D !important;
+}
+
+.btn-secondary:hover {
+  background-color: #565E64 !important;
+  border-color: #565E64 !important;
+}
+
+.btn-danger {
+  background-color: #DC3545 !important;
+  border-color: #DC3545 !important;
+}
+
+.btn-danger:hover {
+  background-color: #B02A37 !important;
+  border-color: #B02A37 !important;
+}
+
+/* Estilos para las cajas de empleados */
+.employee-card {
+  background-color: #2D2D2D;
+  border: 1px solid #4A90E2;
+  border-radius: 5px;
+  transition: all 0.2s ease;
+}
+
+.employee-card:hover {
+  background-color: #343A40;
+  transform: translateY(-5px);
+}
+
+/* Estilos generales */
+.text-white-50 {
+  color: #A0AEC0 !important; /* Gris claro para texto secundario */
+}
+
+.text-primary {
+  color: #4A90E2 !important; /* Azul suave para títulos */
+}
+
+.mt-5 {
+  margin-top: 3rem !important;
+}
+
+/* Styles para la vista Registro Exitoso */
+.card-success {
+  background-color: #1e1e1e;
+  border: none;
+}
+
+.card-success .card-title {
+  color: #E5E7EB;
+  font-weight: 700;
+}
+
+.card-success .card-text {
+  color: #E5E7EB;
+}
+
+.card-success .btn-primary {
+  background-color: #4A90E2 !important;
+  border-color: #4A90E2 !important;
+  color: #1A1A1A !important;
+}
+
+.card-success .btn-primary:hover {
+  background-color: #357ABD !important;
+  border-color: #357ABD !important;
+}
+
+
+/* Responsive */
+@media (max-width: 576px) {
+  .navbar-nav .nav-link {
+    padding: 10px 0;
+  }
+  .navbar-nav .d-flex {
     flex-direction: column;
-}
-
-a {
-    color: var(--color-accent);
-    text-decoration: none;
-}
-
-a:hover {
-    color: var(--color-hover);
-    text-decoration: underline;
-}
-
-header, footer {
-    padding: 1rem;
-    background-color: #1e293b; /* un poco más claro */
-    text-align: center;
-}
-
-main {
-    flex: 1;
-    padding: 2rem;
-    max-width: 800px;
-    margin: 0 auto;
+    gap: 10px;
+  }
 }

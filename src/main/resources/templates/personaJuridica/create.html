@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Persona Jurídica</title>
+</head>
+<body>
+    
+    <h1>Agregar Persona Jurídica</h1>
+    <form th:object="${personaJuridicaDTO}" th:action="@{/grupo/crear}" method="post">
+        <div>
+            <label for="razonSocial">Razón Social:</label>
+            <input type="text" th:field="*{razonSocial}" id="razonSocial" />
+            <span th:if="${#fields.hasErrors('razonSocial')}" th:errors="*{razonSocial}">Error</span>
+        </div>
+        <div>
+            <label for="cuit">CUIT:</label>
+            <input type="text" th:field="*{cuit}" id="cuit" />
+            <span th:if="${#fields.hasErrors('cuit')}" th:errors="*{cuit}">Error</span>
+        </div>
+        <div>
+            <input type="submit" value="Añadir" />
+        </div>
+    </form>
+    
+</body>
+</html>

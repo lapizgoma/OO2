@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml"> -->
+<head>
+    <title>Ticket - Sporte</title>
+</head>
+
+<body>
+    <h1>Ticket</h1>
+    <hr />
+
+    <!-- Vista para ticketEmployeeDTO -->
+    <div th:if="${ticketEmployeeDTO != null}">
+        <p>Información del Ticket:</p>
+        <p>Id: <span th:text="${ticketEmployeeDTO.id}">Id</span></p>
+        <p>Estado: <span th:text="${ticketEmployeeDTO.estado}">Estado</span></p>
+        <p>Prioridad: <span th:text="${ticketEmployeeDTO.prioridad}">Prioridad</span></p>
+        <p>Nombre: <span th:text="${ticketEmployeeDTO.usuarioNombre}">Nombre</span></p>
+        <p>Apellido: <span th:text="${ticketEmployeeDTO.usuarioApellido}">Apellido</span></p>
+        <p>Asunto: <span th:text="${ticketEmployeeDTO.asunto}">Asunto</span></p>
+        <p>Detalle: <span th:text="${ticketEmployeeDTO.detalle}">Detalle</span></p>
+        <p>Fecha creado: <span th:text="${ticketEmployeeDTO.fechaHoraCreado}">Fecha creado</span></p>
+        <hr />
+        <p>Contacto del Cliente:</p>
+        <p>Email: <span th:text="${ticketEmployeeDTO.usuarioContactoDTO.email}">Email</span></p>
+        <p>Teléfono: <span th:text="${ticketEmployeeDTO.usuarioContactoDTO.telefono}">Teléfono</span></p>
+        <p>Dirección:
+            <span
+                th:text="${ticketEmployeeDTO.usuarioContactoDTO.calle} + ' ' + ${ticketEmployeeDTO.usuarioContactoDTO.nroPuerta} + ', ' + ${ticketEmployeeDTO.usuarioContactoDTO.localidad}">Dirección</span>
+        </p>
+        <hr />
+        <p>Intervenciones:</p>
+        <ul th:each="intervencion : ${ticketEmployeeDTO.intervenciones}">
+            <li>
+                Fecha: <span th:text="${intervencion.fecha}">Fecha</span><br>
+                Descripción: <span th:text="${intervencion.descripcion}">Descripción</span><br>
+                Estado: <span th:text="${intervencion.estado}">Estado</span><br>
+                Realizado por:
+                <span
+                    th:text="${intervencion.realizadoPor.nombre} + ' ' + ${intervencion.realizadoPor.apellido}">Realizado
+                    por</span>
+            </li>
+        </ul>
+        <hr />
+        <a th:if="${ticketEmployeeDTO.empleadoPertenece}" th:href="@{/intervencion/create/{idTicket}(idTicket=${ticketEmployeeDTO.id})}">Crear Intervención</a>
+        <hr />
+
+        <!-- Checkea que tenga rol ADMIN -->
+        <div sec:authorize="hasRole('ADMIN')">
+            <p>Empleados:</p>
+            <ul th:each="empleado : ${ticketEmployeeDTO.listEmpleados}">
+                <li>
+                    Nombre: <span th:text="${empleado.nombre}">Nombre</span><br>
+                    Apellido: <span th:text="${empleado.apellido}">Apellido</span><br>
+                    DNI: <span th:text="${empleado.dni}">DNI</span><br>
+                    Legajo: <span th:text="${empleado.nroLegajo}">Legajo</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Vista para ticketClienteDTO -->
+    <div th:if="${ticketClientDTO != null}">
+        <p>Fecha creado: <span th:text="${ticketClientDTO.fechaHoraCreado}">Fecha creado</span></p>
+        <p>Estado: <span th:text="${ticketClientDTO.estado}">Estado</span></p>
+        <p>Asunto: <span th:text="${ticketClientDTO.asunto}">Asunto</span></p>
+        <p>Detalle: <span th:text="${ticketClientDTO.detalle}">Detalle</span></p>
+        <hr />
+        <p>Intervenciones:</p>
+        <ul th:each="intervencion : ${ticketClientDTO.intervenciones}">
+            <li>
+                Fecha: <span th:text="${intervencion.fecha}">Fecha</span><br>
+                Descripción: <span th:text="${intervencion.descripcion}">Descripción</span><br>
+                Estado: <span th:text="${intervencion.estado}">Estado</span><br>
+                Realizado por:
+                <span
+                    th:text="${intervencion.realizadoPor.nombre} + ' ' + ${intervencion.realizadoPor.apellido}">Realizado
+                    por</span>
+            </li>
+        </ul>
+    </div>
+</body>
+
+</html>

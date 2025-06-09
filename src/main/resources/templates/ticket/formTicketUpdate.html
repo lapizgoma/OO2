@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}"></title>
+</head>
+<body>
+    <h1 th:text="${title}"></h1>
+
+    <form th:action="@{/ticket/update-ticket}" th:object="${ticket}" method="post">
+        
+        <input type="hidden" name="ticketId" th:value="${ticketId}">
+
+        <p th:text="*{id}"> id del ticket</p>
+        <div>
+            <select th:field="*{prioridad.id}">
+                <option value="">Seleccion alguna prioridad para el ticket</option>
+                <option th:each="est: ${estadoPrioridad}"
+                        th:value="${est.id}"
+                        th:text="${est.prioridad}">
+                </option>
+            </select>
+        </div>
+
+        <button type="submit">Actualizar ticket</button>
+        
+    </form>
+</body>
+</html>

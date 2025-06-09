@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Eliminación de cuenta</title>
+</head>
+<body>
+    <h2>¿Confirmás la eliminación de tu cuenta?</h2>
+    <form th:action="@{/cuenta/eliminar}" method="get">
+        <button type="submit" name="confirmed" value="true">Sí, confirmo</button>
+        <button type="button" onclick="window.history.back()">No, cancelar</button>
+    </form>    
+</body>
+</html>

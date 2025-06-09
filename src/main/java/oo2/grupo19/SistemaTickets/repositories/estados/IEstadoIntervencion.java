@@ -7,5 +7,4 @@ import oo2.grupo19.SistemaTickets.entities.estados.EstadoIntervencion;
 
 @Repository
 public interface IEstadoIntervencion extends JpaRepository<EstadoIntervencion,Long>{
-
 }

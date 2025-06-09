@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import oo2.grupo19.SistemaTickets.entities.Empleado;
 import oo2.grupo19.SistemaTickets.repositories.IEmpleado;
 import oo2.grupo19.SistemaTickets.repositories.ITicket;
+import oo2.grupo19.SistemaTickets.repositories.estados.IRole;
 import oo2.grupo19.SistemaTickets.services.IService;
 
 @Service
@@ -17,10 +18,12 @@ public class EmpleadoServiceImpl implements IService<Empleado> {
     
     private final IEmpleado empleadoRepository;
     private final ITicket ticketRepository;
+    private final IRole roleRepository;
 
-    public EmpleadoServiceImpl(IEmpleado empleadoRepository, ITicket ticketRepository) {
+    public EmpleadoServiceImpl(IEmpleado empleadoRepository, ITicket ticketRepository, IRole roleRepository) {
         this.empleadoRepository = empleadoRepository;
         this.ticketRepository = ticketRepository;
+        this.roleRepository = roleRepository;
     }
 
     @Override
@@ -67,14 +70,46 @@ public class EmpleadoServiceImpl implements IService<Empleado> {
             throw new RuntimeException("No se hay podido mostrar los empleados");
         }
     }
+
+    @Transactional(readOnly = true)
+	public List<Empleado> traerEmpleadosActivos(){
+        try{
+            return empleadoRepository.findAllByDeletedFalse();
+        }catch(Error e){
+            throw new RuntimeException("No se hay podido mostrar los empleados");
+        }
+    }
     
     @Transactional
-	void agregarEmpleado(Empleado empleado){
+	public void agregarEmpleado(Empleado empleado){
         try{
+            long ultimoLegajo;
+		
+		    if(traerEmpleados().isEmpty()) {
+			    ultimoLegajo = 10000;
+		    } else {
+			    ultimoLegajo = Long.parseLong(traerEmpleados().getLast().getNroLegajo()) + 1;
+		    }
+            empleado.setNroLegajo(Long.toString(ultimoLegajo));
             save(empleado);
         }catch(Error e){
             throw new RuntimeException("No se ha podido persistir el empleado");
         }
+    }
+
+    @Transactional
+    public void darBajaEmpleado(Long id){
+        Optional <Empleado> empleado = findById(id);
+        if(empleado.isPresent()){
+            empleado.get().darDeBaja();
+        }else{
+            throw new RuntimeException("No se ha encontrado el empleado con ese id");
+        }
+    }
+
+    @Transactional
+    public List<Empleado> listarTodos() {
+        return empleadoRepository.findAll();
     }
 
 }

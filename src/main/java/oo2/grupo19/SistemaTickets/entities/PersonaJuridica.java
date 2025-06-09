@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,11 +25,15 @@ public class PersonaJuridica {
     private Long id;    
 
     @Column(name = "razon_social")
+    @NotBlank(message = "La razon social no debe estar vacia")
     private String razonSocial;
 
+    @Column(name = "cuit")
+    @NotBlank(message = "El cuit no debe estar vacio")
     private String cuit;
 
-    @NotBlank
+    @Column(name = "codigo_acceso")
+    @NotBlank(message = "El codigo de acceso no tiene que estar vacio")
     private String codigoAcceso;
 
     @OneToMany(mappedBy = "organizacion")

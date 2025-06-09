@@ -63,7 +63,7 @@ public class Ticket {
     private EstadoTicket estado;
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "prioridad_id",nullable = false)
+	@JoinColumn(name = "prioridad_id",nullable = true)
 	private Prioridad prioridad;
 
 	@Column(length = 1000, nullable = false)
@@ -105,7 +105,7 @@ public class Ticket {
 
 		// Verifica si el usuario (u) pertenece al Ticket o no
 	public boolean usuarioPertenece (Usuario u) {
-		return this.creadoPor == u || this.listEmpleado.contains(u);
+		return this.creadoPor.getId().equals(u.getId()) || this.listEmpleado.stream().anyMatch(empleado -> empleado.getId().equals(u.getId()));
 	}
 
 	@PrePersist
