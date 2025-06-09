@@ -72,7 +72,6 @@ public class AuthController {
             cliente.setContacto(contacto);
             cliente.setOrganizacion(new PersonaJuridica());
             model.addAttribute("cliente", cliente);
-            model.addAttribute("errors",new HashMap<String,String>());
         }
         return ViewRouteHelper.REGISTER;
     }

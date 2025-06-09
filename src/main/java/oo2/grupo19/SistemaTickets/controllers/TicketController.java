@@ -114,7 +114,6 @@ public class TicketController {
         ticket.setEstado(estadoTicketRepository.findById(1L).get());
         ticket.setCreadoPor(clienteDb);
         ticket.setDetalle(contenido);
-        // Ser cuidadoso con esto. No esta probado, asi que puede fallar.
         ticket.setListEmpleado(empleadoRepository.findAll());
         ticketService.save(ticket);
         model.addAttribute("title","Ticket create");
