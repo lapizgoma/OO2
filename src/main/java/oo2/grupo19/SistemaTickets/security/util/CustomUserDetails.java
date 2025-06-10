@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 
 import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.entities.Empleado;
@@ -37,7 +36,10 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (usuario instanceof Empleado empleado) {
-            return List.of(new SimpleGrantedAuthority("ROLE_" + empleado.getRoles().stream().map(e -> e.getType().toString())));
+            // Mapea cada rol a un SimpleGrantedAuthority individual
+            return empleado.getRoles().stream()
+                .map(r -> new SimpleGrantedAuthority("ROLE_" + r.getType().toString()))
+                .toList();
         } else if (usuario instanceof Cliente) {
             return List.of(new SimpleGrantedAuthority("ROLE_USER"));
         }

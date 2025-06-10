@@ -14,62 +14,16 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <!-- Izquierda: Bienvenido o título -->
-            <div th:if="${#authorization.expression('isAuthenticated()')}">
-                <span class="navbar-brand">Bienvenido, <span th:text="${#authentication.principal.nombre}">Usuario</span>!</span>
-            </div>
-            <div th:unless="${#authorization.expression('isAuthenticated()')}">
-                <a class="navbar-brand" href="#">Sistema de Tickets UNLa</a>
-            </div>
-
-            <!-- Botón hamburguesa para mobile -->
+            <a class="navbar-brand" href="#">Sistema de Tickets UNLa</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
-            <!-- Derecha: Opciones según rol o login/register -->
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <!-- Opciones para usuarios autenticados -->
-                    <div th:if="${#authorization.expression('isAuthenticated()')}">
-                        <!-- Rol USER -->
-                        <div sec:authorize="hasRole('USER')">
-                            <li class="nav-item">
-                                <a class="nav-link" th:href="@{/ticket/create}">Crear Ticket</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" th:href="@{/ticket/history}">Ver Historial de Tickets</a>
-                            </li>
-                        </div>
-                        <!-- Rol EMPLEADO -->
-                        <div sec:authorize="hasRole('EMPLEADO')">
-                            <li class="nav-item">
-                                <a class="nav-link" th:href="@{/tickets}">Ver Tickets</a>
-                            </li>
-                        </div>
-                        <!-- Rol ADMIN -->
-                        <div sec:authorize="hasRole('ADMIN')">
-                            <li class="nav-item">
-                                <a class="nav-link" th:href="@{/tickets}">Ver Tickets</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" th:href="@{/empleados}">Ver Empleados</a>
-                            </li>
-                        </div>
-                        <!-- Logout -->
-                        <li class="nav-item">
-                            <form th:action="@{/auth/logout}" method="post" class="d-inline">
-                                <button type="submit" class="nav-link btn btn-link text-white">Logout</button>
-                            </form>
-                        </li>
-                    </div>
-                    <!-- Opciones para no autenticados -->
-                    <div th:unless="${#authorization.expression('isAuthenticated()')}">
-                        <li class="nav-item d-flex">
-                            <a class="nav-link btn btn-login me-2" th:href="@{/auth/login}">Login</a>
-                            <a class="nav-link btn btn-register" th:href="@{/auth/register}">Registrarse</a>
-                        </li>
-                    </div>
+                    <li class="nav-item d-flex">
+                        <a class="nav-link btn btn-login me-2" th:href="@{/auth/login}">Login</a>
+                        <a class="nav-link btn btn-register" th:href="@{/auth/register}">Registrarse</a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -77,42 +31,6 @@
 
     <!-- Contenido del body -->
     <div class="container mt-5 text-center vh-100 d-flex flex-column justify-content-center">
-        <!-- Para usuarios autenticados -->
-        <div th:if="${#authorization.expression('isAuthenticated()')}">
-            <h1 class="mb-4">Panel de Control</h1>
-            <div class="alert alert-info">
-                <p>Bienvenido al Sistema de Tickets UNLa, <span th:text="${#authentication.principal.nombre}">Usuario</span>.</p>
-                <p>Selecciona una opción desde la barra de navegación para continuar.</p>
-            </div>
-            <!-- Accesos rápidos según rol -->
-            <div sec:authorize="hasRole('USER')">
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Accesos Rápidos</h5>
-                        <a th:href="@{/ticket/create}" class="btn btn-primary me-2">Crear Ticket</a>
-                        <a th:href="@{/ticket/history}" class="btn btn-secondary">Ver Historial</a>
-                    </div>
-                </div>
-            </div>
-            <div sec:authorize="hasRole('EMPLEADO')">
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Accesos Rápidos</h5>
-                        <a th:href="@{/tickets}" class="btn btn-primary">Ver Tickets</a>
-                    </div>
-                </div>
-            </div>
-            <div sec:authorize="hasRole('ADMIN')">
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Accesos Rápidos</h5>
-                        <a th:href="@{/tickets}" class="btn btn-primary me-2">Ver Tickets</a>
-                        <a th:href="@{/empleados}" class="btn btn-secondary">Ver Empleados</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Para usuarios no autenticados (Landing Page) -->
         <div th:unless="${#authorization.expression('isAuthenticated()')}">
             <!-- Hero Section -->

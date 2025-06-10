@@ -1,89 +1,53 @@
 package oo2.grupo19.SistemaTickets.dto.mappers;
 
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import oo2.grupo19.SistemaTickets.dto.EmpleadoDTO;
-import oo2.grupo19.SistemaTickets.dto.IntervencionDTO;
-import oo2.grupo19.SistemaTickets.dto.TicketClientDTO;
-import oo2.grupo19.SistemaTickets.dto.TicketEmployeeDTO;
-import oo2.grupo19.SistemaTickets.entities.Empleado;
-import oo2.grupo19.SistemaTickets.entities.Intervencion;
+import oo2.grupo19.SistemaTickets.dto.TicketDTO;
 import oo2.grupo19.SistemaTickets.entities.Ticket;
 
-public class TicketMapper {
-    public static TicketEmployeeDTO mapToTicketEmployeeDto(Ticket ticket, Empleado empleadoSolicitante) {
+public final class TicketMapper {
+    private TicketMapper() {}
+
+    public static TicketDTO mapToTicketDto(Ticket ticket) {
         if (ticket == null) {
             return null;
         }
-
-        TicketEmployeeDTO dto = new TicketEmployeeDTO ();
-
-        dto.setId (ticket.getId());
-        dto.setAsunto (ticket.getAsunto());
-        dto.setDetalle (ticket.getDetalle ());
-        dto.setFechaHoraCreado (ticket.getFechaHora ().format (DateTimeFormatter.ofPattern ("dd/MM/yyyy HH:mm")));
-        List<EmpleadoDTO> empleados = new ArrayList<>();
-        if (ticket.getListEmpleado () != null)
-        {
-            for (Empleado empleado : ticket.getListEmpleado ()) 
-            {
-                empleados.add(EmpleadoMapper.mapToEmpleadoDto(empleado));
-            }
+        TicketDTO dto = new TicketDTO();
+        dto.setId(ticket.getId());
+        dto.setAsunto(ticket.getAsunto());
+        dto.setEstado(ticket.getEstado() != null ? ticket.getEstado().getEstado() : null);
+        // Cliente
+        if (ticket.getCreadoPor() != null) {
+            dto.setCliente(ticket.getCreadoPor().usuarioToDto());
         }
-        dto.setListEmpleados (empleados);
-
-        if (ticket.usuarioPertenece(empleadoSolicitante)) 
-        {
-            dto.setEmpleadoPertenece(true);
+        // Empleados
+        if (ticket.getListEmpleado() != null) {
+            dto.setEmpleados(ticket.getListEmpleado().stream().map(EmpleadoMapper::mapToEmpleadoDto).collect(Collectors.toList()));
         }
-
-        List<IntervencionDTO> intervenciones = new ArrayList<>();
-        if (ticket.getLstIntervencion () != null) 
-        {
-            for (Intervencion intervencion : ticket.getLstIntervencion()) 
-            {
-                intervenciones.add(IntervencioMapper.mapToIntervencionDto(intervencion));
-            }
+        // Intervenciones
+        if (ticket.getLstIntervencion() != null) {
+            dto.setIntervencion(ticket.getLstIntervencion().stream().map(IntervencioMapper::mapToIntervencionDto).collect(Collectors.toList()));
         }
-        dto.setIntervenciones (intervenciones);
-
-        dto.setEstado (ticket.getEstado ().getEstado ());
-        dto.setPrioridad (ticket.getPrioridad());
-        // Datos del cliente
-        dto.setUsuarioNombre (ticket.getCreadoPor ().getNombre ());
-        dto.setUsuarioApellido (ticket.getCreadoPor ().getApellido ());
-        dto.setUsuarioContactoDTO (ContactoMapper.mapToContactoDto (ticket.getCreadoPor ().getContacto ()));
-
         return dto;
     }
-    
-    public static TicketClientDTO mapToTicketClientDto(Ticket ticket) {
-        if (ticket == null) {
-            return null;
-        }
 
-        TicketClientDTO dto = new TicketClientDTO();
+    public static Ticket mapToTicketEntity(TicketDTO dto) {
+        if (dto == null) return null;
+        Ticket ticket = new Ticket();
+        ticket.setId(dto.getId());
+        ticket.setAsunto(dto.getAsunto());
+        // Estado y relaciones deben ser seteadas por el servicio según lógica de negocio
+        return ticket;
+    }
 
-        dto.setId (ticket.getId ());
-        dto.setAsunto (ticket.getAsunto ());
-        dto.setDetalle (ticket.getDetalle ());
-        dto.setFechaHoraCreado (ticket.getFechaHora ().format (DateTimeFormatter.ofPattern ("dd/MM/yyyy HH:mm")));
+    public static List<TicketDTO> mapToTicketDtoList(List<Ticket> tickets) {
+        return tickets == null ? List.of() :
+            tickets.stream().map(TicketMapper::mapToTicketDto).collect(Collectors.toList());
+    }
 
-        List<IntervencionDTO> intervenciones = new ArrayList<>();
-        if (ticket.getLstIntervencion () != null) {
-            for (Intervencion intervencion : ticket.getLstIntervencion()) {
-                intervenciones.add(IntervencioMapper.mapToIntervencionDto(intervencion));
-            }
-        }
-        dto.setIntervenciones (intervenciones);
-
-        dto.setEstado (ticket.getEstado ().getEstado ());
-        // Datos del cliente
-        dto.setUsuarioNombre (ticket.getCreadoPor ().getNombre ());
-        dto.setUsuarioApellido (ticket.getCreadoPor ().getApellido ());
-
-        return dto;
+    public static List<Ticket> mapToTicketEntityList(List<TicketDTO> dtos) {
+        return dtos == null ? List.of() :
+            dtos.stream().map(TicketMapper::mapToTicketEntity).collect(Collectors.toList());
     }
 }

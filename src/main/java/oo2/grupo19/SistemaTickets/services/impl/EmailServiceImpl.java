@@ -16,8 +16,8 @@ import oo2.grupo19.SistemaTickets.services.EmailService;
 public class EmailServiceImpl implements EmailService {
     
     private final JavaMailSender mailSender;
-
     private final TemplateEngine templateEngine;
+    private final String mailFrom = "sistematicketv1@gmail.com";
 
     public EmailServiceImpl(JavaMailSender mailSender, TemplateEngine templateEngine) {
         this.mailSender = mailSender;
@@ -26,12 +26,17 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void enviarCorreoPlano(String destinatario, String asunto, String mensaje) {
-        SimpleMailMessage email = new SimpleMailMessage();
-        email.setTo(destinatario);
-        email.setSubject(asunto);
-        email.setText(mensaje);
-        email.setFrom("sistematicketv1@gmail.com");
-        mailSender.send(email);
+        try {
+            SimpleMailMessage email = new SimpleMailMessage();
+            email.setTo(destinatario);
+            email.setSubject(asunto);
+            email.setText(mensaje);
+            email.setFrom(mailFrom);
+            mailSender.send(email);
+        } catch (Exception e) {
+            // Aquí podrías loguear el error o lanzar una excepción personalizada
+            throw new RuntimeException("Error al enviar correo plano: " + e.getMessage(), e);
+        }
     }
 
     @Override
@@ -47,11 +52,14 @@ public class EmailServiceImpl implements EmailService {
             helper.setTo(destinatario);
             helper.setSubject(asunto);
             helper.setText(cuerpo, true); // true = HTML
-            helper.setFrom("sistematicketv1@gmail.com");
+            helper.setFrom(mailFrom);
 
             mailSender.send(mensaje);
         } catch (MessagingException e) {
-            e.printStackTrace();
+            // Aquí podrías loguear el error o lanzar una excepción personalizada
+            throw new RuntimeException("Error al enviar correo HTML: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("Error inesperado al enviar correo HTML: " + e.getMessage(), e);
         }
     }
 

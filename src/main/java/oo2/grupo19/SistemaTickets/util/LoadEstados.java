@@ -2,7 +2,6 @@ package oo2.grupo19.SistemaTickets.util;
 
 import java.util.List;
 
-import org.hibernate.Hibernate;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,9 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.entities.Contacto;
 import oo2.grupo19.SistemaTickets.entities.Empleado;
-import oo2.grupo19.SistemaTickets.entities.Cliente;
-import oo2.grupo19.SistemaTickets.entities.Ticket;
-import oo2.grupo19.SistemaTickets.entities.Usuario;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoIntervencion;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoTicket;
 import oo2.grupo19.SistemaTickets.entities.estados.Prioridad;
@@ -22,8 +18,6 @@ import oo2.grupo19.SistemaTickets.repositories.estados.IEstadoIntervencion;
 import oo2.grupo19.SistemaTickets.repositories.estados.IEstadoTicket;
 import oo2.grupo19.SistemaTickets.repositories.estados.IPrioridad;
 import oo2.grupo19.SistemaTickets.repositories.estados.IRole;
-import oo2.grupo19.SistemaTickets.repositories.ITicket;
-import oo2.grupo19.SistemaTickets.services.impl.EmpleadoServiceImpl;
 import oo2.grupo19.SistemaTickets.services.impl.UsuarioServiceImpl;
 
 @Configuration
@@ -31,13 +25,9 @@ import oo2.grupo19.SistemaTickets.services.impl.UsuarioServiceImpl;
 public class LoadEstados {
     private final UsuarioServiceImpl empleadoRepository;
     private final UsuarioServiceImpl clienteRepository;
-    private final IEstadoTicket estadoTicketRepository;
-    private final ITicket ticketRepository;
     
-    public LoadEstados(UsuarioServiceImpl empleadoRepository, UsuarioServiceImpl clienteRepository,IEstadoTicket estadoTicketRepository, ITicket ticketRepository) {
+    public LoadEstados(UsuarioServiceImpl empleadoRepository, UsuarioServiceImpl clienteRepository) {
         this.empleadoRepository = empleadoRepository;
-        this.estadoTicketRepository = estadoTicketRepository;
-        this.ticketRepository = ticketRepository;
         this.clienteRepository = clienteRepository;
     }
 

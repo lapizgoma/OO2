@@ -3,8 +3,6 @@ package oo2.grupo19.SistemaTickets.services.impl;
 import java.util.List;
 import java.util.Optional;
 
-import javax.management.RuntimeErrorException;
-
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.entities.Usuario;
-import oo2.grupo19.SistemaTickets.exceptions.UserNotFounException;
+import oo2.grupo19.SistemaTickets.exceptions.UserCustomExceptions;
 import oo2.grupo19.SistemaTickets.repositories.ICliente;
 import oo2.grupo19.SistemaTickets.repositories.IUsuario;
 import oo2.grupo19.SistemaTickets.services.IService;
@@ -55,11 +53,12 @@ public class ClienteServiceImpl implements IService<Cliente> {
             if(user.isEmpty()){
                 object.asignarContactoUsuario();
                 clienteRepository.save(object);
-            }else{
+            } else {
                 log.info("El usuario ya existe en la bd!");
+                throw new UserCustomExceptions.ClienteAlreadyExistsException("El cliente con email " + object.getContacto().getEmail() + " ya existe.");
             }
-        }catch(Error e){
-            throw new RuntimeErrorException(e,"No se ha podido actualizar/insertar el usuario");
+        } catch (Exception e) {
+            throw new UserCustomExceptions.ClienteServiceException("No se ha podido actualizar/insertar el usuario", e);
         }
     }
 
@@ -74,7 +73,7 @@ public class ClienteServiceImpl implements IService<Cliente> {
     public void eliminarCliente (String email) 
     {
         Cliente clienteEntity = clienteRepository.findByContactoEmail(email)
-        .orElseThrow(() -> new UserNotFounException("Cliente no encontrado :/"));
+        .orElseThrow(() -> new UserCustomExceptions.UserNotFoundException("Cliente no encontrado :/"));
 
         ((Usuario) clienteEntity).setDeleted(true);
         usuarioRepository.save(clienteEntity);

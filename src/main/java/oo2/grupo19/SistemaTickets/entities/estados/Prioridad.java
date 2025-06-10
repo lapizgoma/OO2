@@ -1,5 +1,6 @@
 package oo2.grupo19.SistemaTickets.entities.estados;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -18,5 +19,6 @@ public class Prioridad {
     private Long id;
 
     @NotBlank
+    @Column(nullable = false)
     private String prioridad;
 }
