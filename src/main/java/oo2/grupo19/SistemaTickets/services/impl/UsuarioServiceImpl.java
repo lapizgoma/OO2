@@ -3,6 +3,7 @@ package oo2.grupo19.SistemaTickets.services.impl;
 import java.util.List;
 import java.util.Optional;
 
+import oo2.grupo19.SistemaTickets.repositories.IEmpleado;
 import oo2.grupo19.SistemaTickets.services.IEmpleadoService;
 import oo2.grupo19.SistemaTickets.services.IUsuarioService;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,16 +22,16 @@ import oo2.grupo19.SistemaTickets.repositories.IUsuario;
 @Service
 @Qualifier("usuarioService")
 @Log4j2
-public class UsuarioServiceServiceImpl implements IUsuarioService {
+public class UsuarioServiceImpl implements IUsuarioService {
 
     private final IUsuario usuarioRepository;
-    private final IEmpleadoService empleadoService;
-    private final PasswordEncoder passwordEncoder;
+    private final IEmpleado empleadoRepository;
     private final ICliente clienteRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UsuarioServiceServiceImpl(IUsuario usuarioRepository, IEmpleadoService empleadoService, PasswordEncoder password, ICliente clienteRepository) {
+    public UsuarioServiceImpl(IUsuario usuarioRepository, IEmpleado empleadoService, PasswordEncoder password,ICliente clienteRepository) {
         this.usuarioRepository = usuarioRepository;
-        this.empleadoService = empleadoService;
+        this.empleadoRepository = empleadoService;
         this.passwordEncoder = password;
         this.clienteRepository = clienteRepository;
     }
@@ -106,9 +107,9 @@ public class UsuarioServiceServiceImpl implements IUsuarioService {
             usuario = usuario.toCliente();
         }
         if (usuario instanceof Cliente c) {
-            save(c);
+            clienteRepository.save(c);
         } else if (usuario instanceof Empleado e) {
-            empleadoService.save(e);
+            empleadoRepository.save(e);
         }
     }
 

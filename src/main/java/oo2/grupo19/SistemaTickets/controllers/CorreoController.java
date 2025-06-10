@@ -24,7 +24,7 @@ public class CorreoController {
     private final ClienteServiceImpl clienteService;
     private static final Logger logger = LoggerFactory.getLogger(CorreoController.class);
 
-    public CorreoController(EmailService emailService,ClienteServiceImpl clienteService) {
+    public CorreoController(EmailService emailService, ClienteServiceImpl clienteService) {
         this.emailService = emailService;
         this.clienteService = clienteService;
     }

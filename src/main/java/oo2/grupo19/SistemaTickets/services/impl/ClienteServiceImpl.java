@@ -17,12 +17,12 @@ import oo2.grupo19.SistemaTickets.repositories.IUsuario;
 
 @Service
 @Log4j2
-public class ClienteServiceServiceImpl implements IClienteService {
+public class ClienteServiceImpl implements IClienteService {
 
     private final ICliente clienteRepository;
     private final IUsuario usuarioRepository;
 
-    public ClienteServiceServiceImpl(ICliente clienteRepository, IUsuario usuarioRepository) {
+    public ClienteServiceImpl(ICliente clienteRepository, IUsuario usuarioRepository) {
         this.clienteRepository = clienteRepository;
         this.usuarioRepository = usuarioRepository;
     }

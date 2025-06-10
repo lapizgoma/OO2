@@ -3,6 +3,8 @@ import jakarta.validation.Valid;
 import oo2.grupo19.SistemaTickets.entities.Contacto;
 import oo2.grupo19.SistemaTickets.entities.Usuario;
 
+import oo2.grupo19.SistemaTickets.services.IClienteService;
+import oo2.grupo19.SistemaTickets.services.IUsuarioService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,12 +35,11 @@ import org.slf4j.LoggerFactory;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final UsuarioServiceImpl usuarioService;
+    private final IUsuarioService usuarioService;
     private final IRole roleRepository;
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
-    public AuthController(UsuarioServiceImpl usuario,
-            ClienteServiceImpl clienteService, IRole roleRepository) {
+    public AuthController(IUsuarioService usuario, IRole roleRepository) {
         this.usuarioService = usuario;
         this.roleRepository = roleRepository;
     }

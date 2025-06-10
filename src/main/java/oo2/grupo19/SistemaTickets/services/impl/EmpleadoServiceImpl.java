@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
+import oo2.grupo19.SistemaTickets.services.IEmpleadoService;
+import oo2.grupo19.SistemaTickets.services.IUsuarioService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,16 +13,15 @@ import oo2.grupo19.SistemaTickets.entities.Empleado;
 import oo2.grupo19.SistemaTickets.exceptions.UserCustomExceptions;
 import oo2.grupo19.SistemaTickets.repositories.IEmpleado;
 import oo2.grupo19.SistemaTickets.repositories.ITicket;
-import oo2.grupo19.SistemaTickets.services.IService;
 
 @Service
-public class EmpleadoServiceImpl implements IService<Empleado> {
+public class EmpleadoServiceImpl implements IEmpleadoService {
     
    private final IEmpleado empleadoRepository;
     private final ITicket ticketRepository;
-    private final UsuarioServiceImpl usuarioService;
+    private final IUsuarioService usuarioService;
 
-    public EmpleadoServiceImpl(IEmpleado empleadoRepository, ITicket ticketRepository, UsuarioServiceImpl usuarioService) {
+    public EmpleadoServiceImpl(IEmpleado empleadoRepository, ITicket ticketRepository, IUsuarioService usuarioService) {
         this.empleadoRepository = empleadoRepository;
         this.ticketRepository = ticketRepository;
         this.usuarioService = usuarioService;
@@ -123,4 +124,18 @@ public class EmpleadoServiceImpl implements IService<Empleado> {
     }
 
 
+    @Override
+    public List<Empleado> findAllEmpleados() {
+        return empleadoRepository.findAllEmpleados();
+    }
+
+    @Override
+    public List<Empleado> findAllByDeletedFalse() {
+        return empleadoRepository.findAllByDeletedFalse();
+    }
+
+    @Override
+    public Optional<Empleado> findByNombre(String nombre) {
+        return empleadoRepository.findByNombre(nombre);
+    }
 }

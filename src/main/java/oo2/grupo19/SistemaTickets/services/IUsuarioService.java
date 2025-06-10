@@ -5,7 +5,7 @@ import oo2.grupo19.SistemaTickets.entities.Usuario;
 import java.util.List;
 import java.util.Optional;
 
-public interface IUsuario {
+public interface IUsuarioService {
 
     void delete(Long id);
     List<Usuario> findAll();
