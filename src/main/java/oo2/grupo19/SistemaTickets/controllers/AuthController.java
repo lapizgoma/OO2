@@ -2,6 +2,7 @@ package oo2.grupo19.SistemaTickets.controllers;
 import jakarta.validation.Valid;
 import oo2.grupo19.SistemaTickets.entities.Contacto;
 import oo2.grupo19.SistemaTickets.entities.Usuario;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -55,8 +56,17 @@ public class AuthController {
     }
 
     @GetMapping("/loginSuccess")
-    public String loginCheck() {
+    public String loginCheck(Authentication authentication) {
         logger.info("Login exitoso");
+        if (authentication != null && authentication.isAuthenticated()) {
+            if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+                return "redirect:/admin/home";
+            } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
+                return "redirect:/empleado/home";
+            } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
+                return "redirect:/cliente/home";
+            }
+        }
         return ViewRouteHelper.INDEX;
     }
 

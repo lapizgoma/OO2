@@ -219,28 +219,43 @@ public class TicketController {
     }
 
     @GetMapping("/list-ticket-por-cliente")
-    public String ticketListByCliente(@RequestParam String email, Model model){
+    public String ticketListByCliente(@RequestParam String email, Model model, Authentication authentication){
         List<Ticket> tickets = ticketService.findTicketByCliente(email);
         model.addAttribute("tickets", tickets);
+        if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            return ViewRouteHelper.INDEX_ADMIN;
+        } else if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
+            return ViewRouteHelper.INDEX_EMPLOYEE;
+        }
         return "ticket/listTickets";
     }
 
     @GetMapping("/list-ticket-por-asunto")
-    public String ticketListByAsunto(@RequestParam String asunto, Model model){
+    public String ticketListByAsunto(@RequestParam String asunto, Model model, Authentication authentication){
         List<Ticket> tickets = ticketService.findTicketByAsunto(asunto);
         model.addAttribute("tickets", tickets);
+        if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            return ViewRouteHelper.INDEX_ADMIN;
+        } else if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
+            return ViewRouteHelper.INDEX_EMPLOYEE;
+        }
         return "ticket/listTickets";
     }
 
     @GetMapping("/list-ticket-por-empleado")
-    public String ticketListByEmpleado(@RequestParam String email, Model model){
+    public String ticketListByEmpleado(@RequestParam String email, Model model, Authentication authentication){
         List<Ticket> tickets = ticketService.findTicketByEmpleado(email);
         model.addAttribute("tickets", tickets);
+        if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            return ViewRouteHelper.INDEX_ADMIN;
+        } else if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
+            return ViewRouteHelper.INDEX_EMPLOYEE;
+        }
         return "ticket/listTickets";
     }
 
     @GetMapping("/list-ticket-por-estado")
-    public String ticketListByEstado(@RequestParam("estadoTicketId") Long estadoId, Model model){
+    public String ticketListByEstado(@RequestParam("estadoTicketId") Long estadoId, Model model, Authentication authentication){
         Optional<EstadoTicket> optionalEstado = estadoTicketService.findById(estadoId);
         if (optionalEstado.isPresent()) {
             EstadoTicket estado = optionalEstado.get();
@@ -249,11 +264,16 @@ public class TicketController {
         } else {
             model.addAttribute("error", "Estado no encontrado");
         }
+        if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            return ViewRouteHelper.INDEX_ADMIN;
+        } else if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
+            return ViewRouteHelper.INDEX_EMPLOYEE;
+        }
         return "ticket/listTickets";
     }
 
     @GetMapping("/list-ticket-por-prioridad")
-    public String ticketListByPrioridad(@RequestParam("prioridadId") Long prioridadId, Model model){
+    public String ticketListByPrioridad(@RequestParam("prioridadId") Long prioridadId, Model model, Authentication authentication){
         Optional<Prioridad> optionalPrioridad = prioridadService.findById(prioridadId);
         if (optionalPrioridad.isPresent()) {
             Prioridad prioridad = optionalPrioridad.get();
@@ -262,22 +282,32 @@ public class TicketController {
         } else {
             model.addAttribute("error", "Prioridad no encontrada");
         }
+        if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            return ViewRouteHelper.INDEX_ADMIN;
+        } else if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
+            return ViewRouteHelper.INDEX_EMPLOYEE;
+        }
         return "ticket/listTickets";
     }
 
     @GetMapping("/list-ticket-por-fecha")
-    public String ticketListByFecha(@RequestParam LocalDate fecha, Model model){
+    public String ticketListByFecha(@RequestParam LocalDate fecha, Model model, Authentication authentication){
         List<Ticket> tickets = ticketService.findTicketByFechaHora(fecha);
         model.addAttribute("tickets", tickets);
+        if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            return ViewRouteHelper.INDEX_ADMIN;
+        } else if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
+            return ViewRouteHelper.INDEX_EMPLOYEE;
+        }
         return "ticket/listTickets";
     }
 
-    @GetMapping("/list-ticket-cerrado-por-cliente")
+    /*@GetMapping("/list-ticket-por-cliente")
     public String ticketListByClienteCerrado(@RequestParam String email, Model model){
-        List<Ticket> tickets = ticketService.traerPorClienteCerrado(email);
+        List<Ticket> tickets = ticketService.traerPorCliente(email);
         model.addAttribute("tickets", tickets);
         return "ticket/listTicketsAntiguos";
-    }
+    }*/
 
     @GetMapping("/form-filtrar-tickets")
         public String showFilterPage() {

@@ -5,9 +5,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import oo2.grupo19.SistemaTickets.dto.TicketClientDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketEmployeeDTO;
@@ -37,6 +41,7 @@ public class TicketServiceImpl implements ITicketService{
     private final IUsuario usuarioRepository;
     private final ICliente clienteRepository;
     private final IEmpleado empleadoRepository;
+    private static final Logger log = LoggerFactory.getLogger(TicketServiceImpl.class);
 
     public TicketServiceImpl(ITicket ticketRepository, IUsuario usuarioRepository, ICliente clienteRepository, IEmpleado empleadoRepository) {
         this.ticketRepository = ticketRepository;
@@ -113,7 +118,10 @@ public class TicketServiceImpl implements ITicketService{
     @Transactional
     public List<Ticket> findTicketByCliente(String email) {
         try {
-            return ticketRepository.traerPorCliente(email);
+            List<Ticket> tickets = ticketRepository.traerPorCliente(email);
+        tickets.forEach(ticket -> log.debug("Ticket ID: {}, Fecha_hora: {}, Tipo: {}", 
+            ticket.getId(), ticket.getFechaHora(), ticket.getFechaHora() != null ? ticket.getFechaHora().getClass().getName() : "null"));
+        return tickets;
         } catch (Exception e) {
             throw new TicketCustomExceptions.TicketListException("Error al intentar mostrar los tickets del cliente", e);
         }
@@ -182,13 +190,11 @@ public class TicketServiceImpl implements ITicketService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<Ticket> traerPorClienteCerrado(String email) {
+    public List<Ticket> traerPorCliente(String email) {
         try {
-            Long estado = 3L;
-            List<Ticket> ticket = ticketRepository.traerPorClienteCerrado(email, estado);
-            return ticket;
+            return ticketRepository.traerPorCliente(email);
         } catch (Exception e) {
-            throw new TicketCustomExceptions.TicketListException("Error al intentar mostrar los tickets cerrados del cliente", e);
+            throw new TicketCustomExceptions.TicketListException("Error al intentar mostrar los tickets del cliente", e);
         }
     }
 

@@ -13,13 +13,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import oo2.grupo19.SistemaTickets.services.impl.UserDetailsServiceImpl;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
-public class SecurityConfig {
+public class SecurityConfig implements WebMvcConfigurer{
 
     @Autowired
     private UserDetailsServiceImpl userDetailsServiceImpl;
@@ -31,7 +32,7 @@ public class SecurityConfig {
                 // CORS está deshabilitado porque el front está embebido. Si expones la API, habilita y configura aquí.
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/home", "/auth/*").permitAll(); // Solo /home y /auth/* son públicas
+                    auth.requestMatchers("/home", "/auth/**", "/css/**", "/images/**").permitAll(); // Solo /home y /auth/* son públicas
                     auth.anyRequest().authenticated(); // Todo lo demás requiere autenticación
                 })
                 .formLogin(form -> {
@@ -82,3 +83,4 @@ public class SecurityConfig {
         return new HiddenHttpMethodFilter();
     }
 }
+

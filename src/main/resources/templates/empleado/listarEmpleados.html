@@ -36,12 +36,14 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
+            <li class="nav-item me-2">
+                        <a class="btn btn-primary" th:href="@{/admin/home}">Ver Tickets</a>
+                    </li>
             <li class="nav-item">
               <form th:action="@{/auth/logout}" method="post" class="d-inline">
                 <button
                   type="submit"
-                  class="nav-link btn btn-logout text-white"
-                >
+                  class="nav-link btn btn-logout text-white">
                   Logout
                 </button>
               </form>

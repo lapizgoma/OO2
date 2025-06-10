@@ -1,7 +1,6 @@
 package oo2.grupo19.SistemaTickets.services.impl;
 
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -17,11 +16,8 @@ import oo2.grupo19.SistemaTickets.services.EmailService;
 public class EmailServiceImpl implements EmailService {
     
     private final JavaMailSender mailSender;
-
     private final TemplateEngine templateEngine;
-
-    @Value("${mail.from}")
-    private String mailFrom;
+    private final String mailFrom = "sistematicketv1@gmail.com";
 
     public EmailServiceImpl(JavaMailSender mailSender, TemplateEngine templateEngine) {
         this.mailSender = mailSender;

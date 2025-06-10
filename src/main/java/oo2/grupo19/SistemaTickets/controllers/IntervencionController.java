@@ -2,10 +2,6 @@ package oo2.grupo19.SistemaTickets.controllers;
 
 import java.util.Optional;
 
-import static oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotAuthorizedException;
-import static oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
-import static oo2.grupo19.SistemaTickets.exceptions.UserCustomExceptions.UserNotFoundException;
-import static oo2.grupo19.SistemaTickets.exceptions.TicketCustomExceptions.TicketNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +22,10 @@ import oo2.grupo19.SistemaTickets.entities.Empleado;
 import oo2.grupo19.SistemaTickets.entities.Intervencion;
 import oo2.grupo19.SistemaTickets.entities.Ticket;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoIntervencion;
+import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotAuthorizedException;
+import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
+import oo2.grupo19.SistemaTickets.exceptions.TicketCustomExceptions.TicketNotFoundException;
+import oo2.grupo19.SistemaTickets.exceptions.UserCustomExceptions.UserNotFoundException;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 import oo2.grupo19.SistemaTickets.security.SecurityService;
 import oo2.grupo19.SistemaTickets.services.IIntervencionService;
@@ -70,7 +70,7 @@ public class IntervencionController {
         model.addAttribute("estadosIntervencion",  estadoIntervencionService.findAll());
         model.addAttribute("ticket", ticket);
         logger.info("Acceso a procesamiento de ticket: {}", ticketId);
-        return ViewRouteHelper.FORM_INTERVENCION;
+        return ViewRouteHelper.FORM_CREATE_INTERVENCION;
     }
 
     @PostMapping("/processing-ticket")

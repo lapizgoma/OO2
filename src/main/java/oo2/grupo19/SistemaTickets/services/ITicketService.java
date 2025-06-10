@@ -18,7 +18,7 @@ public interface ITicketService extends IService<Ticket> {
     List<Ticket> findTicketByEmpleado(String email);
     List<Ticket> findTicketByEstado(EstadoTicket estado);
     List<Ticket> findTicketByFechaHora(LocalDate fecha);
-    List<Ticket> traerPorClienteCerrado(String email);
+    List<Ticket> traerPorCliente(String email);
     List<Ticket> traerPorEstados(long idEstado);
     TicketClientDTO getTicketParaCliente(Long ticketId, String clienteEmail);
     TicketEmployeeDTO getTicketparaEmpleado(Long ticketId, String empleadoEmail);
