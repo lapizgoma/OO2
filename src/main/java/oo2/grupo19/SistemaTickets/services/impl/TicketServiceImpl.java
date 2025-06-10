@@ -225,7 +225,7 @@ public class TicketServiceImpl implements ITicketService{
         try {
             Ticket ticketEntity = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new TicketCustomExceptions.TicketNotFoundException("No pudimos encontrar el Ticket que buscás :/"));
-            Cliente clienteEntity = clienteRepository.findByContactoEmail(clienteEmail)
+            Cliente clienteEntity = clienteRepository.findByContacto_Email(clienteEmail)
                 .orElseThrow(() -> new UserNotFoundException("Cliente no encontrado :/"));
 
             if (!ticketEntity.usuarioPertenece(clienteEntity)) {

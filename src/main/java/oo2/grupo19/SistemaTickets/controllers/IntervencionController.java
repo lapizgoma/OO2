@@ -32,6 +32,8 @@ import oo2.grupo19.SistemaTickets.services.IIntervencionService;
 import oo2.grupo19.SistemaTickets.services.IEstadoIntervencionService;
 import oo2.grupo19.SistemaTickets.services.impl.EmpleadoServiceImpl;
 import oo2.grupo19.SistemaTickets.services.impl.TicketServiceImpl;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 /*
  * Este controlador no esta terminado.
  */
@@ -132,7 +134,8 @@ public class IntervencionController {
                                         @RequestParam Long ticketId,
                                         @RequestParam Long empleadoId,
                                         @RequestParam("estado.id") Long estadoId, 
-                                        Authentication auth){
+                                        Authentication auth,
+                                        RedirectAttributes redirectAttributes){
         if(auth != null && auth.isAuthenticated()){
             Ticket ticket = ticketServiceImpl.findById(ticketId).orElseThrow(() -> new NotFoundException("Ticket no encontrado"));
             Empleado empleado = empleadoService.findById(empleadoId).orElseThrow(() -> new UserNotFoundException("Empleado no encontrado"));
@@ -143,8 +146,8 @@ public class IntervencionController {
             intervencion.setEstado(estado);
             logger.info("Intervención creada para ticket: {} por empleado: {}", ticketId, empleadoId);
             intervencionService.save(intervencion);
-            ticketServiceImpl.save(ticket);
-            return ViewRouteHelper.INTERVENCION_SUCCESS;
+            redirectAttributes.addFlashAttribute("mensajeExito", "Intervención creada con éxito!");
+            return "redirect:/empleado/home";
         }else{
             logger.warn("Intento de crear intervención sin autenticación");
             throw new NotAuthorizedException("No estas autorizado para realizar una intervencion");

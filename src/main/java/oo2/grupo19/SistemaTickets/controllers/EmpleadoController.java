@@ -1,6 +1,7 @@
 package oo2.grupo19.SistemaTickets.controllers;
 import java.util.List;
 
+import oo2.grupo19.SistemaTickets.entities.estados.enums.RoleType;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -54,7 +55,7 @@ public class EmpleadoController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/agregar")
     public String obtenerVistaEmpleado(Model model, Authentication auth) {
-        model.addAttribute("rolRepository", roleRepository.findAll());
+        model.addAttribute("rolRepository", roleRepository.findByTypeNot(RoleType.USER));
         model.addAttribute("empleado", new Empleado());
         model.addAttribute("rol", new Role());
         logger.info("Vista de registro de empleado accedida por: {}", auth.getName());
@@ -64,10 +65,10 @@ public class EmpleadoController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/agregar")
     public String postMethodName(@Valid @ModelAttribute Empleado empleado,
-            @RequestParam("roles") Long rolId,
-            BindingResult result,
-            Authentication auth,
-            Model model) {
+                                 BindingResult result,
+                                @RequestParam("roles") Long rolId,
+                                Authentication auth,
+                                Model model) {
         if(result.hasErrors()){
             logger.warn("Errores de validación en registro de empleado: {}", result.getAllErrors());
             model.addAttribute("rolRepository", roleRepository.findAll());

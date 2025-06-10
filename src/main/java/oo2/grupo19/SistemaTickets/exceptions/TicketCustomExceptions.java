@@ -1,6 +1,6 @@
 package oo2.grupo19.SistemaTickets.exceptions;
 
-public class TicketCustomExceptions {
+public class TicketCustomExceptions extends RuntimeException{
     public static class TicketNotFoundException extends RuntimeException {
         public TicketNotFoundException(String message) {
             super(message);

@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.dto.IntervencionDTO;
 import oo2.grupo19.SistemaTickets.entities.Intervencion;
 
@@ -24,7 +25,7 @@ public final class IntervencioMapper {
             dto.setFecha(intervencion.getFecha().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
         }
         if (intervencion.getEstado() != null) {
-            dto.setEstado(intervencion.getEstado().toString());
+            dto.setEstado(intervencion.getEstado().getEstado());
         }
         return dto;
     }

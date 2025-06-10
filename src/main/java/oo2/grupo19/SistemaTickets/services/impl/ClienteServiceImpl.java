@@ -13,11 +13,10 @@ import oo2.grupo19.SistemaTickets.entities.Usuario;
 import oo2.grupo19.SistemaTickets.exceptions.UserCustomExceptions;
 import oo2.grupo19.SistemaTickets.repositories.ICliente;
 import oo2.grupo19.SistemaTickets.repositories.IUsuario;
-import oo2.grupo19.SistemaTickets.services.IService;
 
 @Service
 @Log4j2
-public class ClienteServiceImpl implements IService<Cliente> {
+public class ClienteServiceImpl implements oo2.grupo19.SistemaTickets.services.ICliente {
 
     private final ICliente clienteRepository;
     private final IUsuario usuarioRepository;
@@ -49,7 +48,7 @@ public class ClienteServiceImpl implements IService<Cliente> {
     @Transactional
     public void save(Cliente object) {
         try{
-            Optional<Cliente> user = clienteRepository.findByContactoEmail(object.getContacto().getEmail());
+            Optional<Cliente> user = clienteRepository.findByContacto_Email(object.getContacto().getEmail());
             if(user.isEmpty()){
                 object.asignarContactoUsuario();
                 clienteRepository.save(object);
@@ -62,17 +61,19 @@ public class ClienteServiceImpl implements IService<Cliente> {
         }
     }
 
+    @Override
     @Transactional(readOnly = true)
     public Optional<Cliente> findByEmail(String email){
-        return clienteRepository.findByContactoEmail(email);
+        return clienteRepository.findByContacto_Email(email);
     }
 
-    
+
+    @Override
     @Modifying
     @Transactional(readOnly = false)
     public void eliminarCliente (String email) 
     {
-        Cliente clienteEntity = clienteRepository.findByContactoEmail(email)
+        Cliente clienteEntity = clienteRepository.findByContacto_Email(email)
         .orElseThrow(() -> new UserCustomExceptions.UserNotFoundException("Cliente no encontrado :/"));
 
         ((Usuario) clienteEntity).setDeleted(true);

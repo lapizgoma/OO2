@@ -1,6 +1,7 @@
 package oo2.grupo19.SistemaTickets.entities;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Objects;
@@ -132,5 +133,15 @@ public class Ticket {
     public Long getId() {
         return id;
     }
+
+	public Intervencion getUltimaIntervencion() {
+		if (lstIntervencion == null || lstIntervencion.isEmpty()) {
+			return null;
+		}
+
+		return lstIntervencion.stream()
+				.max(Comparator.comparing(Intervencion::getId)) // o el campo que uses
+				.orElse(null);
+	}
 
 }

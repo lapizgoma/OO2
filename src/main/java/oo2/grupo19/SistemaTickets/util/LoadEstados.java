@@ -2,6 +2,7 @@ package oo2.grupo19.SistemaTickets.util;
 
 import java.util.List;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +22,7 @@ import oo2.grupo19.SistemaTickets.repositories.estados.IRole;
 import oo2.grupo19.SistemaTickets.services.impl.UsuarioServiceImpl;
 
 @Configuration
-
+@Log4j2
 public class LoadEstados {
     private final UsuarioServiceImpl empleadoRepository;
     private final UsuarioServiceImpl clienteRepository;
@@ -72,6 +73,7 @@ public CommandLineRunner cargarEstados(IEstadoIntervencion estadoIntervencionRep
         }
 
         if (empleadoRepository.findByEmail("empleado@empleado.com").isEmpty()) {
+            log.info("Encontrado!!!!!!!!");
             Empleado empleado = new Empleado();
             Contacto contacto = new Contacto();
             contacto.setCalle("2312312");
@@ -139,29 +141,6 @@ public CommandLineRunner cargarEstados(IEstadoIntervencion estadoIntervencionRep
             System.out.println("admin de prueba creado.");
         } else {
             System.out.println("admin de prueba ya existe.");
-        }
-
-        if (empleadoRepository.findByEmail("cliente@cliente.com").isEmpty()) {
-            Cliente cliente = new Cliente ();
-            Contacto contacto = new Contacto ();
-            contacto.setCalle ("2312312");
-            contacto.setEmail ("cliente@cliente.com");
-            contacto.setLocalidad ("SDASDAS");
-            contacto.setNroPuerta ("33");
-            contacto.setTelefono ("3333333");
-            cliente.setNombre ("Viernes");
-            cliente.setApellido ("de prueba");
-            cliente.setPassword ("cliente");
-            cliente.setDni ("1231123");
-            cliente.agregarRoles (roleRepository.findById (1L).get ());
-            cliente.setContacto (contacto);
-            cliente.asignarContactoUsuario ();
-            // ... otros campos necesarios
-
-            empleadoRepository.registrarUsuario (cliente);
-            System.out.println ("Usuario de prueba creado.");
-        } else {
-            System.out.println ("Usuario de prueba ya existe.");
         }
 
     };
