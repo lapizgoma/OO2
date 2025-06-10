@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
+    <div th:if="${mensajeExito}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${mensajeExito}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <span class="navbar-brand">Bienvenido, <span th:text="${#authentication.principal.nombre}">Usuario</span>!</span>
@@ -43,8 +47,9 @@
                                 <div class="ticket-detail"><strong>Estado:</strong> <span th:text="${ticket.estado.estado}"></span></div>
                                 <div class="ticket-detail"><strong>Fecha:</strong> <span th:text="${ticket.fechaHora}"></span></div>
                                 <div class="ticket-detail-label mt-2">Última intervención:</div>
-                                <div class="ticket-detail-content" th:if="${ticket.lstIntervencion != null && !ticket.lstIntervencion.isEmpty()}"
-                                     th:text="${ticket.lstIntervencion.get(ticket.lstIntervencion.size() - 1).descripcion}"></div>
+                                <div class="ticket-detail-content" th:if="${ticket.ultimaIntervencion != null}"
+                                     th:text="${ticket.ultimaIntervencion.descripcion}">
+                                </div>
                                 <div class="ticket-detail-content text-white-50" th:if="${ticket.lstIntervencion == null || ticket.lstIntervencion.isEmpty()}">Sin intervenciones</div>
                             </div>
                         </div>
@@ -53,5 +58,5 @@
             </div>
         </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+   </body>
 </html>

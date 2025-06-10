@@ -3,6 +3,7 @@ package oo2.grupo19.SistemaTickets.services.impl;
 import java.util.List;
 import java.util.Optional;
 
+import oo2.grupo19.SistemaTickets.services.IClienteService;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,12 +17,12 @@ import oo2.grupo19.SistemaTickets.repositories.IUsuario;
 
 @Service
 @Log4j2
-public class ClienteServiceImpl implements oo2.grupo19.SistemaTickets.services.ICliente {
+public class ClienteServiceServiceImpl implements IClienteService {
 
     private final ICliente clienteRepository;
     private final IUsuario usuarioRepository;
 
-    public ClienteServiceImpl(ICliente clienteRepository, IUsuario usuarioRepository) {
+    public ClienteServiceServiceImpl(ICliente clienteRepository, IUsuario usuarioRepository) {
         this.clienteRepository = clienteRepository;
         this.usuarioRepository = usuarioRepository;
     }

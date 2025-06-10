@@ -3,6 +3,8 @@ package oo2.grupo19.SistemaTickets.services.impl;
 import java.util.List;
 import java.util.Optional;
 
+import oo2.grupo19.SistemaTickets.services.IEmpleadoService;
+import oo2.grupo19.SistemaTickets.services.IUsuarioService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,23 +16,21 @@ import oo2.grupo19.SistemaTickets.entities.Empleado;
 import oo2.grupo19.SistemaTickets.entities.Usuario;
 import oo2.grupo19.SistemaTickets.exceptions.UsuarioServiceException;
 import oo2.grupo19.SistemaTickets.repositories.ICliente;
-import oo2.grupo19.SistemaTickets.repositories.IEmpleado;
 import oo2.grupo19.SistemaTickets.repositories.IUsuario;
-import oo2.grupo19.SistemaTickets.services.IService;
 
 @Service
 @Qualifier("usuarioService")
 @Log4j2
-public class UsuarioServiceImpl implements IService<Usuario> {
+public class UsuarioServiceServiceImpl implements IUsuarioService {
 
     private final IUsuario usuarioRepository;
-    private final IEmpleado empleadoRepository;
+    private final IEmpleadoService empleadoService;
     private final PasswordEncoder passwordEncoder;
     private final ICliente clienteRepository;
 
-    public UsuarioServiceImpl(IUsuario usuarioRepository, IEmpleado empleadoRepository, PasswordEncoder password, ICliente clienteRepository) {
+    public UsuarioServiceServiceImpl(IUsuario usuarioRepository, IEmpleadoService empleadoService, PasswordEncoder password, ICliente clienteRepository) {
         this.usuarioRepository = usuarioRepository;
-        this.empleadoRepository = empleadoRepository;
+        this.empleadoService = empleadoService;
         this.passwordEncoder = password;
         this.clienteRepository = clienteRepository;
     }
@@ -82,6 +82,7 @@ public class UsuarioServiceImpl implements IService<Usuario> {
     }
 
     @Transactional(readOnly = true)
+    @Override
     public Optional<Usuario> findByEmail(String email) {
         try {
             return usuarioRepository.findByContactoEmail(email);
@@ -90,11 +91,13 @@ public class UsuarioServiceImpl implements IService<Usuario> {
         }
     }
 
+    @Override
     public boolean validarCredenciales(String email, String password) {
         Optional<Usuario> usOptional = usuarioRepository.findByContactoEmail(email);
         return usOptional.isPresent() && passwordEncoder.matches(password, usOptional.get().getPassword());
     }
 
+    @Override
     public void registrarUsuario(Usuario usuario) {
         String passwordHash = passwordEncoder.encode(usuario.getPassword());
         usuario.setPassword(passwordHash);
@@ -103,9 +106,9 @@ public class UsuarioServiceImpl implements IService<Usuario> {
             usuario = usuario.toCliente();
         }
         if (usuario instanceof Cliente c) {
-            clienteRepository.save(c);
+            save(c);
         } else if (usuario instanceof Empleado e) {
-            empleadoRepository.save(e);
+            empleadoService.save(e);
         }
     }
 
