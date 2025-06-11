@@ -77,8 +77,8 @@
             <input type="date" name="fecha" required>
             <button type="submit">Filtrar</button>
         </form>
-        <a class="btn btn-primary" th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{/admin/home}">Volver</a>
-        <a class="btn btn-primary" th:if="${#authorization.expression('hasRole(''EMPLOYEE'')')}" th:href="@{/empleado/home}">Vovler</a>
+        <a class="btn btn-primary" th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{/home}">Volver</a>
+        <a class="btn btn-primary" th:if="${#authorization.expression('hasRole(''EMPLOYEE'')')}" th:href="@{/home}">Vovler</a>
     </div>
     
 </body>

@@ -54,18 +54,9 @@ public class AuthController {
     }
 
     @GetMapping("/loginSuccess")
-    public String loginCheck(Authentication authentication) {
+    public String loginCheck() {
         logger.info("Login exitoso");
-        if (authentication != null && authentication.isAuthenticated()) {
-            if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-                return "redirect:/admin/home";
-            } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
-                return "redirect:/empleado/home";
-            } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_CUSTOMER"))) {
-                return "redirect:/cliente/home";
-            }
-        }
-        return ViewRouteHelper.INDEX;
+        return "redirect:/"+ViewRouteHelper.INDEX;
     }
 
     @GetMapping("/register")

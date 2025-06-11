@@ -1,5 +1,8 @@
 package oo2.grupo19.SistemaTickets.controllers;
 
+import oo2.grupo19.SistemaTickets.entities.Cliente;
+import oo2.grupo19.SistemaTickets.entities.Empleado;
+import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -13,14 +16,16 @@ import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 import oo2.grupo19.SistemaTickets.services.ITicketService;
 import oo2.grupo19.SistemaTickets.services.IUsuarioService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 @Log4j2
-public class HomeController {
+public class HomeController <T> {
 
     private final IUsuarioService usuarioService;
     private final ITicketService ticketService;
@@ -49,30 +54,41 @@ public class HomeController {
     }
 
     @GetMapping("/home")
-    public String home() {
+    public String home(Authentication auth) {
+        if(auth != null && auth.isAuthenticated()){
+            String rol = typeUserAuthenticated(auth);
+            log.info("Role Home 1: " + rol);
+            String rolClean = rol.replace("ROLE_", "").toLowerCase();
+            return "redirect:/" + rolClean + "/home";
+        }
         return ViewRouteHelper.INDEX;
     }
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/admin/home")
-    public String adminHome(Model model) {
-        List<Ticket> tickets = ticketService.findAll();
-        model.addAttribute("tickets", tickets);
-        return ViewRouteHelper.INDEX_ADMIN;
-    }
-    @PreAuthorize("hasRole('EMPLOYEE')")
-    @GetMapping("/empleado/home")
-    public String empleadoHome(Model model) {
-        List<Ticket> tickets = ticketService.findAll();
-        model.addAttribute("tickets", tickets);
-        return ViewRouteHelper.INDEX_EMPLOYEE;
-    }
-    @PreAuthorize("hasRole('CUSTOMER')") 
-    @GetMapping("/cliente/home")
-    public String clienteHome(Authentication authentication, Model model) {
+
+    @PreAuthorize("hasAnyRole('CUSTOMER','EMPLOYEE','ADMIN')")
+    @GetMapping("/{rol}/home")
+    public String homeGlobal(@PathVariable String rol, Authentication authentication, Model model){
         String email = authentication.getName();
+        simplifyGlobalHome(email,model);
+        log.info(rol);
+        switch (rol) {
+            case "customer":
+                return ViewRouteHelper.INDEX_USER;
+            case "employee":
+                return ViewRouteHelper.INDEX_EMPLOYEE;
+            case "admin":
+                return ViewRouteHelper.INDEX_ADMIN;
+            default:
+                throw new StatusCustomExceptions.AccessDeniedException("No tienes acceso a esta vista :/");
+        }
+    }
+
+    private String typeUserAuthenticated(Authentication auth){
+        return auth.getAuthorities().iterator().next().getAuthority(); // Si el usuario tiene mas de un rol, utilizar otro tipo de busqueda
+    }
+
+    private void simplifyGlobalHome(String email, Model model){
         List<Ticket> tickets = ticketService.traerPorCliente(email);
         model.addAttribute("tickets", tickets);
-        return ViewRouteHelper.INDEX_USER;
     }
 
 }
