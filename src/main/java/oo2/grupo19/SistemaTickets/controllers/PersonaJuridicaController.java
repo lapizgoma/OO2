@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.dto.PersonaJuridicaDTO;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
-import oo2.grupo19.SistemaTickets.services.impl.PersonaJuridicaService;
+import oo2.grupo19.SistemaTickets.services.IPersonaJuridicaService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +22,10 @@ import org.slf4j.LoggerFactory;
 @RequestMapping("/grupo")
 @Log4j2
 public class PersonaJuridicaController {
-    private PersonaJuridicaService personaJuridicaService;
+    private IPersonaJuridicaService personaJuridicaService;
     private static final Logger logger = LoggerFactory.getLogger(PersonaJuridicaController.class);
 
-    public PersonaJuridicaController (PersonaJuridicaService personaJuridicaService) {
+    public PersonaJuridicaController (IPersonaJuridicaService personaJuridicaService) {
         this.personaJuridicaService = personaJuridicaService;
     }
 

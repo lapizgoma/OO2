@@ -22,6 +22,7 @@ import oo2.grupo19.SistemaTickets.entities.Empleado;
 import oo2.grupo19.SistemaTickets.entities.Intervencion;
 import oo2.grupo19.SistemaTickets.entities.Ticket;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoIntervencion;
+import oo2.grupo19.SistemaTickets.entities.estados.EstadoTicket;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotAuthorizedException;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
 import oo2.grupo19.SistemaTickets.exceptions.TicketCustomExceptions.TicketNotFoundException;
@@ -29,34 +30,34 @@ import oo2.grupo19.SistemaTickets.exceptions.UserCustomExceptions.UserNotFoundEx
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 import oo2.grupo19.SistemaTickets.security.SecurityService;
 import oo2.grupo19.SistemaTickets.services.IIntervencionService;
+import oo2.grupo19.SistemaTickets.services.ITicketService;
+import oo2.grupo19.SistemaTickets.services.IEmpleadoService;
 import oo2.grupo19.SistemaTickets.services.IEstadoIntervencionService;
-import oo2.grupo19.SistemaTickets.services.impl.EmpleadoServiceImpl;
-import oo2.grupo19.SistemaTickets.services.impl.TicketServiceImpl;
+import oo2.grupo19.SistemaTickets.services.IEstadoTicketService;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-/*
- * Este controlador no esta terminado.
- */
 @Controller
 @Log4j2
 @RequestMapping("/intervencion")
 public class IntervencionController {
 
     private final IIntervencionService intervencionService;
-    private final TicketServiceImpl ticketServiceImpl;
-    private final EmpleadoServiceImpl empleadoService;
+    private final ITicketService ticketServiceImpl;
+    private final IEmpleadoService empleadoService;
     private final SecurityService securityService;
     private final IEstadoIntervencionService estadoIntervencionService;
+    private final IEstadoTicketService estadoTicketService;
     private static final Logger logger = LoggerFactory.getLogger(IntervencionController.class);
 
-    public IntervencionController(IIntervencionService intervencionService, TicketServiceImpl ticketServiceImpl,
-                                  EmpleadoServiceImpl empleadoService, SecurityService securityService,
-                                  IEstadoIntervencionService estadoIntervencionService) {
+    public IntervencionController(IIntervencionService intervencionService, ITicketService ticketServiceImpl,
+                                  IEmpleadoService empleadoService, SecurityService securityService,
+                                  IEstadoIntervencionService estadoIntervencionService, IEstadoTicketService estadoTicketService) {
         this.intervencionService = intervencionService;
         this.ticketServiceImpl = ticketServiceImpl;
         this.empleadoService = empleadoService;
         this.securityService = securityService;
         this.estadoIntervencionService = estadoIntervencionService;
+        this.estadoTicketService = estadoTicketService;
     }
 
     /*
@@ -139,13 +140,17 @@ public class IntervencionController {
         if(auth != null && auth.isAuthenticated()){
             Ticket ticket = ticketServiceImpl.findById(ticketId).orElseThrow(() -> new NotFoundException("Ticket no encontrado"));
             Empleado empleado = empleadoService.findById(empleadoId).orElseThrow(() -> new UserNotFoundException("Empleado no encontrado"));
-            EstadoIntervencion estado = estadoIntervencionService.findById(estadoId).orElseThrow(() -> new NotFoundException("Estado de intervención no encontrado"));
+            EstadoIntervencion estadoIntervencion = estadoIntervencionService.findById(estadoId).orElseThrow(() -> new NotFoundException("Estado de intervención no encontrado"));
+            EstadoTicket estadoTicket = estadoTicketService.findById(2L).orElseThrow();
             ticket.agregarEmpleado(empleado);
-            ticket.agregarMensaje(intervencion);
+            if (ticket.getEstado().getEstado()=="PENDIENTE") {
+                ticket.setEstado(estadoTicket);
+            }
             intervencion.setRealizadoPor(empleado);
-            intervencion.setEstado(estado);
+            intervencion.setEstado(estadoIntervencion);
             logger.info("Intervención creada para ticket: {} por empleado: {}", ticketId, empleadoId);
             intervencionService.save(intervencion);
+            ticket.agregarMensaje(intervencion);
             redirectAttributes.addFlashAttribute("mensajeExito", "Intervención creada con éxito!");
             return "redirect:/empleado/home";
         }else{

@@ -207,10 +207,10 @@ public class TicketServiceImpl implements ITicketService{
     dto.setCliente(ticket.getCreadoPor().usuarioToDto());
     dto.setEmpleados(ticket.getListEmpleado().stream()
         .map(t -> t.empleadoToDto())
-        .collect(Collectors.toList()));
+        .collect(Collectors.toSet()));
     dto.setIntervencion(ticket.getLstIntervencion().stream()
         .map(m -> m.mensajeToDto())
-        .collect(Collectors.toList()));
+        .collect(Collectors.toSet()));
 
     return dto;
 }

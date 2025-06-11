@@ -14,6 +14,8 @@ import oo2.grupo19.SistemaTickets.entities.Usuario;
 import oo2.grupo19.SistemaTickets.exceptions.UserCustomExceptions;
 import oo2.grupo19.SistemaTickets.repositories.ICliente;
 import oo2.grupo19.SistemaTickets.repositories.IUsuario;
+import oo2.grupo19.SistemaTickets.services.IClienteService;
+
 
 @Service
 @Log4j2

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
+import oo2.grupo19.SistemaTickets.services.IClienteService;
 
 import static oo2.grupo19.SistemaTickets.exceptions.UserCustomExceptions.UserNotFoundException;
 import org.slf4j.Logger;

@@ -26,6 +26,7 @@ import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.dto.TicketClientDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketEmployeeDTO;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
+import oo2.grupo19.SistemaTickets.entities.Empleado;
 import oo2.grupo19.SistemaTickets.entities.Ticket;
 import oo2.grupo19.SistemaTickets.entities.Usuario;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoIntervencion;
@@ -34,12 +35,11 @@ import oo2.grupo19.SistemaTickets.entities.estados.Prioridad;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 import oo2.grupo19.SistemaTickets.security.SecurityService;
 import oo2.grupo19.SistemaTickets.services.ITicketService;
-import oo2.grupo19.SistemaTickets.services.impl.UsuarioServiceImpl;
-import oo2.grupo19.SistemaTickets.services.impl.ClienteServiceImpl;
-import oo2.grupo19.SistemaTickets.services.impl.EmpleadoServiceImpl;
-
+import oo2.grupo19.SistemaTickets.services.IUsuarioService;
 
 import oo2.grupo19.SistemaTickets.services.IEstadoTicketService;
+import oo2.grupo19.SistemaTickets.services.IClienteService;
+import oo2.grupo19.SistemaTickets.services.IEmpleadoService;
 import oo2.grupo19.SistemaTickets.services.IEstadoIntervencionService;
 import oo2.grupo19.SistemaTickets.services.IPrioridadService;
 @Controller
@@ -48,9 +48,9 @@ import oo2.grupo19.SistemaTickets.services.IPrioridadService;
 public class TicketController {
 
     private final ITicketService ticketService;
-    private final UsuarioServiceImpl usuarioService;
-    private final EmpleadoServiceImpl empleadoService;
-    private final ClienteServiceImpl clienteService;
+    private final IUsuarioService usuarioService;
+    private final IEmpleadoService empleadoService;
+    private final IClienteService clienteService;
     private final IEstadoTicketService estadoTicketService;
     private final IEstadoIntervencionService estadoIntervencionService;
     private final SecurityService securityService;
@@ -58,7 +58,7 @@ public class TicketController {
     // Crear un cliente - Crear un ticket - Login cliente
 
     // Agregue Qualifier para identificar a cada uno.
-    public TicketController(ITicketService ticketService, @Qualifier("usuarioService") UsuarioServiceImpl usuarioService, IPrioridadService prioridadService, IEstadoIntervencionService estadoIntervencionService, ClienteServiceImpl clienteService, EmpleadoServiceImpl empleadoService, SecurityService securityService, IEstadoTicketService estadoTicketService) {
+    public TicketController(ITicketService ticketService, @Qualifier("usuarioService") IUsuarioService usuarioService, IPrioridadService prioridadService, IEstadoIntervencionService estadoIntervencionService, IClienteService clienteService, IEmpleadoService empleadoService, SecurityService securityService, IEstadoTicketService estadoTicketService) {
         this.ticketService = ticketService;
         this.usuarioService = usuarioService;
         this.estadoIntervencionService = estadoIntervencionService;
@@ -113,7 +113,6 @@ public class TicketController {
         ticket.setEstado(estado);
         ticket.setCreadoPor(clienteDb);
         ticket.setDetalle(contenido);
-        ticket.setListEmpleado(new HashSet<>(empleadoService.findAll()));
         ticketService.save(ticket);
         logger.info("Ticket creado exitosamente por: {}", email);
         model.addAttribute("title","Ticket create");
@@ -191,9 +190,12 @@ public class TicketController {
         return "redirect:/ticket/" + idTicket;
     }
     
-
+    @PreAuthorize("hasRole ('EMPLOYEE')")
     @GetMapping("/update-ticket-estado")
     public String showUpdateStatusForm(@RequestParam Long ticketId, Authentication auth, Model model){
+         System.out.println("Principal class: " + auth.getPrincipal().getClass().getName());
+    System.out.println("Principal toString: " + auth.getPrincipal().toString());
+    System.out.println("Authorities: " + auth.getAuthorities());
         Long empleadoId = securityService.getIdEmpleado(auth);
         Ticket ticket = ticketService.findByIdAndEmpleado(empleadoId, ticketId);
         List<EstadoIntervencion> estadosIntervencion = estadoIntervencionService.findAll();
@@ -206,6 +208,7 @@ public class TicketController {
         return "ticket/formTicketUpdateStatus";
     }
 
+    @PreAuthorize ("hasRole ('EMPLOYEE')")
     @PostMapping("/update-ticket-estado")
     public String processUpdateStatus(@ModelAttribute Ticket ticket, Authentication auth,Model model) {
         Long empleadoId = securityService.getIdEmpleado(auth);
@@ -218,6 +221,7 @@ public class TicketController {
         return "ticket/formTicketUpdateStatus"; 
     }
 
+    @PreAuthorize ("hasRole ('EMPLOYEE')")
     @GetMapping("/list-ticket-por-cliente")
     public String ticketListByCliente(@RequestParam String email, Model model, Authentication authentication){
         List<Ticket> tickets = ticketService.findTicketByCliente(email);
@@ -230,6 +234,7 @@ public class TicketController {
         return "ticket/listTickets";
     }
 
+    @PreAuthorize ("hasRole ('EMPLOYEE')")
     @GetMapping("/list-ticket-por-asunto")
     public String ticketListByAsunto(@RequestParam String asunto, Model model, Authentication authentication){
         List<Ticket> tickets = ticketService.findTicketByAsunto(asunto);
@@ -242,6 +247,7 @@ public class TicketController {
         return "ticket/listTickets";
     }
 
+    @PreAuthorize ("hasRole ('EMPLOYEE')")
     @GetMapping("/list-ticket-por-empleado")
     public String ticketListByEmpleado(@RequestParam String email, Model model, Authentication authentication){
         List<Ticket> tickets = ticketService.findTicketByEmpleado(email);
@@ -254,6 +260,7 @@ public class TicketController {
         return "ticket/listTickets";
     }
 
+    @PreAuthorize ("hasRole ('EMPLOYEE')")
     @GetMapping("/list-ticket-por-estado")
     public String ticketListByEstado(@RequestParam("estadoTicketId") Long estadoId, Model model, Authentication authentication){
         Optional<EstadoTicket> optionalEstado = estadoTicketService.findById(estadoId);
@@ -272,6 +279,7 @@ public class TicketController {
         return "ticket/listTickets";
     }
 
+    @PreAuthorize ("hasRole ('EMPLOYEE')")
     @GetMapping("/list-ticket-por-prioridad")
     public String ticketListByPrioridad(@RequestParam("prioridadId") Long prioridadId, Model model, Authentication authentication){
         Optional<Prioridad> optionalPrioridad = prioridadService.findById(prioridadId);
@@ -290,6 +298,7 @@ public class TicketController {
         return "ticket/listTickets";
     }
 
+    @PreAuthorize ("hasRole ('EMPLOYEE')")
     @GetMapping("/list-ticket-por-fecha")
     public String ticketListByFecha(@RequestParam LocalDate fecha, Model model, Authentication authentication){
         List<Ticket> tickets = ticketService.findTicketByFechaHora(fecha);
@@ -308,6 +317,8 @@ public class TicketController {
         model.addAttribute("tickets", tickets);
         return "ticket/listTicketsAntiguos";
     }*/
+
+
 
     @GetMapping("/form-filtrar-tickets")
         public String showFilterPage() {

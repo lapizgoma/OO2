@@ -1,5 +1,6 @@
 package oo2.grupo19.SistemaTickets.services;
 
+<<<<<<< HEAD
 import oo2.grupo19.SistemaTickets.entities.Cliente;
 
 import java.util.List;
@@ -14,4 +15,14 @@ public interface IClienteService {
     Optional<Cliente> findByEmail(String email);
     void eliminarCliente (String email);
 
+=======
+import java.util.Optional;
+
+import oo2.grupo19.SistemaTickets.entities.Cliente;
+
+public interface IClienteService extends IService<Cliente>{
+    public Optional<Cliente> findByEmail(String email);
+    public void eliminarCliente (String email);
+    
+>>>>>>> feature/wip/spring-co-mati
 }

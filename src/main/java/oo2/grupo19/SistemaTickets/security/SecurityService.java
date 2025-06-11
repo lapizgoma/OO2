@@ -16,10 +16,10 @@ public class SecurityService {
             throw new NotAuthorizedException("No hay usuario autenticado en la sesión actual.");
         }
         Object principal = auth.getPrincipal();
-        if (!(principal instanceof CustomUserDetails userDetails)) {
+        if (!(principal instanceof Usuario userDetails)) {
             throw new NotAuthorizedException("El principal autenticado no es del tipo esperado.");
         }
-        Usuario usuario = userDetails.getUsuario();
+        Usuario usuario = userDetails;
         if (!(usuario instanceof Empleado empleado)) {
             throw new NotAuthorizedException("El usuario autenticado no es un empleado válido.");
         }

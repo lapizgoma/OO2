@@ -1,6 +1,6 @@
 package oo2.grupo19.SistemaTickets.dto.mappers;
 
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import oo2.grupo19.SistemaTickets.dto.TicketDTO;
@@ -23,11 +23,11 @@ public final class TicketMapper {
         }
         // Empleados
         if (ticket.getListEmpleado() != null) {
-            dto.setEmpleados(ticket.getListEmpleado().stream().map(EmpleadoMapper::mapToEmpleadoDto).collect(Collectors.toList()));
+            dto.setEmpleados(ticket.getListEmpleado().stream().map(EmpleadoMapper::mapToEmpleadoDto).collect(Collectors.toSet()));
         }
         // Intervenciones
         if (ticket.getLstIntervencion() != null) {
-            dto.setIntervencion(ticket.getLstIntervencion().stream().map(IntervencioMapper::mapToIntervencionDto).collect(Collectors.toList()));
+            dto.setIntervencion(ticket.getLstIntervencion().stream().map(IntervencioMapper::mapToIntervencionDto).collect(Collectors.toSet()));
         }
         return dto;
     }
@@ -41,13 +41,13 @@ public final class TicketMapper {
         return ticket;
     }
 
-    public static List<TicketDTO> mapToTicketDtoList(List<Ticket> tickets) {
-        return tickets == null ? List.of() :
-            tickets.stream().map(TicketMapper::mapToTicketDto).collect(Collectors.toList());
+    public static Set<TicketDTO> mapToTicketDtoList(Set<Ticket> tickets) {
+        return tickets == null ? Set.of() :
+            tickets.stream().map(TicketMapper::mapToTicketDto).collect(Collectors.toSet());
     }
 
-    public static List<Ticket> mapToTicketEntityList(List<TicketDTO> dtos) {
-        return dtos == null ? List.of() :
-            dtos.stream().map(TicketMapper::mapToTicketEntity).collect(Collectors.toList());
+    public static Set<Ticket> mapToTicketEntityList(Set<TicketDTO> dtos) {
+        return dtos == null ? Set.of() :
+            dtos.stream().map(TicketMapper::mapToTicketEntity).collect(Collectors.toSet());
     }
 }

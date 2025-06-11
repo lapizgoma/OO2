@@ -18,6 +18,7 @@ import oo2.grupo19.SistemaTickets.entities.Usuario;
 import oo2.grupo19.SistemaTickets.exceptions.UsuarioServiceException;
 import oo2.grupo19.SistemaTickets.repositories.ICliente;
 import oo2.grupo19.SistemaTickets.repositories.IUsuario;
+import oo2.grupo19.SistemaTickets.services.IUsuarioService;
 
 @Service
 @Qualifier("usuarioService")
@@ -81,7 +82,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
             throw new UsuarioServiceException("No se ha podido actualizar/insertar el usuario", e);
         }
     }
-
+    @Override
     @Transactional(readOnly = true)
     @Override
     public Optional<Usuario> findByEmail(String email) {

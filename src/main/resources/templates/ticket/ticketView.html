@@ -65,7 +65,9 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <a class="btn btn-primary" th:if="${ticketEmployeeDTO.empleadoPertenece}" th:href="@{/intervencion/create/{idTicket}(idTicket=${ticketEmployeeDTO.id})}">Crear Intervención</a>
+                        <a class="btn btn-primary" th:href="@{/intervencion/create/{idTicket}(idTicket=${ticketEmployeeDTO.id})}">Crear Intervención</a>
+                        <a class="btn btn-primary" th:if="${ticketEmployeeDTO.empleadoPertenece}" th:href="@{/ticket/update-ticket-estado(ticketId=${idTicket})}">Cambiar Estado</a>
+
                     </div>
                     <div sec:authorize="hasRole('ADMIN')" class="card bg-dark border-primary shadow mb-4">
                         <div class="card-body">

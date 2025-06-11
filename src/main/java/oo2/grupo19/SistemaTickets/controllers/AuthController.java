@@ -19,8 +19,7 @@ import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.entities.PersonaJuridica;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 import oo2.grupo19.SistemaTickets.repositories.estados.IRole;
-import oo2.grupo19.SistemaTickets.services.impl.ClienteServiceImpl;
-import oo2.grupo19.SistemaTickets.services.impl.UsuarioServiceImpl;
+import oo2.grupo19.SistemaTickets.services.IUsuarioService;
 
 import java.util.HashMap;
 import java.util.Map;
