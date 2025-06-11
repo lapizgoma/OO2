@@ -16,12 +16,12 @@ import oo2.grupo19.SistemaTickets.exceptions.UsuarioServiceException;
 import oo2.grupo19.SistemaTickets.repositories.ICliente;
 import oo2.grupo19.SistemaTickets.repositories.IEmpleado;
 import oo2.grupo19.SistemaTickets.repositories.IUsuario;
-import oo2.grupo19.SistemaTickets.services.IService;
+import oo2.grupo19.SistemaTickets.services.IUsuarioService;
 
 @Service
 @Qualifier("usuarioService")
 @Log4j2
-public class UsuarioServiceImpl implements IService<Usuario> {
+public class UsuarioServiceImpl implements IUsuarioService {
 
     private final IUsuario usuarioRepository;
     private final IEmpleado empleadoRepository;
@@ -80,7 +80,7 @@ public class UsuarioServiceImpl implements IService<Usuario> {
             throw new UsuarioServiceException("No se ha podido actualizar/insertar el usuario", e);
         }
     }
-
+    @Override
     @Transactional(readOnly = true)
     public Optional<Usuario> findByEmail(String email) {
         try {
@@ -89,12 +89,12 @@ public class UsuarioServiceImpl implements IService<Usuario> {
             throw new UsuarioServiceException("No se ha encontrado el usuario con ese email", e);
         }
     }
-
+    @Override
     public boolean validarCredenciales(String email, String password) {
         Optional<Usuario> usOptional = usuarioRepository.findByContactoEmail(email);
         return usOptional.isPresent() && passwordEncoder.matches(password, usOptional.get().getPassword());
     }
-
+    @Override
     public void registrarUsuario(Usuario usuario) {
         String passwordHash = passwordEncoder.encode(usuario.getPassword());
         usuario.setPassword(passwordHash);

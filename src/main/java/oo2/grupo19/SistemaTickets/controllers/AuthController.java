@@ -17,8 +17,8 @@ import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.entities.PersonaJuridica;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 import oo2.grupo19.SistemaTickets.repositories.estados.IRole;
-import oo2.grupo19.SistemaTickets.services.impl.ClienteServiceImpl;
-import oo2.grupo19.SistemaTickets.services.impl.UsuarioServiceImpl;
+import oo2.grupo19.SistemaTickets.services.IClienteService;
+import oo2.grupo19.SistemaTickets.services.IUsuarioService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,12 +33,12 @@ import org.slf4j.LoggerFactory;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final UsuarioServiceImpl usuarioService;
+    private final IUsuarioService usuarioService;
     private final IRole roleRepository;
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
-    public AuthController(UsuarioServiceImpl usuario,
-            ClienteServiceImpl clienteService, IRole roleRepository) {
+    public AuthController(IUsuarioService usuario,
+            IClienteService clienteService, IRole roleRepository) {
         this.usuarioService = usuario;
         this.roleRepository = roleRepository;
     }

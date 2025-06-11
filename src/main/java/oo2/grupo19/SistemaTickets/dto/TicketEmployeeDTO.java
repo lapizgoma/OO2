@@ -1,6 +1,6 @@
 package oo2.grupo19.SistemaTickets.dto;
 
-import java.util.List;
+import java.util.Set;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -21,8 +21,8 @@ public class TicketEmployeeDTO {
 	private String asunto;
 	private String detalle;
 	private String fechaHoraCreado;
-	private List<IntervencionDTO> intervenciones;
-    private List<EmpleadoDTO> listEmpleados;
+	private Set<IntervencionDTO> intervenciones;
+    private Set<EmpleadoDTO> listEmpleados;
 	private String estado;
 	private Prioridad prioridad;
 	private String usuarioNombre;

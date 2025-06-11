@@ -13,11 +13,12 @@ import oo2.grupo19.SistemaTickets.entities.Usuario;
 import oo2.grupo19.SistemaTickets.exceptions.UserCustomExceptions;
 import oo2.grupo19.SistemaTickets.repositories.ICliente;
 import oo2.grupo19.SistemaTickets.repositories.IUsuario;
-import oo2.grupo19.SistemaTickets.services.IService;
+import oo2.grupo19.SistemaTickets.services.IClienteService;
+
 
 @Service
 @Log4j2
-public class ClienteServiceImpl implements IService<Cliente> {
+public class ClienteServiceImpl implements IClienteService {
 
     private final ICliente clienteRepository;
     private final IUsuario usuarioRepository;
@@ -61,13 +62,13 @@ public class ClienteServiceImpl implements IService<Cliente> {
             throw new UserCustomExceptions.ClienteServiceException("No se ha podido actualizar/insertar el usuario", e);
         }
     }
-
+    @Override
     @Transactional(readOnly = true)
     public Optional<Cliente> findByEmail(String email){
         return clienteRepository.findByContactoEmail(email);
     }
 
-    
+    @Override
     @Modifying
     @Transactional(readOnly = false)
     public void eliminarCliente (String email) 

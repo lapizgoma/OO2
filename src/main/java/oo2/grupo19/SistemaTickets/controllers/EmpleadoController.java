@@ -18,7 +18,7 @@ import oo2.grupo19.SistemaTickets.entities.Empleado;
 import oo2.grupo19.SistemaTickets.entities.estados.Role;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 import oo2.grupo19.SistemaTickets.repositories.estados.IRole;
-import oo2.grupo19.SistemaTickets.services.impl.EmpleadoServiceImpl;
+import oo2.grupo19.SistemaTickets.services.IEmpleadoService;
 import org.springframework.web.bind.annotation.PutMapping;
 import static oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
 import org.slf4j.Logger;
@@ -32,12 +32,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @RequestMapping("/empleados")
 public class EmpleadoController {
     
-    private final EmpleadoServiceImpl empleadoService;
+    private final IEmpleadoService empleadoService;
     private final IRole roleRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(EmpleadoController.class);
 
-    public EmpleadoController(EmpleadoServiceImpl empleadoService, IRole roleRepository) {
+    public EmpleadoController(IEmpleadoService empleadoService, IRole roleRepository) {
         this.empleadoService = empleadoService;
         this.roleRepository = roleRepository;
     }

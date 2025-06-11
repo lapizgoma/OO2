@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
-import oo2.grupo19.SistemaTickets.services.impl.ClienteServiceImpl;
+import oo2.grupo19.SistemaTickets.services.IClienteService;
 
 import static oo2.grupo19.SistemaTickets.exceptions.UserCustomExceptions.UserNotFoundException;
 import org.slf4j.Logger;
@@ -21,10 +21,10 @@ import org.slf4j.LoggerFactory;
 @Log4j2
 @RequestMapping("/cuenta")
 public class ClienteController {
-    private ClienteServiceImpl clienteService;
+    private IClienteService clienteService;
     private static final Logger logger = LoggerFactory.getLogger(ClienteController.class);
 
-    public ClienteController (ClienteServiceImpl clienteService) {
+    public ClienteController (IClienteService clienteService) {
         this.clienteService = clienteService;
     }
 

@@ -11,10 +11,11 @@ import oo2.grupo19.SistemaTickets.entities.Empleado;
 import oo2.grupo19.SistemaTickets.exceptions.UserCustomExceptions;
 import oo2.grupo19.SistemaTickets.repositories.IEmpleado;
 import oo2.grupo19.SistemaTickets.repositories.ITicket;
-import oo2.grupo19.SistemaTickets.services.IService;
+import oo2.grupo19.SistemaTickets.services.IEmpleadoService;
+
 
 @Service
-public class EmpleadoServiceImpl implements IService<Empleado> {
+public class EmpleadoServiceImpl implements IEmpleadoService {
     
    private final IEmpleado empleadoRepository;
     private final ITicket ticketRepository;

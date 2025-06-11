@@ -12,14 +12,14 @@ import oo2.grupo19.SistemaTickets.dto.mappers.PersonaJuridicaMapper;
 import oo2.grupo19.SistemaTickets.entities.PersonaJuridica;
 import oo2.grupo19.SistemaTickets.exceptions.UserCustomExceptions;
 import oo2.grupo19.SistemaTickets.repositories.IPersonaJuridica;
-import oo2.grupo19.SistemaTickets.services.IService;
+import oo2.grupo19.SistemaTickets.services.IPersonaJuridicaService;
 
 @Service
-public class PersonaJuridicaService implements IService<PersonaJuridica> {
+public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService{
 
     private final IPersonaJuridica repository;
 
-    public PersonaJuridicaService(IPersonaJuridica repository) {
+    public PersonaJuridicaServiceImpl(IPersonaJuridica repository) {
         this.repository = repository;
     }
 
@@ -63,6 +63,7 @@ public class PersonaJuridicaService implements IService<PersonaJuridica> {
         }
     }
 
+    @Override
     public PersonaJuridicaDTO crearPersonaJuridica (PersonaJuridicaDTO personaJuridicaDTO)
     {
         if (!repository.findByCuit(personaJuridicaDTO.getCuit()).isEmpty()) 
@@ -80,6 +81,7 @@ public class PersonaJuridicaService implements IService<PersonaJuridica> {
         return personaJuridicaDTO;
     }
 
+    @Override
     @Transactional(readOnly = true)
     public PersonaJuridicaDTO buscarPersonaJuridica (String code) 
     {

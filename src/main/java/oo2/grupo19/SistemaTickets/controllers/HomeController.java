@@ -11,7 +11,7 @@ import oo2.grupo19.SistemaTickets.entities.Ticket;
 import oo2.grupo19.SistemaTickets.entities.Usuario;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 import oo2.grupo19.SistemaTickets.services.ITicketService;
-import oo2.grupo19.SistemaTickets.services.impl.UsuarioServiceImpl;
+import oo2.grupo19.SistemaTickets.services.IUsuarioService;
 
 import java.util.List;
 
@@ -22,11 +22,11 @@ import org.slf4j.LoggerFactory;
 @Log4j2
 public class HomeController {
 
-    private final UsuarioServiceImpl usuarioService;
+    private final IUsuarioService usuarioService;
     private final ITicketService ticketService;
     private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
-    public HomeController(UsuarioServiceImpl usuarioService, ITicketService ticketService) {
+    public HomeController(IUsuarioService usuarioService, ITicketService ticketService) {
         this.usuarioService = usuarioService;
         this.ticketService = ticketService;
     }

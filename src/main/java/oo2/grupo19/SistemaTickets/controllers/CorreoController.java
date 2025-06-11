@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.services.EmailService;
-import oo2.grupo19.SistemaTickets.services.impl.ClienteServiceImpl;
+import oo2.grupo19.SistemaTickets.services.IClienteService;
 
 import static oo2.grupo19.SistemaTickets.exceptions.UserCustomExceptions.UserNotFoundException;
 import org.slf4j.Logger;
@@ -21,10 +21,10 @@ import org.slf4j.LoggerFactory;
 public class CorreoController {
 
     private final EmailService emailService;
-    private final ClienteServiceImpl clienteService;
+    private final IClienteService clienteService;
     private static final Logger logger = LoggerFactory.getLogger(CorreoController.class);
 
-    public CorreoController(EmailService emailService,ClienteServiceImpl clienteService) {
+    public CorreoController(EmailService emailService,IClienteService clienteService) {
         this.emailService = emailService;
         this.clienteService = clienteService;
     }

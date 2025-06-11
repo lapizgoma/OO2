@@ -43,8 +43,8 @@
                                 <div class="ticket-detail"><strong>Estado:</strong> <span th:text="${ticket.estado.estado}"></span></div>
                                 <div class="ticket-detail"><strong>Fecha:</strong> <span th:text="${ticket.fechaHora}"></span></div>
                                 <div class="ticket-detail-label mt-2">Última intervención:</div>
-                                <div class="ticket-detail-content" th:if="${ticket.lstIntervencion != null && !ticket.lstIntervencion.isEmpty()}"
-                                     th:text="${ticket.lstIntervencion.get(ticket.lstIntervencion.size() - 1).descripcion}"></div>
+                                <!--div class="ticket-detail-content" th:if="${ticket.lstIntervencion != null && !ticket.lstIntervencion.isEmpty()}"</div>
+                                     th:text="${ticket.lstIntervencion.toString()}"></div-->
                                 <div class="ticket-detail-content text-white-50" th:if="${ticket.lstIntervencion == null || ticket.lstIntervencion.isEmpty()}">Sin intervenciones</div>
                             </div>
                         </div>
