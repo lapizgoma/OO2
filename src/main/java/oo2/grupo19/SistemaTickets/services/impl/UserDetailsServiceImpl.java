@@ -2,10 +2,10 @@ package oo2.grupo19.SistemaTickets.services.impl;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.entities.Usuario;
+import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
 import oo2.grupo19.SistemaTickets.repositories.IUsuario;
 
 @Service
@@ -18,13 +18,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email){
         log.info("Intentando cargar usuario con email: {}", email);
 
         Usuario usuario = usuarioRepository.findByContactoEmail(email)
             .orElseThrow(() -> {
                 log.warn("Usuario no encontrado con email: {}", email);
-                return new UsernameNotFoundException("Usuario no encontrado con email: " + email);
+                return new NotFoundException("Usuario no encontrado con email: " + email);
             });
 
         String roles = usuario.getRoles().stream()

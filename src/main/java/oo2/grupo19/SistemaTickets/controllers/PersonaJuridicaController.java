@@ -29,18 +29,17 @@ public class PersonaJuridicaController {
         this.personaJuridicaService = personaJuridicaService;
     }
 
-    @PreAuthorize ("hasRole ('ADMIN')")
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @GetMapping ("/crear")
     public String addPersonaJuridica (Model model, Authentication authentication) 
     {
-        logger.info("Acceso a formulario de creación de persona jurídica por: {}", authentication != null ? authentication.getName() : "desconocido");
         PersonaJuridicaDTO dto = new PersonaJuridicaDTO ();
         model.addAttribute("personaJuridicaDTO", dto);
 
         return ViewRouteHelper.FORM_PERSONA_JURIDICA;
     }
 
-    @PreAuthorize ("hasRole ('ADMIN')")
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @PostMapping ("/crear")
     public String postAddPersonaJuridica (
         @ModelAttribute PersonaJuridicaDTO personaJuridicaDTO,
@@ -52,7 +51,7 @@ public class PersonaJuridicaController {
         return "redirect:/grupo/" + personaJuridicaDTO.getCodigoAcceso ();
     }
 
-    @PreAuthorize ("hasRole ('ADMIN')")
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN', 'CUSTOMER')")
     @GetMapping ("/{code}")
     public String verPersonaJuridica (@PathVariable String code, Model model) 
     {

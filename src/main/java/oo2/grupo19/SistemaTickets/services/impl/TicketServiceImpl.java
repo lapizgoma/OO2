@@ -23,8 +23,7 @@ import oo2.grupo19.SistemaTickets.entities.Ticket;
 import oo2.grupo19.SistemaTickets.entities.Usuario;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoTicket;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions;
-import oo2.grupo19.SistemaTickets.exceptions.TicketCustomExceptions;
-import oo2.grupo19.SistemaTickets.exceptions.UserCustomExceptions.UserNotFoundException;
+import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
 import oo2.grupo19.SistemaTickets.repositories.ICliente;
 import oo2.grupo19.SistemaTickets.repositories.IEmpleado;
 import oo2.grupo19.SistemaTickets.repositories.ITicket;
@@ -56,7 +55,7 @@ public class TicketServiceImpl implements ITicketService{
         try {
             ticketRepository.deleteById(id);
         } catch (Exception e) {
-            throw new TicketCustomExceptions.TicketDeleteException("Error no se ha podido eliminar el ticket", e);
+            throw new NotFoundException("Error no se ha podido eliminar el ticket");
         }
     }
 
@@ -66,7 +65,7 @@ public class TicketServiceImpl implements ITicketService{
         try {
             return ticketRepository.findAll();
         } catch (Exception e) {
-            throw new TicketCustomExceptions.TicketListException("Error no se ha podido mostrar la lista de tickets", e);
+            throw new NotFoundException("Error no se ha podido encontrar la lista de tickets");
         }
     }
 
@@ -76,7 +75,7 @@ public class TicketServiceImpl implements ITicketService{
         try {
             return ticketRepository.findById(id);
         } catch (Exception e) {
-            throw new TicketCustomExceptions.TicketNotFoundException("Error no se ha podido mostrar el ticket", e);
+            throw new NotFoundException("Error no se ha podido encontrar el ticket");
         }
     }
 
@@ -88,7 +87,7 @@ public class TicketServiceImpl implements ITicketService{
             object.setCreadoPor(userDb);
             ticketRepository.save(object);
         } catch (Exception e) {
-            throw new TicketCustomExceptions.TicketSaveException("Error no se ha podido actualizar/insertar el ticket", e);
+            throw new RuntimeException("Error no se ha podido actualizar/insertar el ticket", e);
         }
         
     }
@@ -98,18 +97,20 @@ public class TicketServiceImpl implements ITicketService{
     public Ticket findByIdAndEmpleado(Long idEmpleado, Long idTicket) {
         try {
             return ticketRepository.traerPorEmpleadoYId(idEmpleado, idTicket);
-        } catch (Exception e) {
-            throw new TicketCustomExceptions.TicketNotFoundException("No se ha podido mostrar el ticket", e);
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
         }
     }
 
+    //TODO: HACE FALTA USAR DTO PARA ACTUALIZAR ESTADO?
     @Override
     @Transactional
     public void actualizarEstadoTicket(Long idEmpleado, Long idTicket, EstadoTicket nuevoEstado) {
         Ticket ticket = this.findByIdAndEmpleado(idEmpleado, idTicket);
         if (ticket == null) {
-            throw new TicketCustomExceptions.TicketNotFoundException("No se ha encontrado el ticket o no tiene permiso");
+            throw new NotFoundException("No se ha encontrado el ticket o no tiene permiso");
         }
+        
         ticket.setEstado(nuevoEstado);
         ticketRepository.save(ticket);
     }
@@ -123,7 +124,7 @@ public class TicketServiceImpl implements ITicketService{
             ticket.getId(), ticket.getFechaHora(), ticket.getFechaHora() != null ? ticket.getFechaHora().getClass().getName() : "null"));
         return tickets;
         } catch (Exception e) {
-            throw new TicketCustomExceptions.TicketListException("Error al intentar mostrar los tickets del cliente", e);
+            throw new NotFoundException("Error al intentar mostrar los tickets del cliente");
         }
     }
 
@@ -133,7 +134,7 @@ public class TicketServiceImpl implements ITicketService{
         try {
             return ticketRepository.traerPorAsunto(asunto);
         } catch (Exception e) {
-            throw new TicketCustomExceptions.TicketListException("Error al intentar mostrar los tickets ", e);
+            throw new NotFoundException("Error al intentar mostrar los tickets ");
         }
     }
 
@@ -143,7 +144,7 @@ public class TicketServiceImpl implements ITicketService{
         try {
             return ticketRepository.traerPorEmpleado(email);
         } catch (Exception e) {
-            throw new TicketCustomExceptions.TicketListException("Error al intentar mostrar los tickets del empleado", e);
+            throw new NotFoundException("Error al intentar mostrar los tickets del empleado");
         }
     }
 
@@ -153,7 +154,7 @@ public class TicketServiceImpl implements ITicketService{
         try {
             return ticketRepository.traerPorEstado(estado.getId());
         } catch (Exception e) {
-            throw new TicketCustomExceptions.TicketListException("Error al intentar mostrar los tickets del cliente", e);
+            throw new NotFoundException("Error al intentar mostrar los tickets del cliente");
         }
     }
 
@@ -163,7 +164,7 @@ public class TicketServiceImpl implements ITicketService{
         try {
             return ticketRepository.traerPorPrioridad(prioridad.getId());
         } catch (Exception e) {
-            throw new TicketCustomExceptions.TicketListException("Error al intentar mostrar los tickets", e);
+            throw new NotFoundException("Error al intentar mostrar los tickets");
         }
     }
 
@@ -175,7 +176,7 @@ public class TicketServiceImpl implements ITicketService{
             LocalDateTime fin = inicio.plusDays(1);
             return ticketRepository.traerPorRangoFecha(inicio, fin);
         } catch (Exception e) {
-            throw new TicketCustomExceptions.TicketListException("Error al intentar mostrar los tickets", e);
+            throw new NotFoundException("Error al intentar mostrar los tickets");
         }
     }
 
@@ -184,7 +185,7 @@ public class TicketServiceImpl implements ITicketService{
         try {
             return convertirATicketDTO(ticketRepository.findByCreadoPor_Id(idCliente));
         } catch (Exception e) {
-            throw new TicketCustomExceptions.TicketNotFoundException("No se ha podido mostrar el ticket", e);
+            throw new NotFoundException("No se ha podido mostrar el ticket");
         }
     }
 
@@ -194,7 +195,7 @@ public class TicketServiceImpl implements ITicketService{
         try {
             return ticketRepository.traerPorCliente(email);
         } catch (Exception e) {
-            throw new TicketCustomExceptions.TicketListException("Error al intentar mostrar los tickets del cliente", e);
+            throw new NotFoundException("Error al intentar mostrar los tickets del cliente");
         }
     }
 
@@ -224,9 +225,9 @@ public class TicketServiceImpl implements ITicketService{
     public TicketClientDTO getTicketParaCliente(Long ticketId, String clienteEmail) {
         try {
             Ticket ticketEntity = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new TicketCustomExceptions.TicketNotFoundException("No pudimos encontrar el Ticket que buscás :/"));
+                .orElseThrow(() -> new NotFoundException("No pudimos encontrar el Ticket que buscás :/"));
             Cliente clienteEntity = clienteRepository.findByContacto_Email(clienteEmail)
-                .orElseThrow(() -> new UserNotFoundException("Cliente no encontrado :/"));
+                .orElseThrow(() -> new NotFoundException("Cliente no encontrado :/"));
 
             if (!ticketEntity.usuarioPertenece(clienteEntity)) {
                 throw new StatusCustomExceptions.NotAuthorizedException("No pudimos encontrar el Ticket que buscás :/");
@@ -234,7 +235,7 @@ public class TicketServiceImpl implements ITicketService{
 
             return TicketClientMapper.mapToTicketClientDto(ticketEntity);
         } catch (Exception e) {
-            throw new TicketCustomExceptions.TicketNotFoundException("Error al obtener el ticket para el cliente", e);
+            throw new NotFoundException("Error al obtener el ticket para el cliente");
         }
     }
 
@@ -242,13 +243,13 @@ public class TicketServiceImpl implements ITicketService{
     public TicketEmployeeDTO getTicketparaEmpleado (Long ticketId, String empleadoEmail) {
         try {
             Ticket ticketEntity = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new TicketCustomExceptions.TicketNotFoundException("No pudimos encontrar el Ticket que buscás :/"));
+                .orElseThrow(() -> new NotFoundException("No pudimos encontrar el Ticket que buscás :/"));
             Empleado empleadoEntity = empleadoRepository.findByContactoEmail(empleadoEmail)
-                .orElseThrow(() -> new UserNotFoundException("Empleado no encontrado :/"));
+                .orElseThrow(() -> new NotFoundException("Empleado no encontrado :/"));
 
             return TicketEmployeeMapper.mapToTicketEmployeeDto(ticketEntity, empleadoEntity);
         } catch (Exception e) {
-            throw new TicketCustomExceptions.TicketNotFoundException("Error al obtener el ticket para el empleado", e);
+            throw new NotFoundException("Error al obtener el ticket para el empleado");
         }
     }
 
@@ -257,9 +258,9 @@ public class TicketServiceImpl implements ITicketService{
     {
         try {
             Ticket ticketEntity = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new TicketCustomExceptions.TicketNotFoundException("No pudimos encontrar el Ticket que buscás :/"));
+                .orElseThrow(() -> new NotFoundException("No pudimos encontrar el Ticket que buscás :/"));
             Empleado empleadoEntity = empleadoRepository.findByContactoEmail(empleadoEmail)
-                .orElseThrow(() -> new UserNotFoundException("Empleado no encontrado :/"));
+                .orElseThrow(() -> new NotFoundException("Empleado no encontrado :/"));
 
             if (!ticketEntity.usuarioPertenece(empleadoEntity)) 
             {
@@ -270,7 +271,7 @@ public class TicketServiceImpl implements ITicketService{
 
             return TicketEmployeeMapper.mapToTicketEmployeeDto(ticketEntity, empleadoEntity);
         } catch (Exception e) {
-            throw new TicketCustomExceptions.TicketSaveException("Error al asignar el ticket al empleado", e);
+            throw new NotFoundException("Error al asignar el ticket al empleado");
         }
     }
 }

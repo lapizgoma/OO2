@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import oo2.grupo19.SistemaTickets.entities.Contacto;
+import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
 import oo2.grupo19.SistemaTickets.repositories.IContacto;
 import oo2.grupo19.SistemaTickets.services.IService;
 
@@ -22,7 +23,7 @@ public class ContactoServiceImpl implements IService<Contacto> {
     @Transactional
     public void delete(Long id) {
         if (!contactoRepository.existsById(id)) {
-            throw new IllegalArgumentException("Contacto con id " + id + " no existe");
+            throw new NotFoundException("Contacto con id " + id + " no existe");
         }
         contactoRepository.deleteById(id);        
     }
@@ -38,7 +39,7 @@ public class ContactoServiceImpl implements IService<Contacto> {
     public Optional<Contacto> findById(Long id) {
         Optional<Contacto> contacto = contactoRepository.findById(id);
         if (contacto.isEmpty()) {
-            throw new IllegalArgumentException("Contacto con id " + id + " no encontrado");
+            throw new NotFoundException("Contacto con id " + id + " no encontrado");
         }
         return contacto;
     }

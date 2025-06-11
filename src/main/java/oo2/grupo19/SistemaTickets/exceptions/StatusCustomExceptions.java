@@ -16,4 +16,10 @@ public class StatusCustomExceptions {
             super(message);
         }
     }
+    public static class AlreadyExistsException extends RuntimeException {
+        public AlreadyExistsException(String message) {
+            super(message);
+        }
+    }
+
 }

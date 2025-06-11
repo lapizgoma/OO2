@@ -3,7 +3,6 @@ import jakarta.validation.Valid;
 import oo2.grupo19.SistemaTickets.entities.Contacto;
 import oo2.grupo19.SistemaTickets.entities.Usuario;
 
-import oo2.grupo19.SistemaTickets.services.IClienteService;
 import oo2.grupo19.SistemaTickets.services.IUsuarioService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -19,14 +18,13 @@ import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.entities.PersonaJuridica;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 import oo2.grupo19.SistemaTickets.repositories.estados.IRole;
-import oo2.grupo19.SistemaTickets.services.IUsuarioService;
+
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import static oo2.grupo19.SistemaTickets.exceptions.UserCustomExceptions.UserAlreadyExistException;
-import static oo2.grupo19.SistemaTickets.exceptions.UserCustomExceptions.UserAlreadyAuthenticatedException;
-import static oo2.grupo19.SistemaTickets.exceptions.UserCustomExceptions.PersonaJuridicaNotFound;
+import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
+import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.AlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +61,7 @@ public class AuthController {
                 return "redirect:/admin/home";
             } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
                 return "redirect:/empleado/home";
-            } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
+            } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_CUSTOMER"))) {
                 return "redirect:/cliente/home";
             }
         }
@@ -74,7 +72,7 @@ public class AuthController {
     public String register(Model model, Authentication authentication) {
         if (isUserAuthenticated(authentication)) {
             logger.warn("Intento de registro con usuario ya autenticado: {}", authentication.getName());
-            throw new UserAlreadyAuthenticatedException("El usuario ya ha iniciado sesion");
+            throw new AlreadyExistsException("El usuario ya ha iniciado sesion");
         } else {
             Cliente cliente = new Cliente();
             Contacto contacto = new Contacto();
@@ -99,16 +97,16 @@ public class AuthController {
         Optional<Usuario> optionalClienteBd = usuarioService.findByEmail(cliente.getContacto().getEmail());
         if(optionalClienteBd.isPresent()){
             logger.warn("Intento de registro con email ya existente: {}", cliente.getContacto().getEmail());
-            throw new UserAlreadyExistException("Ya existe un usuario registrado");
+            throw new AlreadyExistsException("Ya existe un usuario registrado");
         }else if (isUserAuthenticated(currentAuth)) {
             logger.warn("Intento de registro con usuario ya autenticado: {}", currentAuth.getName());
-            throw new UserAlreadyAuthenticatedException("Ya hay un usuario autenticado");
+            throw new AlreadyExistsException("Ya hay un usuario autenticado");
         }
         if (activo == null) {
             cliente.setOrganizacion(null);
         }
         try {
-            cliente.agregarRoles(roleRepository.findById(1L).orElseThrow(() -> new PersonaJuridicaNotFound("Rol no encontrado")));
+            cliente.agregarRoles(roleRepository.findById(1L).orElseThrow(() -> new NotFoundException("Rol no encontrado")));
             usuarioService.registrarUsuario(cliente);
             logger.info("Usuario registrado exitosamente: {}", cliente.getContacto().getEmail());
         } catch (Exception e) {

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoIntervencion;
-import oo2.grupo19.SistemaTickets.exceptions.TicketCustomExceptions;
+import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
 import oo2.grupo19.SistemaTickets.repositories.estados.IEstadoIntervencion;
 import oo2.grupo19.SistemaTickets.services.IEstadoIntervencionService;
 
@@ -26,7 +26,7 @@ public class EstadoIntervencionServiceImpl implements IEstadoIntervencionService
         try {
             estadoRepository.deleteById(id);
         } catch (Exception e) {
-            throw new TicketCustomExceptions.EstadoIntervencionDeleteException("Error: no se ha podido eliminar el estado de intervención", e);
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -36,7 +36,7 @@ public class EstadoIntervencionServiceImpl implements IEstadoIntervencionService
         try {
             return estadoRepository.findAll();
         } catch (Exception e) {
-            throw new TicketCustomExceptions.EstadoIntervencionListException("Error: no se ha podido mostrar la lista de estados de intervención", e);
+            throw new NotFoundException("Error: no se ha podido encontrar la lista de estados de intervención");
         }
     }
 
@@ -46,7 +46,7 @@ public class EstadoIntervencionServiceImpl implements IEstadoIntervencionService
         try {
             return estadoRepository.findById(id);
         } catch (Exception e) {
-            throw new TicketCustomExceptions.EstadoIntervencionNotFoundException("Error: no se ha podido mostrar el estado de intervención", e);
+            throw new NotFoundException("Error: no se ha podido encontrar el estado de intervención");
         }
     }
 
@@ -56,7 +56,7 @@ public class EstadoIntervencionServiceImpl implements IEstadoIntervencionService
         try {
             estadoRepository.save(object);
         } catch (Exception e) {
-            throw new TicketCustomExceptions.EstadoIntervencionSaveException("Error: no se ha podido guardar el estado de intervención", e);
+            throw new RuntimeException(e.getMessage());
         }
     }
 }

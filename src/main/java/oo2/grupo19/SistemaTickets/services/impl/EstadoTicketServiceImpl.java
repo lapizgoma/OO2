@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoTicket;
-import oo2.grupo19.SistemaTickets.exceptions.TicketCustomExceptions;
+import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
 import oo2.grupo19.SistemaTickets.repositories.estados.IEstadoTicket;
 import oo2.grupo19.SistemaTickets.services.IEstadoTicketService;
 
@@ -23,7 +23,7 @@ public class EstadoTicketServiceImpl implements IEstadoTicketService {
         try {
             return estadoTicketRepository.findAll();
         } catch (Exception e) {
-            throw new TicketCustomExceptions.EstadoTicketListException("Error: no se ha podido mostrar la lista de estados de ticket", e);
+            throw new NotFoundException("Error: no se ha podido encontrar la lista de estados de ticket");
         }
     }
 
@@ -32,7 +32,7 @@ public class EstadoTicketServiceImpl implements IEstadoTicketService {
         try {
             return estadoTicketRepository.findById(id);
         } catch (Exception e) {
-            throw new TicketCustomExceptions.EstadoTicketNotFoundException("Error: no se ha podido mostrar el estado de ticket", e);
+            throw new NotFoundException("Error: no se ha podido encontrar el estado de ticket");
         }
     }
 
@@ -41,7 +41,7 @@ public class EstadoTicketServiceImpl implements IEstadoTicketService {
         try {
             estadoTicketRepository.save(estadoTicket);
         } catch (Exception e) {
-            throw new TicketCustomExceptions.EstadoTicketSaveException("Error: no se ha podido guardar el estado de ticket", e);
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -50,7 +50,7 @@ public class EstadoTicketServiceImpl implements IEstadoTicketService {
         try {
             estadoTicketRepository.deleteById(id);
         } catch (Exception e) {
-            throw new TicketCustomExceptions.EstadoTicketDeleteException("Error: no se ha podido eliminar el estado de ticket", e);
+            throw new RuntimeException(e.getMessage());
         }
     }
 }

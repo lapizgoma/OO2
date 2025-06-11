@@ -78,13 +78,13 @@ public class Ticket {
 	}
 	
 
-	public void agregarMensaje(Intervencion chat) {
+	public void agregarIntervencion(Intervencion intervencion) {
 	    if (lstIntervencion == null) {
 	    	lstIntervencion = new HashSet<>();
 	    }
 	    // Seteamos la relacion bidireccional desde esta clase
-	    lstIntervencion.add(chat);
-	    chat.setTicket(this);
+	    lstIntervencion.add(intervencion);
+	    intervencion.setTicket(this);
 	}
 	
 	public boolean existeUsuario() {

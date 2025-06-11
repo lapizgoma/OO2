@@ -383,6 +383,3 @@ buildNumber.properties
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij,eclipse,visualstudiocode,java,maven
-
-# Spring Boot application properties
-src/main/resources/application.properties

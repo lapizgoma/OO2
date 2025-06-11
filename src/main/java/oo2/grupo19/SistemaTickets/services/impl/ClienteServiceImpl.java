@@ -11,10 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.entities.Usuario;
-import oo2.grupo19.SistemaTickets.exceptions.UserCustomExceptions;
+import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.*;
 import oo2.grupo19.SistemaTickets.repositories.ICliente;
 import oo2.grupo19.SistemaTickets.repositories.IUsuario;
-import oo2.grupo19.SistemaTickets.services.IClienteService;
 
 
 @Service
@@ -57,10 +56,10 @@ public class ClienteServiceImpl implements IClienteService {
                 clienteRepository.save(object);
             } else {
                 log.info("El usuario ya existe en la bd!");
-                throw new UserCustomExceptions.ClienteAlreadyExistsException("El cliente con email " + object.getContacto().getEmail() + " ya existe.");
+                throw new AlreadyExistsException("El cliente con email " + object.getContacto().getEmail() + " ya existe.");
             }
         } catch (Exception e) {
-            throw new UserCustomExceptions.ClienteServiceException("No se ha podido actualizar/insertar el usuario", e);
+            throw new RuntimeException("No se ha podido actualizar/insertar el usuario");
         }
     }
 
@@ -77,7 +76,7 @@ public class ClienteServiceImpl implements IClienteService {
     public void eliminarCliente (String email) 
     {
         Cliente clienteEntity = clienteRepository.findByContacto_Email(email)
-        .orElseThrow(() -> new UserCustomExceptions.UserNotFoundException("Cliente no encontrado :/"));
+        .orElseThrow(() -> new NotFoundException("Cliente no encontrado :/"));
 
         ((Usuario) clienteEntity).setDeleted(true);
         usuarioRepository.save(clienteEntity);

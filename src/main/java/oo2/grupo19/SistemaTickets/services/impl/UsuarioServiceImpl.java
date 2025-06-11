@@ -4,24 +4,20 @@ import java.util.List;
 import java.util.Optional;
 
 import oo2.grupo19.SistemaTickets.repositories.IEmpleado;
-import oo2.grupo19.SistemaTickets.services.IEmpleadoService;
+
 import oo2.grupo19.SistemaTickets.services.IUsuarioService;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.entities.Empleado;
 import oo2.grupo19.SistemaTickets.entities.Usuario;
-import oo2.grupo19.SistemaTickets.exceptions.UsuarioServiceException;
+import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
 import oo2.grupo19.SistemaTickets.repositories.ICliente;
 import oo2.grupo19.SistemaTickets.repositories.IUsuario;
-import oo2.grupo19.SistemaTickets.services.IUsuarioService;
 
 @Service
-@Qualifier("usuarioService")
 @Log4j2
 public class UsuarioServiceImpl implements IUsuarioService {
 
@@ -43,7 +39,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
         try {
             usuarioRepository.deleteById(id);
         } catch (Exception e) {
-            throw new UsuarioServiceException("No se ha podido eliminar el Usuario", e);
+            throw new NotFoundException("No se ha podido eliminar el Usuario");
         }
     }
 
@@ -53,7 +49,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
         try {
             return usuarioRepository.findAll();
         } catch (Exception e) {
-            throw new UsuarioServiceException("No se ha podido mostrar la lista de usuario", e);
+            throw new NotFoundException("No se ha podido encontrar la lista de usuario");
         }
     }
 
@@ -63,7 +59,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
         try {
             return usuarioRepository.findById(id);
         } catch (Exception e) {
-            throw new UsuarioServiceException("No se ha podido mostrar el usuario", e);
+            throw new NotFoundException("No se ha podido encontrar el usuario");
         }
     }
 
@@ -79,17 +75,17 @@ public class UsuarioServiceImpl implements IUsuarioService {
                 log.info("El usuario ya existe en la bd!");
             }
         } catch (Exception e) {
-            throw new UsuarioServiceException("No se ha podido actualizar/insertar el usuario", e);
+            throw new NotFoundException("No se ha podido actualizar/insertar el usuario");
         }
     }
-    @Override
+
     @Transactional(readOnly = true)
     @Override
     public Optional<Usuario> findByEmail(String email) {
         try {
             return usuarioRepository.findByContactoEmail(email);
         } catch (Exception e) {
-            throw new UsuarioServiceException("No se ha encontrado el usuario con ese email", e);
+            throw new NotFoundException("No se ha encontrado el usuario con ese email");
         }
     }
 

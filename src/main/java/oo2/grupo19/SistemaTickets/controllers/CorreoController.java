@@ -12,7 +12,7 @@ import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.services.EmailService;
 import oo2.grupo19.SistemaTickets.services.IClienteService;
 
-import static oo2.grupo19.SistemaTickets.exceptions.UserCustomExceptions.UserNotFoundException;
+import static oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +36,7 @@ public class CorreoController {
         Cliente cliente = clienteService.findByEmail(auth.getName())
             .orElseThrow(() -> {
                 logger.warn("Intento de envío de correo de texto a un cliente inexistente: {}", auth.getName());
-                return new UserNotFoundException("El cliente no existe");
+                return new NotFoundException("El cliente no existe");
             });
         try {
             emailService.enviarCorreoPlano(cliente.getContacto().getEmail(), "Prueba texto plano", "Hola desde Spring Boot.");
@@ -54,7 +54,7 @@ public class CorreoController {
         Cliente cliente = clienteService.findByEmail(auth.getName())
             .orElseThrow(() -> {
                 logger.warn("Intento de envío de correo HTML a un cliente inexistente: {}", auth.getName());
-                return new UserNotFoundException("El cliente no existe");
+                return new NotFoundException("El cliente no existe");
             });
         datos.put("nombre", cliente.getNombre());
         try {

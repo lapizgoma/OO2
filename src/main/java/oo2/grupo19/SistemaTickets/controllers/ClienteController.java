@@ -12,9 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
-import oo2.grupo19.SistemaTickets.services.IClienteService;
 
-import static oo2.grupo19.SistemaTickets.exceptions.UserCustomExceptions.UserNotFoundException;
+import static oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +28,7 @@ public class ClienteController {
         this.clienteService = clienteService;
     }
 
-    @PreAuthorize ("hasRole ('USER')")
+    @PreAuthorize ("hasRole ('CUSTOMER')")
     @GetMapping("/eliminar")
     public String confirmationPage(@RequestParam(required = false) Boolean confirmed, Authentication authentication, HttpServletRequest request) {
         if (confirmed == null || !confirmed) 
@@ -42,7 +41,7 @@ public class ClienteController {
             logger.info("Cuenta eliminada exitosamente para el usuario: {}", authentication.getName());
         } catch (Exception e) {
             logger.error("Error al eliminar la cuenta del usuario: {}", authentication.getName(), e);
-            throw new UserNotFoundException("No se pudo eliminar la cuenta del usuario: " + authentication.getName());
+            throw new NotFoundException("No se pudo eliminar la cuenta del usuario: " + authentication.getName());
         }
         new SecurityContextLogoutHandler().logout(request, null, null);
         return ViewRouteHelper.REMOVAL_SUCCESS;

@@ -1,8 +1,6 @@
 package oo2.grupo19.SistemaTickets.repositories;
 
 import java.util.Optional;
-
-import oo2.grupo19.SistemaTickets.entities.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import oo2.grupo19.SistemaTickets.entities.Cliente;

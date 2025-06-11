@@ -10,7 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import oo2.grupo19.SistemaTickets.dto.PersonaJuridicaDTO;
 import oo2.grupo19.SistemaTickets.dto.mappers.PersonaJuridicaMapper;
 import oo2.grupo19.SistemaTickets.entities.PersonaJuridica;
-import oo2.grupo19.SistemaTickets.exceptions.UserCustomExceptions;
+import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.AlreadyExistsException;
+import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
 import oo2.grupo19.SistemaTickets.repositories.IPersonaJuridica;
 import oo2.grupo19.SistemaTickets.services.IPersonaJuridicaService;
 
@@ -29,7 +30,7 @@ public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService{
         try {
             repository.deleteById(id);
         } catch (Exception e) {
-            throw new UserCustomExceptions.PersonaJuridicaNotFound("No se pudo eliminar la Persona Jurídica: " + e.getMessage());
+            throw new NotFoundException("No se pudo eliminar la Persona Jurídica"+ e.getMessage());
         }
     }
 
@@ -39,7 +40,7 @@ public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService{
         try {
             return repository.findAll();
         } catch (Exception e) {
-            throw new UserCustomExceptions.PersonaJuridicaNotFound("No se pudo listar las Personas Jurídicas: " + e.getMessage());
+            throw new NotFoundException("No se pudo listar las Personas Jurídicas: " + e.getMessage());
         }
     }
 
@@ -49,7 +50,7 @@ public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService{
         try {
             return repository.findById(id);
         } catch (Exception e) {
-            throw new UserCustomExceptions.PersonaJuridicaNotFound("No se pudo encontrar la Persona Jurídica: " + e.getMessage());
+            throw new NotFoundException("No se pudo encontrar la Persona Jurídica: " + e.getMessage());
         }
     }
 
@@ -59,7 +60,7 @@ public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService{
         try {
             repository.save(object);
         } catch (Exception e) {
-            throw new UserCustomExceptions.PersonaJuridicaAlreadyExists("No se pudo guardar la Persona Jurídica: " + e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -68,7 +69,7 @@ public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService{
     {
         if (!repository.findByCuit(personaJuridicaDTO.getCuit()).isEmpty()) 
         {
-            throw new UserCustomExceptions.PersonaJuridicaAlreadyExists ("Persona Jurídica bajo ese CUIT ya se encuentra registrada.");
+            throw new AlreadyExistsException("Persona Jurídica bajo ese CUIT ya se encuentra registrada.");
         }
 
         String codigoAcceso = UUID.randomUUID ().toString ().replace ("-", "").substring (0, 12);
@@ -85,7 +86,7 @@ public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService{
     @Transactional(readOnly = true)
     public PersonaJuridicaDTO buscarPersonaJuridica (String code) 
     {
-        PersonaJuridica personaJuridicaEntity = repository.findByCodigoAcceso(code).orElseThrow(() -> new UserCustomExceptions.PersonaJuridicaNotFound ("No hay una Persona Jurídica bajo con ese código :/"));
+        PersonaJuridica personaJuridicaEntity = repository.findByCodigoAcceso(code).orElseThrow(() -> new NotFoundException ("No hay una Persona Jurídica bajo con ese código :/"));
         
         return PersonaJuridicaMapper.mapToPersonaJuridicaDto(personaJuridicaEntity);
     }

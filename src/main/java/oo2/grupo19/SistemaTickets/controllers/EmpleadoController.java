@@ -21,7 +21,7 @@ import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 import oo2.grupo19.SistemaTickets.repositories.estados.IRole;
 import oo2.grupo19.SistemaTickets.services.IEmpleadoService;
 import org.springframework.web.bind.annotation.PutMapping;
-import static oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
+import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -55,7 +55,7 @@ public class EmpleadoController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/agregar")
     public String obtenerVistaEmpleado(Model model, Authentication auth) {
-        model.addAttribute("rolRepository", roleRepository.findByTypeNot(RoleType.USER));
+        model.addAttribute("rolRepository", roleRepository.findByTypeNot(RoleType.CUSTOMER));
         model.addAttribute("empleado", new Empleado());
         model.addAttribute("rol", new Role());
         logger.info("Vista de registro de empleado accedida por: {}", auth.getName());

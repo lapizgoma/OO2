@@ -30,7 +30,7 @@ public class HomeController {
         this.usuarioService = usuarioService;
         this.ticketService = ticketService;
     }
-
+    
     // Inyecta el nombre del usuario en TODAS las vistas
     @ModelAttribute("nombreUsuario")
     public String getNombreUsuario(Authentication authentication) {
@@ -52,21 +52,21 @@ public class HomeController {
     public String home() {
         return ViewRouteHelper.INDEX;
     }
-    
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/home")
     public String adminHome(Model model) {
         List<Ticket> tickets = ticketService.findAll();
         model.addAttribute("tickets", tickets);
         return ViewRouteHelper.INDEX_ADMIN;
     }
-
+    @PreAuthorize("hasRole('EMPLOYEE')")
     @GetMapping("/empleado/home")
     public String empleadoHome(Model model) {
         List<Ticket> tickets = ticketService.findAll();
         model.addAttribute("tickets", tickets);
         return ViewRouteHelper.INDEX_EMPLOYEE;
     }
-    @PreAuthorize("hasRole('ROLE_USER')") 
+    @PreAuthorize("hasRole('CUSTOMER')") 
     @GetMapping("/cliente/home")
     public String clienteHome(Authentication authentication, Model model) {
         String email = authentication.getName();

@@ -50,7 +50,7 @@ public CommandLineRunner cargarEstados(IEstadoIntervencion estadoIntervencionRep
 
         if (roleRepository.count() == 0) {
             roleRepository.saveAll(List.of(
-                new Role(1L, RoleType.USER),
+                new Role(1L, RoleType.CUSTOMER),
                 new Role(2L, RoleType.EMPLOYEE),
                 new Role(3L, RoleType.ADMIN)
             ));

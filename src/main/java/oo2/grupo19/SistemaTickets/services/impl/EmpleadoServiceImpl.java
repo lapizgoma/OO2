@@ -10,10 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import oo2.grupo19.SistemaTickets.entities.Empleado;
-import oo2.grupo19.SistemaTickets.exceptions.UserCustomExceptions;
+import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
 import oo2.grupo19.SistemaTickets.repositories.IEmpleado;
 import oo2.grupo19.SistemaTickets.repositories.ITicket;
-import oo2.grupo19.SistemaTickets.services.IEmpleadoService;
 
 
 @Service
@@ -34,7 +33,7 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
     @Transactional
     public void delete(Long id) {
         if (!empleadoRepository.existsById(id)) {
-            throw new UserCustomExceptions.EmpleadoNotFoundException("No se ha encontrado el empleado con ese id");
+            throw new NotFoundException("No se ha encontrado el empleado con ese id");
         }
         empleadoRepository.deleteById(id);
     }
@@ -50,7 +49,7 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
     public Optional<Empleado> findById(Long id) {
         Optional<Empleado> empleado = empleadoRepository.findById(id);
         if (empleado.isEmpty()) {
-            throw new UserCustomExceptions.EmpleadoNotFoundException("No se ha encontrado el empleado con ese id");
+            throw new NotFoundException("No se ha encontrado el empleado con ese id");
         }
         return empleado;
     }
@@ -59,7 +58,7 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
     @Transactional
     public void save(Empleado object) {
         if(object == null) {
-            throw new UserCustomExceptions.EmpleadoNullException("El empleado no puede ser null");
+            throw new IllegalArgumentException("El empleado no puede ser null");
         }
         if(object.getId() != null && object.getId() > 0){
             object.setTickets(new HashSet<>(ticketRepository.findAll()));
@@ -72,7 +71,7 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
         try{
             return empleadoRepository.findByContactoEmail(email);
         }catch(Exception e){
-            throw new UserCustomExceptions.EmpleadoNotFoundException("No se ha encontrado el empleado con ese email");
+            throw new NotFoundException("No se ha encontrado el empleado con ese email");
         }
     }
 
@@ -81,7 +80,7 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
         try{
             return empleadoRepository.findAllEmpleados();
         }catch(Exception e){
-            throw new UserCustomExceptions.EmpleadoListException("No se ha podido mostrar los empleados");
+            throw new NotFoundException("No se ha podido encontrar los empleados");
         }
     }
 
@@ -90,7 +89,7 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
         try{
             return empleadoRepository.findAllByDeletedFalse();
         }catch(Exception e){
-            throw new UserCustomExceptions.EmpleadoListException("No se ha podido mostrar los empleados activos");
+            throw new NotFoundException("No se ha podido encontrar los empleados activos");
         }
     }
     
@@ -106,7 +105,7 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
             empleado.setNroLegajo(Long.toString(ultimoLegajo));
             usuarioService.registrarUsuario(empleado);
         }catch(Exception e){
-            throw new UserCustomExceptions.EmpleadoPersistException("No se ha podido persistir el empleado");
+            throw new RuntimeException("No se ha podido persistir el empleado");
         }
     }
 
@@ -116,7 +115,7 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
         if(empleado.isPresent()){
             empleado.get().darDeBaja();
         }else{
-            throw new UserCustomExceptions.EmpleadoNotFoundException("No se ha encontrado el empleado con ese id");
+            throw new NotFoundException("No se ha encontrado el empleado con ese id");
         }
     }
 
