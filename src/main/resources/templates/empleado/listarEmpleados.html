@@ -37,7 +37,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
             <li class="nav-item me-2">
-                        <a class="btn btn-primary" th:href="@{/admin/home}">Ver Tickets</a>
+                        <a class="btn btn-primary" th:href="@{/home}">Ver Tickets</a>
                     </li>
             <li class="nav-item">
               <form th:action="@{/auth/logout}" method="post" class="d-inline">
@@ -65,7 +65,7 @@
         <div th:each="empleado : ${empleados}" class="col">
           <div
             class="employee-card p-3"
-            data-email="${empleado.contacto.email}"
+            data-email="${empleado.email}"
           >
             <h5 class="text-primary mb-2">
               [[${empleado.nombre}]] [[${empleado.apellido}]]
@@ -78,11 +78,11 @@
 
     <div class="collapse mt-3" th:id="'detalleEmpleado' + ${empleado.id}">
       <hr />
-      <p class="card-text mb-1"><strong>Email:</strong> <span th:text="${empleado.contacto.email}"></span></p>
-      <p class="card-text mb-1"><strong>Teléfono:</strong> <span th:text="${empleado.contacto.telefono}"></span></p>
+      <p class="card-text mb-1"><strong>Email:</strong> <span th:text="${empleado.email}"></span></p>
+      <p class="card-text mb-1"><strong>Teléfono:</strong> <span th:text="${empleado.telefono}"></span></p>
       <p class="card-text mb-1">
         <strong>Dirección:</strong>
-        <span th:text="${empleado.contacto.calle + ' ' + empleado.contacto.nroPuerta + ', ' + empleado.contacto.localidad}"></span>
+        <span th:text="${empleado.direccionCompleta}"></span>
       </p>
     </div>
             <form
