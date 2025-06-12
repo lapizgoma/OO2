@@ -32,7 +32,7 @@ public class SecurityConfig implements WebMvcConfigurer{
                 // CORS está deshabilitado porque el front está embebido. Si expones la API, habilita y configura aquí.
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/home", "/auth/**", "/css/**", "/images/**").permitAll(); // Solo /home y /auth/* son públicas
+                    auth.requestMatchers("/home", "/auth/**", "/css/**", "/images/**", "/api/*").permitAll(); // Solo /home y /auth/* son públicas
                     auth.anyRequest().authenticated(); // Todo lo demás requiere autenticación
                 })
                 .formLogin(form -> {
