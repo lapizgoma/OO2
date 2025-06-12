@@ -1,6 +1,8 @@
 package oo2.grupo19.SistemaTickets.controllers;
 import java.util.List;
 
+import oo2.grupo19.SistemaTickets.dto.EmpleadoDTO;
+import oo2.grupo19.SistemaTickets.dto.mappers.EmpleadoMapper;
 import oo2.grupo19.SistemaTickets.entities.estados.enums.RoleType;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -44,12 +46,16 @@ public class EmpleadoController {
     }
     
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("")
+    @GetMapping
     public String listarEmpleados(Model model, Authentication auth) {
         List<Empleado> empleados = empleadoService.traerEmpleadosActivos();
-        model.addAttribute("empleados", empleados);
-        logger.info("Listado de empleados accedido por: {}", auth.getName());
-        return ViewRouteHelper.LISTAR_EMPLEADOS;
+        if(!empleados.isEmpty()){
+            List<EmpleadoDTO> empleadoDTOS = EmpleadoMapper.mapToEmpleadoDtoList(empleados);
+            model.addAttribute("empleados", empleadoDTOS);
+            logger.info("Listado de empleados accedido por: {}", auth.getName());
+            return ViewRouteHelper.LISTAR_EMPLEADOS;
+        }
+        throw new NotFoundException("No hay empleados");
     }
     
     @PreAuthorize("hasRole('ADMIN')")
