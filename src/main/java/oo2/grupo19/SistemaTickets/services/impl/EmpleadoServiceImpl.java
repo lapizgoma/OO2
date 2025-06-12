@@ -124,19 +124,22 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
         return empleadoRepository.findAll();
     }
 
-
     @Override
+    @Transactional(readOnly = true)
     public List<Empleado> findAllEmpleados() {
         return empleadoRepository.findAllEmpleados();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Empleado> findAllByDeletedFalse() {
         return empleadoRepository.findAllByDeletedFalse();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Empleado> findByNombre(String nombre) {
         return empleadoRepository.findByNombre(nombre);
     }
+
 }
