@@ -17,8 +17,8 @@ public class RestControllerTest {
         this.clienteService = clienteService;
     }
 
-    @GetMapping("/prueba")
-    public ResponseEntity<?> enviar2(){
+    @GetMapping("/clientes")
+    public ResponseEntity<?> mostrarClientes(){
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(clienteService.findAll());
     }
 
