@@ -5,7 +5,6 @@ import java.util.Optional;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
 
 public interface IClienteService extends IService<Cliente>{
-    public Optional<Cliente> findByEmail(String email);
-    public void eliminarCliente (String email);
-    
+    Optional<Cliente> findByEmail(String email);
+    void eliminarCliente (String email);
 }
