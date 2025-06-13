@@ -12,13 +12,11 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import oo2.grupo19.SistemaTickets.dto.TicketClientDTO;
-import oo2.grupo19.SistemaTickets.dto.TicketDTO;
-import oo2.grupo19.SistemaTickets.dto.TicketEmployeeDTO;
 import oo2.grupo19.SistemaTickets.dto.mappers.ClienteMapper;
 import oo2.grupo19.SistemaTickets.dto.mappers.IntervencionMapper;
-import oo2.grupo19.SistemaTickets.dto.mappers.TicketClientMapper;
-import oo2.grupo19.SistemaTickets.dto.mappers.TicketEmployeeMapper;
+import oo2.grupo19.SistemaTickets.dto.mappers.TicketMapper;
+import oo2.grupo19.SistemaTickets.dto.ticket.TicketDTO;
+import oo2.grupo19.SistemaTickets.dto.ticket.TicketEmployeeDTO;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.entities.Empleado;
 import oo2.grupo19.SistemaTickets.entities.Ticket;
@@ -181,7 +179,7 @@ public class TicketServiceImpl implements ITicketService{
     @Transactional(readOnly = true)
     public TicketDTO traerPorCliente(Long idCliente) {
         try {
-            return convertirATicketDTO(ticketRepository.findByCreadoPor_Id(idCliente));
+            return TicketMapper.mapToTicketDto(ticketRepository.findByCreadoPor_Id(idCliente));
         } catch (Exception e) {
             throw new NotFoundException("No se ha podido mostrar el ticket");
         }
@@ -197,20 +195,6 @@ public class TicketServiceImpl implements ITicketService{
         }
     }
 
-    private TicketDTO convertirATicketDTO(Ticket ticket) {
-    TicketDTO dto = new TicketDTO();
-    dto.setId(ticket.getId());
-    dto.setAsunto(ticket.getAsunto());
-    dto.setEstado(ticket.getEstado().toString());
-
-    dto.setCliente(ClienteMapper.mapToClienteDto(ticket.getCreadoPor()));
-    dto.setEmpleados(ticket.getListEmpleado().stream()
-        .map(t -> t.empleadoToDto())
-        .collect(Collectors.toSet()));
-    dto.setIntervencion(IntervencionMapper.mapToIntervencionDtoSet(ticket.getLstIntervencion()));
-
-    return dto;
-}
     @Transactional (readOnly = true)
     public List<Ticket> traerPorEstados (long idEstado) {
         return ticketRepository.traerPorEstado(idEstado);
@@ -218,7 +202,7 @@ public class TicketServiceImpl implements ITicketService{
 
 
     @Transactional(readOnly = true)
-    public TicketClientDTO getTicketParaCliente(Long ticketId, String clienteEmail) {
+    public TicketDTO getTicketParaCliente(Long ticketId, String clienteEmail) {
         try {
             Ticket ticketEntity = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new NotFoundException("No pudimos encontrar el Ticket que buscás :/"));
@@ -229,7 +213,7 @@ public class TicketServiceImpl implements ITicketService{
                 throw new StatusCustomExceptions.NotAuthorizedException("No pudimos encontrar el Ticket que buscás :/");
             }
 
-            return TicketClientMapper.mapToTicketClientDto(ticketEntity);
+            return TicketMapper.mapToTicketDto(ticketEntity);
         } catch (Exception e) {
             throw new NotFoundException("Error al obtener el ticket para el cliente");
         }
@@ -243,7 +227,7 @@ public class TicketServiceImpl implements ITicketService{
             Empleado empleadoEntity = empleadoRepository.findByContactoEmail(empleadoEmail)
                 .orElseThrow(() -> new NotFoundException("Empleado no encontrado :/"));
 
-            return TicketEmployeeMapper.mapToTicketEmployeeDto(ticketEntity, empleadoEntity);
+            return TicketMapper.mapToTicketEmployeeDto(ticketEntity, empleadoEntity);
         } catch (Exception e) {
             throw new NotFoundException("Error al obtener el ticket para el empleado");
         }
@@ -265,7 +249,7 @@ public class TicketServiceImpl implements ITicketService{
 
             ticketRepository.save(ticketEntity);
 
-            return TicketEmployeeMapper.mapToTicketEmployeeDto(ticketEntity, empleadoEntity);
+            return TicketMapper.mapToTicketEmployeeDto(ticketEntity, empleadoEntity);
         } catch (Exception e) {
             throw new NotFoundException("Error al asignar el ticket al empleado");
         }

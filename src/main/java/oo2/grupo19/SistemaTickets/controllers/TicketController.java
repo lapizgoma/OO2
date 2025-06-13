@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import lombok.extern.log4j.Log4j2;
-import oo2.grupo19.SistemaTickets.dto.TicketClientDTO;
-import oo2.grupo19.SistemaTickets.dto.TicketEmployeeDTO;
+import oo2.grupo19.SistemaTickets.dto.ticket.TicketDTO;
+import oo2.grupo19.SistemaTickets.dto.ticket.TicketEmployeeDTO;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.entities.Ticket;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoIntervencion;
@@ -104,7 +104,7 @@ public class TicketController {
         }
         else if (authentication.getAuthorities ().stream ().anyMatch (a -> a.getAuthority ().equals ("ROLE_CUSTOMER"))) 
         {
-            TicketClientDTO ticket = ticketService.getTicketParaCliente(idTicket, authentication.getName ());
+            TicketDTO ticket = ticketService.getTicketParaCliente(idTicket, authentication.getName ());
             model.addAttribute("ticketClientDTO", ticket);
         }
 
