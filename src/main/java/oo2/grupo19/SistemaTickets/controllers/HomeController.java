@@ -1,7 +1,5 @@
 package oo2.grupo19.SistemaTickets.controllers;
 
-import oo2.grupo19.SistemaTickets.entities.Cliente;
-import oo2.grupo19.SistemaTickets.entities.Empleado;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -16,7 +14,6 @@ import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 import oo2.grupo19.SistemaTickets.services.ITicketService;
 import oo2.grupo19.SistemaTickets.services.IUsuarioService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;

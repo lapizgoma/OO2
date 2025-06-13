@@ -1,8 +1,8 @@
 package oo2.grupo19.SistemaTickets.dto.mappers;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import oo2.grupo19.SistemaTickets.dto.TicketClientDTO;
 import oo2.grupo19.SistemaTickets.dto.IntervencionDTO;
@@ -24,10 +24,10 @@ public final class TicketClientMapper {
             dto.setFechaHoraCreado(ticket.getFechaHora().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
         }
         // Intervenciones
-        List<IntervencionDTO> intervenciones = new ArrayList<>();
+        Set<IntervencionDTO> intervenciones = new HashSet<>();
         if (ticket.getLstIntervencion() != null) {
             for (Intervencion intervencion : ticket.getLstIntervencion()) {
-                intervenciones.add(IntervencioMapper.mapToIntervencionDto(intervencion));
+                intervenciones.add(IntervencionMapper.mapToIntervencionDto(intervencion));
             }
         }
         dto.setIntervenciones(intervenciones);

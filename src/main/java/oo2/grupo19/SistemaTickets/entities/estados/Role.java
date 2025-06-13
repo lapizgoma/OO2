@@ -17,7 +17,11 @@ import oo2.grupo19.SistemaTickets.entities.estados.enums.RoleType;
 
 @Entity
 @Table(name = "roles")
-@Getter @Setter @NoArgsConstructor @Builder @AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class Role {
 
     @Id
@@ -36,9 +40,9 @@ public class Role {
     @UpdateTimestamp
     private Timestamp updateAt;
 
-    public Role(Long id,@NotNull RoleType type){
+    public Role(Long id, @NotNull RoleType type) {
         this.id = id;
         this.type = type;
     }
-    
+
 }

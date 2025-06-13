@@ -5,8 +5,9 @@ import org.springframework.stereotype.Component;
 
 import oo2.grupo19.SistemaTickets.entities.Empleado;
 import oo2.grupo19.SistemaTickets.entities.Usuario;
+import oo2.grupo19.SistemaTickets.security.config.CustomUserDetails;
+
 import static oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotAuthorizedException;
-import oo2.grupo19.SistemaTickets.security.util.CustomUserDetails;
 
 @Component
 public class SecurityService {

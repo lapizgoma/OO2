@@ -1,7 +1,6 @@
 package oo2.grupo19.SistemaTickets.entities;
 
 import java.time.LocalDateTime;
-import oo2.grupo19.SistemaTickets.dto.IntervencionDTO;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoIntervencion;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -46,13 +45,6 @@ public class Intervencion {
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "estado_id", nullable = false)
   private EstadoIntervencion estado;
-
-  public IntervencionDTO mensajeToDto() {
-    IntervencionDTO dto = new IntervencionDTO();
-    dto.setId(this.id);
-    dto.setContenido(this.descripcion);
-    return dto;
-  }
 
   @PrePersist
   private void prePersist() {

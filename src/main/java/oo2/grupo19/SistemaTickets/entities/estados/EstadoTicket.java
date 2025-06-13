@@ -11,7 +11,9 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "estado_ticket")
-@Getter @Setter @NoArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
 public class EstadoTicket {
 
     @Id
@@ -25,10 +27,4 @@ public class EstadoTicket {
         this.id = id;
         this.estado = estado;
     }
-
-    // ID 1 -> PENDIENTE
-    // ID 2 -> ATENDIDO
-    // ID 3 -> CERRADO
-
-
 }

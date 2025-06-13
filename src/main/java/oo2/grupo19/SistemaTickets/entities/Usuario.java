@@ -2,7 +2,6 @@ package oo2.grupo19.SistemaTickets.entities;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import oo2.grupo19.SistemaTickets.dto.UsuarioDTO;
 import oo2.grupo19.SistemaTickets.entities.estados.Role;
 
 import java.util.Collection;
@@ -38,7 +37,11 @@ import lombok.ToString;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "usuario")
-@Getter @Setter @NoArgsConstructor @EqualsAndHashCode @ToString
+@Getter
+@Setter
+@NoArgsConstructor
+@EqualsAndHashCode
+@ToString
 public class Usuario implements UserDetails {
 
     @Id
@@ -53,11 +56,11 @@ public class Usuario implements UserDetails {
     @Column(length = 20)
     @NotBlank(message = "El nombre no debe estar vacio")
     protected String nombre;
-    
+
     @Column(length = 20)
     @NotBlank(message = "El apellido no debe estar vacio")
     protected String apellido;
-    
+
     @Column(nullable = false)
     @NotBlank(message = "La password no debe estar vacia")
     protected String password;
@@ -69,57 +72,15 @@ public class Usuario implements UserDetails {
     protected boolean deleted;
 
     @ManyToMany(fetch = FetchType.EAGER, targetEntity = Role.class)
-    @JoinTable(
-        name = "users_role",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns= @JoinColumn(name = "role_id")
-    )
+    @JoinTable(name = "users_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
-	public UsuarioDTO usuarioToDto() {
-		UsuarioDTO usuarioDto = new UsuarioDTO();
-		usuarioDto.setId(this.id);
-		usuarioDto.setApellido(this.apellido);
-		usuarioDto.setNombre(this.nombre);
-		usuarioDto.setEmail(this.contacto.getEmail());
-		return usuarioDto;
-	}
-    
-    public Cliente toCliente(String razonSocial, String cuit){
-        Cliente cliente = new Cliente();
-        cliente.setApellido(this.apellido);
-        cliente.setContacto(this.contacto);
-        cliente.setDeleted(this.deleted);
-        cliente.setDni(this.dni);
-        cliente.setId(this.id);
-        cliente.setPassword(this.password);
-        cliente.setNombre(this.nombre);
-        PersonaJuridica personaJuridica = new PersonaJuridica();
-        personaJuridica.setCuit(cuit);
-        personaJuridica.setRazonSocial(razonSocial);
-        personaJuridica.getCliente().add(cliente);
-        cliente.setOrganizacion(personaJuridica);
-        return cliente;
-    }
-
-    public Cliente toCliente(){
-        Cliente cliente = new Cliente();
-        cliente.setApellido(this.apellido);
-        cliente.setContacto(this.contacto);
-        cliente.setDeleted(this.deleted);
-        cliente.setDni(this.dni);
-        cliente.setId(this.id);
-        cliente.setPassword(this.password);
-        cliente.setNombre(this.nombre);
-        return cliente;
-    }
-
-    public void asignarContactoUsuario(){
+    public void asignarContactoUsuario() {
         this.contacto.setUsuario(this);
     }
 
-    public void agregarRoles(Role role){
-        if(this.roles == null){
+    public void agregarRoles(Role role) {
+        if (this.roles == null) {
             this.roles = new HashSet<>();
         }
         this.roles.add(role);
@@ -128,9 +89,8 @@ public class Usuario implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
-        .map(role -> new SimpleGrantedAuthority(role.getType().getPrefixedName())).collect(Collectors.toList());
+                .map(role -> new SimpleGrantedAuthority(role.getType().getPrefixedName())).collect(Collectors.toList());
     }
-
 
     @Override
     public String getUsername() {
@@ -156,8 +116,4 @@ public class Usuario implements UserDetails {
     public boolean isEnabled() {
         return !this.deleted;
     }
-
-
-    
-    
 }

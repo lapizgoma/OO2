@@ -1,4 +1,4 @@
-package oo2.grupo19.SistemaTickets.security.util;
+package oo2.grupo19.SistemaTickets.security.config;
 
 import java.util.Collection;
 import java.util.List;

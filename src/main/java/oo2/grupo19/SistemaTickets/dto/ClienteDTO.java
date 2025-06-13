@@ -13,8 +13,15 @@ import lombok.ToString;
 @Setter
 @ToString
 @EqualsAndHashCode
-public class PersonaJuridicaDTO {
-    private String razonSocial;
+public class ClienteDTO {
+    private Long id;
+    private String nombre;
+    private String apellido;
+    private String email;
+    private String telefono;
+    private String dni;
+    private String direccionCompleta;
+    private String organizacion;
     private String cuit;
     private String codigoAcceso;
 }

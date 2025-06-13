@@ -14,7 +14,7 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 public class EmpleadoDTO {
-    private Long id;
+	private Long id;
 	private String nombre;
 	private String dni;
 	private String nroLegajo;

@@ -12,14 +12,16 @@ import lombok.Setter;
 
 @Table(name = "cliente")
 @Entity
-@Getter @Setter @NoArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
 public class Cliente extends Usuario {
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "organizacion_id",nullable = true)
+    @JoinColumn(name = "organizacion_id", nullable = true)
     private PersonaJuridica organizacion;
 
-    public boolean tieneOrganizacion(){
+    public boolean tieneOrganizacion() {
         return this.organizacion != null;
     }
 }

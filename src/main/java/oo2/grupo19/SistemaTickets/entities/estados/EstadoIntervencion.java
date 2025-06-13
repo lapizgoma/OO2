@@ -11,7 +11,9 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "estado_intervencion")
-@Getter @Setter @NoArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
 public class EstadoIntervencion {
 
     @Id
@@ -25,7 +27,4 @@ public class EstadoIntervencion {
         this.id = id;
         this.estado = estado;
     }
-
-    
-
 }

@@ -17,12 +17,12 @@ import oo2.grupo19.SistemaTickets.entities.estados.Prioridad;
 @ToString
 @EqualsAndHashCode
 public class TicketEmployeeDTO {
-    private Long id;
+	private Long id;
 	private String asunto;
 	private String detalle;
 	private String fechaHoraCreado;
 	private Set<IntervencionDTO> intervenciones;
-    private Set<EmpleadoDTO> listEmpleados;
+	private Set<EmpleadoDTO> listEmpleados;
 	private String estado;
 	private Prioridad prioridad;
 	private String usuarioNombre;

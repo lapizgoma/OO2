@@ -42,6 +42,13 @@ public final class EmpleadoMapper {
         empleado.setId(dto.getId());
         empleado.setNombre(dto.getNombre());
         empleado.setApellido(dto.getApellido());
+        empleado.getContacto().setEmail(dto.getEmail());
+        empleado.getContacto().setTelefono(dto.getTelefono());
+        empleado.setNroLegajo(dto.getNroLegajo());
+        empleado.setDni(dto.getDni());
+        empleado.getContacto().setCalle(dto.getDireccionCompleta().split(",")[0].trim());
+        empleado.getContacto().setNroPuerta(dto.getDireccionCompleta().split(",")[1].trim());
+        empleado.getContacto().setLocalidad(dto.getDireccionCompleta().split(",")[2].trim());
         return empleado;
     }
 

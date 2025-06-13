@@ -33,7 +33,7 @@ public final class TicketEmployeeMapper {
         // Intervenciones
         Set<IntervencionDTO> intervenciones = new HashSet<>();
         if (ticket.getLstIntervencion() != null) {
-            ticket.getLstIntervencion().forEach(i -> intervenciones.add(IntervencioMapper.mapToIntervencionDto(i)));
+            ticket.getLstIntervencion().forEach(i -> intervenciones.add(IntervencionMapper.mapToIntervencionDto(i)));
         }
         dto.setIntervenciones(intervenciones);
         // Estado y prioridad

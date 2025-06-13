@@ -99,10 +99,6 @@ public class UsuarioServiceImpl implements IUsuarioService {
     public void registrarUsuario(Usuario usuario) {
         String passwordHash = passwordEncoder.encode(usuario.getPassword());
         usuario.setPassword(passwordHash);
-        String rolUser = usuario.getRoles().stream().findAny().orElseThrow().toString();
-        if(rolUser.equals("USER")){
-            usuario = usuario.toCliente();
-        }
         if (usuario instanceof Cliente c) {
             clienteRepository.save(c);
         } else if (usuario instanceof Empleado e) {

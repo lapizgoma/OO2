@@ -2,14 +2,15 @@ package oo2.grupo19.SistemaTickets.dto.mappers;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import oo2.grupo19.SistemaTickets.dto.IntervencionDTO;
 import oo2.grupo19.SistemaTickets.entities.Intervencion;
 
-public final class IntervencioMapper {
-    private IntervencioMapper() {}
+public final class IntervencionMapper {
+    private IntervencionMapper() {}
 
     public static IntervencionDTO mapToIntervencionDto(Intervencion intervencion) {
         if (intervencion == null) {
@@ -42,15 +43,13 @@ public final class IntervencioMapper {
         }
         // Estado y realizadoPor deben ser seteados por el servicio según lógica de negocio
         return intervencion;
+    }    public static Set<IntervencionDTO> mapToIntervencionDtoSet(Set<Intervencion> intervenciones) {
+        return intervenciones == null ? new HashSet<>() :
+            intervenciones.stream().map(IntervencionMapper::mapToIntervencionDto).collect(Collectors.toSet());
     }
 
-    public static List<IntervencionDTO> mapToIntervencionDtoList(List<Intervencion> intervenciones) {
-        return intervenciones == null ? List.of() :
-            intervenciones.stream().map(IntervencioMapper::mapToIntervencionDto).collect(Collectors.toList());
-    }
-
-    public static List<Intervencion> mapToIntervencionEntityList(List<IntervencionDTO> dtos) {
-        return dtos == null ? List.of() :
-            dtos.stream().map(IntervencioMapper::mapToIntervencionEntity).collect(Collectors.toList());
+    public static Set<Intervencion> mapToIntervencionEntitySet(Set<IntervencionDTO> dtos) {
+        return dtos == null ? new HashSet<>() :
+            dtos.stream().map(IntervencionMapper::mapToIntervencionEntity).collect(Collectors.toSet());
     }
 }

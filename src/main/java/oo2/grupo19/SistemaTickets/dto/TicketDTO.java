@@ -16,10 +16,10 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 public class TicketDTO {
-    private Long id;
+	private Long id;
 	private String asunto;
 	private Set<EmpleadoDTO> empleados;
 	private Set<IntervencionDTO> intervencion;
 	private String estado;
-	private UsuarioDTO cliente;
+	private ClienteDTO cliente;
 }

@@ -25,14 +25,12 @@ import oo2.grupo19.SistemaTickets.dto.TicketClientDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketEmployeeDTO;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.entities.Ticket;
-import oo2.grupo19.SistemaTickets.entities.Usuario;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoIntervencion;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoTicket;
 import oo2.grupo19.SistemaTickets.entities.estados.Prioridad;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 import oo2.grupo19.SistemaTickets.security.SecurityService;
 import oo2.grupo19.SistemaTickets.services.ITicketService;
-import oo2.grupo19.SistemaTickets.services.IUsuarioService;
 import oo2.grupo19.SistemaTickets.services.IEstadoTicketService;
 import oo2.grupo19.SistemaTickets.services.IClienteService;
 import oo2.grupo19.SistemaTickets.services.IEstadoIntervencionService;
@@ -43,16 +41,14 @@ import oo2.grupo19.SistemaTickets.services.IPrioridadService;
 public class TicketController {
 
     private final ITicketService ticketService;
-    private final IUsuarioService usuarioService;
     private final IClienteService clienteService;
     private final IEstadoTicketService estadoTicketService;
     private final IEstadoIntervencionService estadoIntervencionService;
     private final SecurityService securityService;
     private final IPrioridadService prioridadService;
 
-    public TicketController(ITicketService ticketService, IUsuarioService usuarioService, IPrioridadService prioridadService, IEstadoIntervencionService estadoIntervencionService, IClienteService clienteService, SecurityService securityService, IEstadoTicketService estadoTicketService) {
+    public TicketController(ITicketService ticketService, IPrioridadService prioridadService, IEstadoIntervencionService estadoIntervencionService, IClienteService clienteService, SecurityService securityService, IEstadoTicketService estadoTicketService) {
         this.ticketService = ticketService;
-        this.usuarioService = usuarioService;
         this.estadoIntervencionService = estadoIntervencionService;
         this.clienteService = clienteService;
         this.securityService = securityService;
@@ -81,8 +77,8 @@ public class TicketController {
         Model model,
         @RequestParam("mensaje") String contenido) {
         String email = authentication.getName();
-        Optional<Usuario> usuarioOpt = usuarioService.findByEmail(email);
-        Usuario clienteDb = usuarioOpt.get();
+        Optional<Cliente> clienteOpt = clienteService.findByEmail(email);
+        Cliente clienteDb = clienteOpt.get();
         EstadoTicket estado = estadoTicketService.findById(1L).orElse(null);
         if(estado == null) {
             throw new NotFoundException("Estado no encontrado");

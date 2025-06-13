@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.HashSet;
 import org.hibernate.annotations.CreationTimestamp;
-import java.util.Objects;
 
 import oo2.grupo19.SistemaTickets.dto.EmpleadoDTO;
 import jakarta.persistence.Column;
@@ -34,10 +33,6 @@ public class Empleado extends Usuario {
 
   @ManyToMany(mappedBy = "listEmpleado")
   private Set<Ticket> tickets = new HashSet<>();
-  /* 
-  @ManyToMany
-  @JoinTable(name = "empleado_ticket", joinColumns = @JoinColumn(name = "empleado_id", nullable = true), inverseJoinColumns = @JoinColumn(name = "ticket_id", nullable = true))
-  private List<Ticket> tickets;*/
 
   public EmpleadoDTO empleadoToDto() {
     EmpleadoDTO empleadoDto = new EmpleadoDTO();
@@ -53,20 +48,7 @@ public class Empleado extends Usuario {
 
   public void agregarTicket(Ticket ticket) {
     if (!tickets.contains(ticket)) {
-        tickets.add(ticket);
+      tickets.add(ticket);
     }
-}
-@Override
-public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof Empleado)) return false;
-    Empleado other = (Empleado) o;
-    return id != null && id.equals(other.getId());
-}
-
-@Override
-public int hashCode() {
-    return Objects.hash(id);
-}
-
+  }
 }

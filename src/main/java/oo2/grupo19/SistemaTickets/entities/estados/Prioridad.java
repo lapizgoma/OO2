@@ -13,7 +13,11 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "prioridad")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @ToString
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class Prioridad {
     @Id
     private Long id;

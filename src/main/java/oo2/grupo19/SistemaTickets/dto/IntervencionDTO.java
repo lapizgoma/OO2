@@ -21,4 +21,3 @@ public class IntervencionDTO {
     private String descripcion;
     private String estado;
 }
-

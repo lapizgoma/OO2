@@ -15,19 +15,19 @@ import org.springframework.transaction.annotation.Transactional;
 import oo2.grupo19.SistemaTickets.dto.TicketClientDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketEmployeeDTO;
+import oo2.grupo19.SistemaTickets.dto.mappers.ClienteMapper;
+import oo2.grupo19.SistemaTickets.dto.mappers.IntervencionMapper;
 import oo2.grupo19.SistemaTickets.dto.mappers.TicketClientMapper;
 import oo2.grupo19.SistemaTickets.dto.mappers.TicketEmployeeMapper;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.entities.Empleado;
 import oo2.grupo19.SistemaTickets.entities.Ticket;
-import oo2.grupo19.SistemaTickets.entities.Usuario;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoTicket;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
 import oo2.grupo19.SistemaTickets.repositories.ICliente;
 import oo2.grupo19.SistemaTickets.repositories.IEmpleado;
 import oo2.grupo19.SistemaTickets.repositories.ITicket;
-import oo2.grupo19.SistemaTickets.repositories.IUsuario;
 import oo2.grupo19.SistemaTickets.services.ITicketService;
 import oo2.grupo19.SistemaTickets.entities.estados.Prioridad;
 
@@ -37,14 +37,12 @@ import oo2.grupo19.SistemaTickets.entities.estados.Prioridad;
 public class TicketServiceImpl implements ITicketService{
     
     private final ITicket ticketRepository;
-    private final IUsuario usuarioRepository;
     private final ICliente clienteRepository;
     private final IEmpleado empleadoRepository;
     private static final Logger log = LoggerFactory.getLogger(TicketServiceImpl.class);
 
-    public TicketServiceImpl(ITicket ticketRepository, IUsuario usuarioRepository, ICliente clienteRepository, IEmpleado empleadoRepository) {
+    public TicketServiceImpl(ITicket ticketRepository, ICliente clienteRepository, IEmpleado empleadoRepository) {
         this.ticketRepository = ticketRepository;
-        this.usuarioRepository = usuarioRepository;
         this.clienteRepository = clienteRepository;
         this.empleadoRepository= empleadoRepository;
     }
@@ -83,7 +81,7 @@ public class TicketServiceImpl implements ITicketService{
     @Transactional
     public void save(Ticket object) {
         try {
-            Usuario userDb = usuarioRepository.findById(object.getCreadoPor().getId()).orElseThrow();
+            Cliente userDb = clienteRepository.findById(object.getCreadoPor().getId()).orElseThrow();
             object.setCreadoPor(userDb);
             ticketRepository.save(object);
         } catch (Exception e) {
@@ -205,13 +203,11 @@ public class TicketServiceImpl implements ITicketService{
     dto.setAsunto(ticket.getAsunto());
     dto.setEstado(ticket.getEstado().toString());
 
-    dto.setCliente(ticket.getCreadoPor().usuarioToDto());
+    dto.setCliente(ClienteMapper.mapToClienteDto(ticket.getCreadoPor()));
     dto.setEmpleados(ticket.getListEmpleado().stream()
         .map(t -> t.empleadoToDto())
         .collect(Collectors.toSet()));
-    dto.setIntervencion(ticket.getLstIntervencion().stream()
-        .map(m -> m.mensajeToDto())
-        .collect(Collectors.toSet()));
+    dto.setIntervencion(IntervencionMapper.mapToIntervencionDtoSet(ticket.getLstIntervencion()));
 
     return dto;
 }

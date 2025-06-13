@@ -16,14 +16,17 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "contacto")
-@Getter @Setter @NoArgsConstructor @ToString
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString
 public class Contacto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true,nullable = false)
+    @Column(unique = true, nullable = false)
     @NotBlank(message = "El correo electronico es obligatorio")
     private String email;
 

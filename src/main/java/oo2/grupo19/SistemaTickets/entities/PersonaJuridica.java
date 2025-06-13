@@ -17,12 +17,14 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "persona_juridica")
-@Getter @Setter @NoArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
 public class PersonaJuridica {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;    
+    private Long id;
 
     @Column(name = "razon_social")
     @NotBlank(message = "La razon social no debe estar vacia")
