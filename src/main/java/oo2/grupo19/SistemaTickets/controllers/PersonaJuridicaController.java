@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import lombok.extern.log4j.Log4j2;
-import oo2.grupo19.SistemaTickets.dto.PersonaJuridicaDTO;
+import oo2.grupo19.SistemaTickets.dto.personaJuridica.PersonaJuridicaDTO;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 import oo2.grupo19.SistemaTickets.services.IPersonaJuridicaService;
 
