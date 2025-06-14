@@ -1,6 +1,7 @@
 package oo2.grupo19.SistemaTickets.dto.mappers;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import oo2.grupo19.SistemaTickets.dto.ClienteDTO;
@@ -9,8 +10,6 @@ import oo2.grupo19.SistemaTickets.entities.Contacto;
 import oo2.grupo19.SistemaTickets.entities.PersonaJuridica;
 
 public final class ClienteMapper {
-    private ClienteMapper() {}
-
     public static ClienteDTO mapToClienteDto(Cliente cliente) {
         if (cliente == null) {
             return null;
@@ -47,6 +46,7 @@ public final class ClienteMapper {
         cliente.setNombre(dto.getNombre());
         cliente.setApellido(dto.getApellido());
         cliente.setDni(dto.getDni());
+        cliente.setPassword(dto.getPassword());
 
         // Mapear contacto
         Contacto contacto = new Contacto();
@@ -75,17 +75,17 @@ public final class ClienteMapper {
         return cliente;
     }
 
-    public static List<ClienteDTO> mapToClienteDtoList(List<Cliente> clientes) {
-        return clientes == null ? List.of() : 
+    public static Set<ClienteDTO> mapToClienteDtoSet(List<Cliente> clientes) {
+        return clientes == null ? Set.of() : 
             clientes.stream()
                 .map(ClienteMapper::mapToClienteDto)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
-    public static List<Cliente> mapToClienteEntityList(List<ClienteDTO> dtos) {
-        return dtos == null ? List.of() : 
+    public static Set<Cliente> mapToClienteEntitySet(List<ClienteDTO> dtos) {
+        return dtos == null ? Set.of() : 
             dtos.stream()
                 .map(ClienteMapper::mapToClienteEntity)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 }

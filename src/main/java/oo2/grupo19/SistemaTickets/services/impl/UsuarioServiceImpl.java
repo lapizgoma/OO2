@@ -1,20 +1,17 @@
 package oo2.grupo19.SistemaTickets.services.impl;
 
-import java.util.List;
 import java.util.Optional;
-
-import oo2.grupo19.SistemaTickets.repositories.IEmpleado;
+import java.util.Set;
 
 import oo2.grupo19.SistemaTickets.services.IUsuarioService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.log4j.Log4j2;
-import oo2.grupo19.SistemaTickets.entities.Cliente;
-import oo2.grupo19.SistemaTickets.entities.Empleado;
+import oo2.grupo19.SistemaTickets.dto.UsuarioDTO;
+import oo2.grupo19.SistemaTickets.dto.mappers.UsuarioMapper;
 import oo2.grupo19.SistemaTickets.entities.Usuario;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
-import oo2.grupo19.SistemaTickets.repositories.ICliente;
 import oo2.grupo19.SistemaTickets.repositories.IUsuario;
 
 @Service
@@ -22,15 +19,11 @@ import oo2.grupo19.SistemaTickets.repositories.IUsuario;
 public class UsuarioServiceImpl implements IUsuarioService {
 
     private final IUsuario usuarioRepository;
-    private final IEmpleado empleadoRepository;
-    private final ICliente clienteRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UsuarioServiceImpl(IUsuario usuarioRepository, IEmpleado empleadoService, PasswordEncoder password,ICliente clienteRepository) {
+    public UsuarioServiceImpl(IUsuario usuarioRepository, PasswordEncoder password) {
         this.usuarioRepository = usuarioRepository;
-        this.empleadoRepository = empleadoService;
         this.passwordEncoder = password;
-        this.clienteRepository = clienteRepository;
     }
 
     @Override
@@ -45,48 +38,45 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Usuario> findAll() {
-        try {
-            return usuarioRepository.findAll();
-        } catch (Exception e) {
-            throw new NotFoundException("No se ha podido encontrar la lista de usuario");
-        }
+    public Set<UsuarioDTO> findAll() {
+        return UsuarioMapper.mapToUsuarioDtoSet(usuarioRepository.findAll());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Usuario> findById(Long id) {
-        try {
-            return usuarioRepository.findById(id);
-        } catch (Exception e) {
-            throw new NotFoundException("No se ha podido encontrar el usuario");
-        }
+    public UsuarioDTO findById(Long id) {
+        return UsuarioMapper.mapToUsuarioDto(
+            usuarioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("No se ha encontrado el usuario con el id: " + id))
+        );
     }
 
     @Override
     @Transactional
-    public void save(Usuario object) {
-        try {
-            Optional<Usuario> user = usuarioRepository.findByContactoEmail(object.getContacto().getEmail());
-            if (user.isEmpty()) {
-                object.asignarContactoUsuario();
-                usuarioRepository.save(object);
-            } else {
-                log.info("El usuario ya existe en la bd!");
-            }
-        } catch (Exception e) {
-            throw new NotFoundException("No se ha podido actualizar/insertar el usuario");
+    public void save(UsuarioDTO usuariodto) {
+        if(usuariodto == null) {
+            throw new IllegalArgumentException("El empleado no puede ser null");
+        }
+        Optional<Usuario> clienteOpt = usuarioRepository.findByContactoEmail(usuariodto.getEmail());
+        if(clienteOpt.isPresent()) {
+            usuariodto.setId(clienteOpt.get().getId());
+            Usuario usuario = UsuarioMapper.mapToUsuarioEntity(usuariodto);
+            usuarioRepository.save(usuario);
+        } else {
+        Usuario usuario = UsuarioMapper.mapToUsuarioEntity(usuariodto);
+        String passwordHash = passwordEncoder.encode(usuario.getPassword());
+        usuario.setPassword(passwordHash);
+        usuarioRepository.save(usuario);
         }
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<Usuario> findByEmail(String email) {
-        try {
-            return usuarioRepository.findByContactoEmail(email);
-        } catch (Exception e) {
-            throw new NotFoundException("No se ha encontrado el usuario con ese email");
-        }
+    public UsuarioDTO findByEmail(String email) {
+        return UsuarioMapper.mapToUsuarioDto(
+            usuarioRepository.findByContactoEmail(email)
+                .orElseThrow(() -> new NotFoundException("No se ha encontrado el usuario con el email: " + email))
+        );
     }
 
     @Override
@@ -94,16 +84,4 @@ public class UsuarioServiceImpl implements IUsuarioService {
         Optional<Usuario> usOptional = usuarioRepository.findByContactoEmail(email);
         return usOptional.isPresent() && passwordEncoder.matches(password, usOptional.get().getPassword());
     }
-
-    @Override
-    public void registrarUsuario(Usuario usuario) {
-        String passwordHash = passwordEncoder.encode(usuario.getPassword());
-        usuario.setPassword(passwordHash);
-        if (usuario instanceof Cliente c) {
-            clienteRepository.save(c);
-        } else if (usuario instanceof Empleado e) {
-            empleadoRepository.save(e);
-        }
-    }
-
 }

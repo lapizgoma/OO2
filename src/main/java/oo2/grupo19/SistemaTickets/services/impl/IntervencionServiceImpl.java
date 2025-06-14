@@ -1,13 +1,16 @@
 package oo2.grupo19.SistemaTickets.services.impl;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
+import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import oo2.grupo19.SistemaTickets.dto.IntervencionDTO;
+import oo2.grupo19.SistemaTickets.dto.mappers.IntervencionMapper;
+import oo2.grupo19.SistemaTickets.entities.Empleado;
 import oo2.grupo19.SistemaTickets.entities.Intervencion;
 import oo2.grupo19.SistemaTickets.entities.Ticket;
 import oo2.grupo19.SistemaTickets.entities.Usuario;
@@ -18,7 +21,6 @@ import oo2.grupo19.SistemaTickets.repositories.ITicket;
 import oo2.grupo19.SistemaTickets.services.IIntervencionService;
 
 @Service
-@Qualifier("mensajeService")
 public class IntervencionServiceImpl implements IIntervencionService{
 
     private final IIntervencion intervencionRepository;
@@ -41,40 +43,46 @@ public class IntervencionServiceImpl implements IIntervencionService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<Intervencion> findAll() {
-        try{
-            return intervencionRepository.findAll();
-        }catch(Exception e){
-            throw new NotFoundException("Error: no se ha podido encontrar la lista de intervenciones");
-        }
+    public Set<IntervencionDTO> findAll() {
+        return IntervencionMapper.mapToIntervencionDtoSet(intervencionRepository.findAll());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Intervencion> findById(Long id) {
-        try{
-            return intervencionRepository.findById(id);
-        }catch(Exception e){
-            throw new NotFoundException("Error: no se ha podido encontrar la intervención");
-        }
+    public IntervencionDTO findById(Long id) {
+        return IntervencionMapper.mapToIntervencionDto(
+            intervencionRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("No se ha encontrado la intervención con el id: " + id))
+        );
     }
 
     @Override
     @Transactional
-    public void save(Intervencion object) {
-        try{
-            intervencionRepository.save(object);
-        }catch(Exception e){
-            throw new RuntimeException(e.getMessage());
+    public void save(IntervencionDTO intervenciondto) {
+        if (intervenciondto == null) {
+            throw new IllegalArgumentException("El contacto no puede ser null");
+        }
+        Optional<Intervencion> estadoOpt = intervencionRepository.findByFecha(
+            LocalDateTime.parse(intervenciondto.getFecha(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))
+        );
+        if(estadoOpt.isPresent()) {
+            intervenciondto.setId(estadoOpt.get().getId());
+            Intervencion intervencion = IntervencionMapper.mapToIntervencionEntity(intervenciondto);
+            intervencionRepository.save(intervencion);
+        } else {
+        Intervencion intervencion = IntervencionMapper.mapToIntervencionEntity(intervenciondto);
+        intervencionRepository.save(intervencion);
         }
     }
 
     @Transactional(readOnly = true)
-    public List<Intervencion> traerIntervencionPorCliente(Long idCliente){
+    public Set<IntervencionDTO> traerIntervencionPorCliente(Long idCliente){
         try {
             Optional<Usuario> usuarioOptional = Optional.of(traerUsuarioDesdeIntervencion(idCliente));
             if(usuarioOptional.isPresent()) {            
-                return intervencionRepository.traerIntervencionPorCliente(idCliente);
+                return IntervencionMapper.mapToIntervencionDtoSet(
+                    intervencionRepository.traerIntervencionPorCliente(idCliente)
+                );
             }
             throw new NotFoundException("El usuario no existe");
         } catch(Exception e) {
@@ -83,16 +91,16 @@ public class IntervencionServiceImpl implements IIntervencionService{
     }
 	
     @Transactional(readOnly = true)
-	public List<Intervencion> traerMensajePorTicket(Long idTicket){
-		return intervencionRepository.traerIntervencionPorTicket(idTicket);
+	public Set<IntervencionDTO> traerIntervencionPorTicket(Long idTicket){
+		return IntervencionMapper.mapToIntervencionDtoSet(intervencionRepository.traerIntervencionPorTicket(idTicket));
 	}
 
     @Transactional(readOnly = true)
-	public List<Intervencion> traer(LocalDateTime fecha,Usuario cliente) {
+	public Set<IntervencionDTO> traer(LocalDateTime fecha,Empleado empleado) {
 		try {
-            Optional<Usuario> usuarioOptional = Optional.of(traerUsuarioDesdeIntervencion(cliente.getId()));
+            Optional<Usuario> usuarioOptional = Optional.of(traerUsuarioDesdeIntervencion(empleado.getId()));
             if(usuarioOptional.isPresent()) {
-                return intervencionRepository.traer(fecha, cliente);            
+                return IntervencionMapper.mapToIntervencionDtoSet(intervencionRepository.traer(fecha, empleado));            
             }
             throw new NotFoundException("El usuario no existe");
         } catch(Exception e) {
@@ -101,11 +109,13 @@ public class IntervencionServiceImpl implements IIntervencionService{
 	}
     
     @Transactional(readOnly = true)
-	public List<Intervencion> traerFecha(LocalDateTime fechaInicio, LocalDateTime fechaFinal, Long idCliente){
+	public Set<IntervencionDTO> traerFecha(LocalDateTime fechaInicio, LocalDateTime fechaFinal, Long idCliente){
 		try {
             Optional<Usuario> usuarioOptional = Optional.of(traerUsuarioDesdeIntervencion(idCliente));
             if(usuarioOptional.isPresent()) {
-                return intervencionRepository.traerFecha(fechaInicio, fechaFinal,idCliente);        
+                return IntervencionMapper.mapToIntervencionDtoSet(
+                    intervencionRepository.traerFecha(fechaInicio, fechaFinal, idCliente)
+                );        
             }
             throw new NotFoundException("El usuario no existe");
         } catch(Exception e) {
@@ -114,23 +124,23 @@ public class IntervencionServiceImpl implements IIntervencionService{
 	}
 
 	@Transactional(readOnly = true)
-	public Intervencion traerFecha(LocalDateTime fecha) {
-		return intervencionRepository.findByFecha(fecha);
+	public IntervencionDTO traerFecha(LocalDateTime fecha) {
+		return IntervencionMapper.mapToIntervencionDto(intervencionRepository.findByFecha(fecha).orElseThrow(() -> new NotFoundException("No se ha encontrado la intervención")));
 	}
 
 	@Transactional(readOnly = true)
 	public Usuario traerUsuarioDesdeIntervencion(Long idCliente) {
-		// Si esta presente nos devuelve el usuario
 		return intervencionRepository.traerClienteDesdeIntervencion(idCliente);		
 	}
 
     @Override
     @Transactional
     public void actualizarEstadoIntervencion(Long empleadoId, Long ticketId, Long intervencionId, EstadoIntervencion nuevoEstado) {
-       Ticket ticket = ticketRepository.traerPorEmpleadoYId(empleadoId, ticketId);
-       if (ticket == null) {
-           throw new NotFoundException("No se ha encontrado el ticket o no tiene permiso");
-       }
+        Ticket ticket = ticketRepository.traerPorEmpleadoYId(empleadoId, ticketId)
+            .orElseThrow(() -> new NotFoundException("No se ha encontrado el ticket con el id: " + ticketId + " o no tiene permiso"));
+        if (ticket == null) {
+            throw new NotFoundException("No se ha encontrado el ticket o no tiene permiso");
+        }
 
         Intervencion intervencion = ticket.getLstIntervencion().stream().filter(i -> i.getId().equals(intervencionId)).findFirst()
         .orElseThrow(() -> new NotFoundException("Intervención no encontrada"));

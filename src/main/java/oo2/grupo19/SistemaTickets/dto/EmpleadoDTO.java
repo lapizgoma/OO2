@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import oo2.grupo19.SistemaTickets.entities.estados.enums.RoleType;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,7 +20,9 @@ public class EmpleadoDTO {
 	private String dni;
 	private String nroLegajo;
 	private String apellido;
+	private String password;
 	private String email;
 	private String telefono;
 	private String direccionCompleta;
+	private RoleType role;
 }

@@ -20,6 +20,7 @@ public class ClienteDTO {
     private String email;
     private String telefono;
     private String dni;
+    private String password;
     private String direccionCompleta;
     private String organizacion;
     private String cuit;

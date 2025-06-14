@@ -69,19 +69,6 @@
                         <a class="btn btn-primary" th:if="${ticketEmployeeDTO.empleadoPertenece}" th:href="@{/ticket/update-ticket-estado(ticketId=${idTicket})}">Cambiar Estado</a>
 
                     </div>
-                    <div sec:authorize="hasRole('ADMIN')" class="card bg-dark border-primary shadow mb-4">
-                        <div class="card-body">
-                            <h5 class="card-title text-primary mb-3">Empleados Participando</h5>
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item bg-dark text-white border-0 border-bottom border-secondary" th:each="empleado : ${ticketEmployeeDTO.listEmpleados}">
-                                    <div><strong class="text-primary">Nombre:</strong> <span class="text-white" th:text="${empleado.nombre}"></span></div>
-                                    <div><strong class="text-primary">Apellido:</strong> <span class="text-white" th:text="${empleado.apellido}"></span></div>
-                                    <div><strong class="text-primary">DNI:</strong> <span class="text-white" th:text="${empleado.dni}"></span></div>
-                                    <div><strong class="text-primary">Legajo:</strong> <span class="text-white" th:text="${empleado.nroLegajo}"></span></div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
                 </div>
                 <!-- Intervenciones a la derecha -->
                 <div class="col-lg-4">

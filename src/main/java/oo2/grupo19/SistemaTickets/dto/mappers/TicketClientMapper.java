@@ -10,8 +10,6 @@ import oo2.grupo19.SistemaTickets.entities.Ticket;
 import oo2.grupo19.SistemaTickets.entities.Intervencion;
 
 public final class TicketClientMapper {
-    private TicketClientMapper() {}
-
     public static TicketClientDTO mapToTicketClientDto(Ticket ticket) {
         if (ticket == null) {
             return null;

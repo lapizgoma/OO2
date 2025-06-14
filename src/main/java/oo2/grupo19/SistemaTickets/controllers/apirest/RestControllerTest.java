@@ -1,6 +1,8 @@
 package oo2.grupo19.SistemaTickets.controllers.apirest;
 
 import lombok.extern.log4j.Log4j2;
+import oo2.grupo19.SistemaTickets.dto.EmpleadoDTO;
+import oo2.grupo19.SistemaTickets.dto.UsuarioDTO;
 import oo2.grupo19.SistemaTickets.dto.api.LoginRequestDTO;
 import oo2.grupo19.SistemaTickets.dto.mappers.ClienteMapper;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
@@ -45,17 +47,15 @@ public class RestControllerTest {
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO loginRequest) {
         try {
             if (usuarioService.validarCredenciales(loginRequest.getEmail(), loginRequest.getPassword())) {
-                Optional<Usuario> usuario = usuarioService.findByEmail(loginRequest.getEmail());
-                if (usuario.isPresent()) {
-                    String role = usuario.get().getAuthorities().stream()
-                            .map(GrantedAuthority::getAuthority)
-                            .collect(Collectors.joining(","));
+                UsuarioDTO usuario = usuarioService.findByEmail(loginRequest.getEmail());
+                String role = usuario.get().getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.joining(","));
                     
-                    return ResponseEntity.ok(Map.of(
-                        "username", usuario.get().getUsername(),
-                        "role", role
-                    ));
-                }
+                return ResponseEntity.ok(Map.of(
+                    "username", usuario.get().getUsername(),
+                    "role", role
+                ));
             }
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales inválidas");
         } catch (Exception e) {
@@ -90,10 +90,10 @@ public class RestControllerTest {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registrarEmpleado(@Valid @RequestBody Empleado empleado) {
+    public ResponseEntity<?> registrarEmpleado(@Valid @RequestBody EmpleadoDTO empleado) {
         try {
-            empleadoService.agregarEmpleado(empleado);
-            log.info("Empleado registrado exitosamente: {}", empleado.getContacto().getEmail());
+            empleadoService.save(empleado);
+            log.info("Empleado registrado exitosamente: {}", empleado.getEmail());
             return ResponseEntity.status(HttpStatus.CREATED).body("Empleado registrado exitosamente");
         } catch (Exception e) {
             log.error("Error al registrar empleado: {}", e.getMessage());
@@ -104,7 +104,7 @@ public class RestControllerTest {
     @GetMapping("/employees")
     public ResponseEntity<?> obtenerEmpleados() {
         try {
-            return ResponseEntity.ok(empleadoService.traerEmpleadosActivos());
+            return ResponseEntity.ok(empleadoService.findAllActive());
         } catch (Exception e) {
             log.error("Error al obtener empleados: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al obtener empleados: " + e.getMessage());

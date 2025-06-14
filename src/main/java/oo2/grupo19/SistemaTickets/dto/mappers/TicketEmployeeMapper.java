@@ -5,14 +5,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import oo2.grupo19.SistemaTickets.dto.TicketEmployeeDTO;
-import oo2.grupo19.SistemaTickets.dto.EmpleadoDTO;
 import oo2.grupo19.SistemaTickets.dto.IntervencionDTO;
 import oo2.grupo19.SistemaTickets.entities.Ticket;
 import oo2.grupo19.SistemaTickets.entities.Empleado;
 
 public final class TicketEmployeeMapper {
-    private TicketEmployeeMapper() {}
-
     public static TicketEmployeeDTO mapToTicketEmployeeDto(Ticket ticket, Empleado empleadoSolicitante) {
         if (ticket == null) {
             return null;
@@ -24,12 +21,6 @@ public final class TicketEmployeeMapper {
         if (ticket.getFechaHora() != null) {
             dto.setFechaHoraCreado(ticket.getFechaHora().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
         }
-        // Empleados
-        Set<EmpleadoDTO> empleados = new HashSet<>();
-        if (ticket.getListEmpleado() != null) {
-            ticket.getListEmpleado().forEach(e -> empleados.add(EmpleadoMapper.mapToEmpleadoDto(e)));
-        }
-        dto.setListEmpleados(empleados);
         // Intervenciones
         Set<IntervencionDTO> intervenciones = new HashSet<>();
         if (ticket.getLstIntervencion() != null) {

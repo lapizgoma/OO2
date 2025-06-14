@@ -14,6 +14,7 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 public class ContactoDTO {
+    private Long id;
     private String email;
     private String telefono;
     private String calle;

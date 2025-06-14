@@ -19,5 +19,5 @@ public class IntervencionDTO {
     private EmpleadoDeIntervencionDTO realizadoPor;
     private String fecha;
     private String descripcion;
-    private String estado;
+    private EstadoIntervencionDTO estado;
 }

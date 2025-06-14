@@ -18,8 +18,10 @@ import lombok.ToString;
 public class TicketDTO {
 	private Long id;
 	private String asunto;
+	private String detalle;
 	private Set<EmpleadoDTO> empleados;
 	private Set<IntervencionDTO> intervencion;
-	private String estado;
+	private EstadoTicketDTO estado;
+	private PrioridadDTO prioridad;
 	private ClienteDTO cliente;
 }

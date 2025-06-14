@@ -45,9 +45,8 @@ public class PersonaJuridicaController {
         @ModelAttribute PersonaJuridicaDTO personaJuridicaDTO,
         Authentication authentication) 
     {
-        personaJuridicaDTO = personaJuridicaService.crearPersonaJuridica (personaJuridicaDTO);
-        logger.info("Persona jurídica creada con código: {} por: {}", personaJuridicaDTO.getCodigoAcceso(), authentication != null ? authentication.getName() : "desconocido");
-
+        personaJuridicaService.save(personaJuridicaDTO);
+        logger.info("Persona jurídica creada con código: {} por: {}", personaJuridicaDTO.getCodigoAcceso(), authentication.getName());
         return "redirect:/grupo/" + personaJuridicaDTO.getCodigoAcceso ();
     }
 
@@ -55,7 +54,7 @@ public class PersonaJuridicaController {
     @GetMapping ("/{code}")
     public String verPersonaJuridica (@PathVariable String code, Model model) 
     {
-        PersonaJuridicaDTO dto = personaJuridicaService.buscarPersonaJuridica(code);
+        PersonaJuridicaDTO dto = personaJuridicaService.findByCode(code);
         model.addAttribute("personaJuridicaDTO", dto);
         logger.info("Vista de persona jurídica accedida para código: {}", code);
 

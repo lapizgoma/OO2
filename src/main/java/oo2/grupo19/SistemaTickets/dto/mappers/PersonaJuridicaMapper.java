@@ -1,14 +1,13 @@
 package oo2.grupo19.SistemaTickets.dto.mappers;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import oo2.grupo19.SistemaTickets.dto.PersonaJuridicaDTO;
 import oo2.grupo19.SistemaTickets.entities.PersonaJuridica;
 
 public final class PersonaJuridicaMapper {
-    private PersonaJuridicaMapper() {}
-
     public static PersonaJuridicaDTO mapToPersonaJuridicaDto(PersonaJuridica personaJuridica) {
         if (personaJuridica == null) {
             return null;
@@ -31,11 +30,11 @@ public final class PersonaJuridicaMapper {
         return personaJuridica;
     }
 
-    public static List<PersonaJuridicaDTO> mapToPersonaJuridicaDtoList(List<PersonaJuridica> entities) {
-        return entities == null ? List.of() : entities.stream().map(PersonaJuridicaMapper::mapToPersonaJuridicaDto).collect(Collectors.toList());
+    public static Set<PersonaJuridicaDTO> mapToPersonaJuridicaDtoSet(List<PersonaJuridica> entities) {
+        return entities == null ? Set.of() : entities.stream().map(PersonaJuridicaMapper::mapToPersonaJuridicaDto).collect(Collectors.toSet());
     }
 
-    public static List<PersonaJuridica> mapToPersonaJuridicaEntityList(List<PersonaJuridicaDTO> dtos) {
-        return dtos == null ? List.of() : dtos.stream().map(PersonaJuridicaMapper::mapToPersonaJuridica).collect(Collectors.toList());
+    public static Set<PersonaJuridica> mapToPersonaJuridicaEntitySet(List<PersonaJuridicaDTO> dtos) {
+        return dtos == null ? Set.of() : dtos.stream().map(PersonaJuridicaMapper::mapToPersonaJuridica).collect(Collectors.toSet());
     }
 }

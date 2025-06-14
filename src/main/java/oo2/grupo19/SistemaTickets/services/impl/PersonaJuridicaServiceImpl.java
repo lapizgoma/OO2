@@ -1,7 +1,7 @@
 package oo2.grupo19.SistemaTickets.services.impl;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import oo2.grupo19.SistemaTickets.dto.PersonaJuridicaDTO;
 import oo2.grupo19.SistemaTickets.dto.mappers.PersonaJuridicaMapper;
 import oo2.grupo19.SistemaTickets.entities.PersonaJuridica;
-import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.AlreadyExistsException;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
 import oo2.grupo19.SistemaTickets.repositories.IPersonaJuridica;
 import oo2.grupo19.SistemaTickets.services.IPersonaJuridicaService;
@@ -36,57 +35,44 @@ public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<PersonaJuridica> findAll() {
-        try {
-            return repository.findAll();
-        } catch (Exception e) {
-            throw new NotFoundException("No se pudo listar las Personas Jurídicas: " + e.getMessage());
-        }
+    public Set<PersonaJuridicaDTO> findAll() {
+        return PersonaJuridicaMapper.mapToPersonaJuridicaDtoSet(repository.findAll());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<PersonaJuridica> findById(Long id) {
-        try {
-            return repository.findById(id);
-        } catch (Exception e) {
-            throw new NotFoundException("No se pudo encontrar la Persona Jurídica: " + e.getMessage());
-        }
+    public PersonaJuridicaDTO findById(Long id) {
+        return PersonaJuridicaMapper.mapToPersonaJuridicaDto(
+            repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("No se ha encontrado la Persona Jurídica con el id: " + id))
+        );
     }
 
     @Override
     @Transactional
-    public void save(PersonaJuridica object) {
-        try {
-            repository.save(object);
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+    public void save(PersonaJuridicaDTO dto) {
+        if (dto == null) {
+            throw new IllegalArgumentException("El contacto no puede ser null");
         }
-    }
-
-    @Override
-    public PersonaJuridicaDTO crearPersonaJuridica (PersonaJuridicaDTO personaJuridicaDTO)
-    {
-        if (!repository.findByCuit(personaJuridicaDTO.getCuit()).isEmpty()) 
-        {
-            throw new AlreadyExistsException("Persona Jurídica bajo ese CUIT ya se encuentra registrada.");
-        }
-
+        Optional<PersonaJuridica> estadoOpt = repository.findByCuit(dto.getCuit());
+        if(estadoOpt.isPresent()) {
+            dto.setId(estadoOpt.get().getId());
+            PersonaJuridica personaJuridica = PersonaJuridicaMapper.mapToPersonaJuridica(dto);
+            repository.save(personaJuridica);
+        } else {
         String codigoAcceso = UUID.randomUUID ().toString ().replace ("-", "").substring (0, 12);
-
-        personaJuridicaDTO.setCodigoAcceso (codigoAcceso);
-
-        PersonaJuridica personaJuridicaEntity = PersonaJuridicaMapper.mapToPersonaJuridica (personaJuridicaDTO);
-        repository.save (personaJuridicaEntity);
-
-        return personaJuridicaDTO;
+        dto.setCodigoAcceso (codigoAcceso);
+        PersonaJuridica personaJuridica = PersonaJuridicaMapper.mapToPersonaJuridica(dto);
+        repository.save(personaJuridica);
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public PersonaJuridicaDTO buscarPersonaJuridica (String code) 
+    public PersonaJuridicaDTO findByCode(String code) 
     {
-        PersonaJuridica personaJuridicaEntity = repository.findByCodigoAcceso(code).orElseThrow(() -> new NotFoundException ("No hay una Persona Jurídica bajo con ese código :/"));
+        PersonaJuridica personaJuridicaEntity = repository.findByCodigoAcceso(code)
+            .orElseThrow(() -> new NotFoundException ("No hay una Persona Jurídica bajo con ese código :/"));
         
         return PersonaJuridicaMapper.mapToPersonaJuridicaDto(personaJuridicaEntity);
     }

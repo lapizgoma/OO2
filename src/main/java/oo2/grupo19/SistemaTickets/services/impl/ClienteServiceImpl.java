@@ -1,19 +1,20 @@
 package oo2.grupo19.SistemaTickets.services.impl;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import oo2.grupo19.SistemaTickets.services.IClienteService;
-import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.log4j.Log4j2;
+import oo2.grupo19.SistemaTickets.dto.ClienteDTO;
+import oo2.grupo19.SistemaTickets.dto.mappers.ClienteMapper;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
-import oo2.grupo19.SistemaTickets.entities.Usuario;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.*;
 import oo2.grupo19.SistemaTickets.repositories.ICliente;
-import oo2.grupo19.SistemaTickets.repositories.IUsuario;
+import oo2.grupo19.SistemaTickets.repositories.estados.IRole;
 
 
 @Service
@@ -21,65 +22,58 @@ import oo2.grupo19.SistemaTickets.repositories.IUsuario;
 public class ClienteServiceImpl implements IClienteService {
 
     private final ICliente clienteRepository;
-    private final IUsuario usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final IRole roleRepository;
 
-    public ClienteServiceImpl(ICliente clienteRepository, IUsuario usuarioRepository) {
+    public ClienteServiceImpl(ICliente clienteRepository, PasswordEncoder passwordEncoder, IRole roleRepository) {
         this.clienteRepository = clienteRepository;
-        this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.roleRepository = roleRepository;
     }
 
     @Override
     @Transactional
     public void delete(Long id) {
-        clienteRepository.deleteById(id);
+        Cliente clienteEntity = clienteRepository.findById(id).orElseThrow(() -> new NotFoundException("Cliente no encontrado"));
+        clienteEntity.setDeleted(true);
+        clienteRepository.save(clienteEntity);
     }
     
     @Override
     @Transactional(readOnly = true)
-    public List<Cliente> findAll() {
-        return clienteRepository.findAll();
+    public Set<ClienteDTO> findAll() {
+        return ClienteMapper.mapToClienteDtoSet(clienteRepository.findAll());
     }
     
     @Override
     @Transactional(readOnly = true)
-    public Optional<Cliente> findById(Long id) {
-        return clienteRepository.findById(id);
+    public ClienteDTO findById(Long id) {
+        return ClienteMapper.mapToClienteDto(clienteRepository.findById(id).orElseThrow(() -> new NotFoundException("Cliente no encontrado")));
     }
 
     @Override
     @Transactional
-    public void save(Cliente object) {
-        try{
-            Optional<Cliente> user = clienteRepository.findByContacto_Email(object.getContacto().getEmail());
-            if(user.isEmpty()){
-                object.asignarContactoUsuario();
-                clienteRepository.save(object);
-            } else {
-                log.info("El usuario ya existe en la bd!");
-                throw new AlreadyExistsException("El cliente con email " + object.getContacto().getEmail() + " ya existe.");
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("No se ha podido actualizar/insertar el usuario");
+    public void save(ClienteDTO clientedto) {
+        if(clientedto == null) {
+            throw new IllegalArgumentException("El empleado no puede ser null");
+        }
+        Optional<Cliente> clienteOpt = clienteRepository.findByContactoEmail(clientedto.getEmail());
+        if(clienteOpt.isPresent()) {
+            clientedto.setId(clienteOpt.get().getId());
+            Cliente cliente = ClienteMapper.mapToClienteEntity(clientedto);
+            clienteRepository.save(cliente);
+        } else {
+        Cliente cliente = ClienteMapper.mapToClienteEntity(clientedto);
+        String passwordHash = passwordEncoder.encode(cliente.getPassword());
+        cliente.agregarRoles(roleRepository.findById(1L).orElseThrow(() -> new NotFoundException("Rol no encontrado")));
+        cliente.setPassword(passwordHash);
+        clienteRepository.save(cliente);
         }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Cliente> findByEmail(String email){
-        return clienteRepository.findByContacto_Email(email);
+    public ClienteDTO findByEmail(String email){
+        return ClienteMapper.mapToClienteDto(clienteRepository.findByContactoEmail(email).orElseThrow(() -> new NotFoundException("Cliente no encontrado")));
     }
-
-
-    @Override
-    @Modifying
-    @Transactional(readOnly = false)
-    public void eliminarCliente (String email) 
-    {
-        Cliente clienteEntity = clienteRepository.findByContacto_Email(email)
-        .orElseThrow(() -> new NotFoundException("Cliente no encontrado :/"));
-
-        ((Usuario) clienteEntity).setDeleted(true);
-        usuarioRepository.save(clienteEntity);
-    }
-    
 }

@@ -1,11 +1,12 @@
 package oo2.grupo19.SistemaTickets.services.impl;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import oo2.grupo19.SistemaTickets.dto.EstadoIntervencionDTO;
+import oo2.grupo19.SistemaTickets.dto.mappers.EstadoIntervencionMapper;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoIntervencion;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
 import oo2.grupo19.SistemaTickets.repositories.estados.IEstadoIntervencion;
@@ -32,31 +33,23 @@ public class EstadoIntervencionServiceImpl implements IEstadoIntervencionService
 
     @Override
     @Transactional(readOnly = true)
-    public List<EstadoIntervencion> findAll() {
-        try {
-            return estadoRepository.findAll();
-        } catch (Exception e) {
-            throw new NotFoundException("Error: no se ha podido encontrar la lista de estados de intervención");
-        }
+    public Set<EstadoIntervencionDTO> findAll() {
+        return EstadoIntervencionMapper.mapToEstadoIntervencionDtoList(estadoRepository.findAll());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<EstadoIntervencion> findById(Long id) {
-        try {
-            return estadoRepository.findById(id);
-        } catch (Exception e) {
-            throw new NotFoundException("Error: no se ha podido encontrar el estado de intervención");
-        }
+    public EstadoIntervencionDTO findById(Long id) {
+        return EstadoIntervencionMapper.mapEstadoIntervencionToDto(estadoRepository.findById(id).orElseThrow(() -> new NotFoundException("No se ha encontrado el Estado con ese email")));
     }
 
     @Override
     @Transactional
-    public void save(EstadoIntervencion object) {
-        try {
-            estadoRepository.save(object);
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+    public void save(EstadoIntervencionDTO estadodto) {
+        if (estadodto == null) {
+            throw new IllegalArgumentException("El contacto no puede ser null");
         }
+        EstadoIntervencion estado = EstadoIntervencionMapper.mapDtoToEstadoIntervencion(estadodto);
+        estadoRepository.save(estado);
     }
 }

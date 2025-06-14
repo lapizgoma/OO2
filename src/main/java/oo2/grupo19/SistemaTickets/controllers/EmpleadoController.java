@@ -1,8 +1,7 @@
 package oo2.grupo19.SistemaTickets.controllers;
-import java.util.List;
+import java.util.Set;
 
 import oo2.grupo19.SistemaTickets.dto.EmpleadoDTO;
-import oo2.grupo19.SistemaTickets.dto.mappers.EmpleadoMapper;
 import oo2.grupo19.SistemaTickets.entities.estados.enums.RoleType;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -17,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
-import oo2.grupo19.SistemaTickets.entities.Empleado;
-import oo2.grupo19.SistemaTickets.entities.estados.Role;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 import oo2.grupo19.SistemaTickets.repositories.estados.IRole;
 import oo2.grupo19.SistemaTickets.services.IEmpleadoService;
@@ -48,10 +45,9 @@ public class EmpleadoController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public String listarEmpleados(Model model, Authentication auth) {
-        List<Empleado> empleados = empleadoService.traerEmpleadosActivos();
+        Set<EmpleadoDTO> empleados = empleadoService.findAllActive();
         if(!empleados.isEmpty()){
-            List<EmpleadoDTO> empleadoDTOS = EmpleadoMapper.mapToEmpleadoDtoList(empleados);
-            model.addAttribute("empleados", empleadoDTOS);
+            model.addAttribute("empleados", empleados);
             logger.info("Listado de empleados accedido por: {}", auth.getName());
             return ViewRouteHelper.LISTAR_EMPLEADOS;
         }
@@ -62,15 +58,14 @@ public class EmpleadoController {
     @GetMapping("/agregar")
     public String obtenerVistaEmpleado(Model model, Authentication auth) {
         model.addAttribute("rolRepository", roleRepository.findByTypeNot(RoleType.CUSTOMER));
-        model.addAttribute("empleado", new Empleado());
-        model.addAttribute("rol", new Role());
+        model.addAttribute("empleado", new EmpleadoDTO());
         logger.info("Vista de registro de empleado accedida por: {}", auth.getName());
         return ViewRouteHelper.EMPLEADO_REGISTER;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/agregar")
-    public String postMethodName(@Valid @ModelAttribute Empleado empleado,
+    public String postMethodName(@Valid @ModelAttribute EmpleadoDTO empleado,
                                  BindingResult result,
                                 @RequestParam("roles") Long rolId,
                                 Authentication auth,
@@ -80,12 +75,7 @@ public class EmpleadoController {
             model.addAttribute("rolRepository", roleRepository.findAll());
             return ViewRouteHelper.EMPLEADO_REGISTER;
         }
-        Role role = roleRepository.findById(rolId).orElseThrow(() -> {
-            logger.error("Rol no encontrado para id: {}", rolId);
-            return new NotFoundException("Rol no encontrado");
-        });
-        empleado.agregarRoles(role);
-        empleadoService.agregarEmpleado(empleado);
+        empleadoService.save(empleado);
         logger.info("Empleado registrado exitosamente (ID): {} por {}", empleado.getId(), auth.getName());
         return ViewRouteHelper.EMPLEADO_REGISTRADO;
     }
@@ -93,9 +83,8 @@ public class EmpleadoController {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{empleadoId}")
     public String darBajaEmpleado(@PathVariable Long empleadoId, Authentication auth) {
-        empleadoService.darBajaEmpleado(empleadoId);
+        empleadoService.delete(empleadoId);
         logger.info("Empleado dado de baja: {} por {}", empleadoId, auth.getName());
         return ViewRouteHelper.EMPLEADO_BORRADO;
     }
-
 }

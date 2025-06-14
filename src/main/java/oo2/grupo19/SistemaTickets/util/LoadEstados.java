@@ -15,19 +15,20 @@ import oo2.grupo19.SistemaTickets.entities.estados.EstadoTicket;
 import oo2.grupo19.SistemaTickets.entities.estados.Prioridad;
 import oo2.grupo19.SistemaTickets.entities.estados.Role;
 import oo2.grupo19.SistemaTickets.entities.estados.enums.RoleType;
+import oo2.grupo19.SistemaTickets.repositories.ICliente;
+import oo2.grupo19.SistemaTickets.repositories.IEmpleado;
 import oo2.grupo19.SistemaTickets.repositories.estados.IEstadoIntervencion;
 import oo2.grupo19.SistemaTickets.repositories.estados.IEstadoTicket;
 import oo2.grupo19.SistemaTickets.repositories.estados.IPrioridad;
 import oo2.grupo19.SistemaTickets.repositories.estados.IRole;
-import oo2.grupo19.SistemaTickets.services.impl.UsuarioServiceImpl;
 
 @Configuration
 @Log4j2
 public class LoadEstados {
-    private final UsuarioServiceImpl empleadoRepository;
-    private final UsuarioServiceImpl clienteRepository;
+    private final IEmpleado empleadoRepository;
+    private final ICliente clienteRepository;
     
-    public LoadEstados(UsuarioServiceImpl empleadoRepository, UsuarioServiceImpl clienteRepository) {
+    public LoadEstados(IEmpleado empleadoRepository, ICliente clienteRepository) {
         this.empleadoRepository = empleadoRepository;
         this.clienteRepository = clienteRepository;
     }
@@ -72,7 +73,7 @@ public CommandLineRunner cargarEstados(IEstadoIntervencion estadoIntervencionRep
             ));
         }
 
-        if (empleadoRepository.findByEmail("empleado@empleado.com").isEmpty()) {
+        if (empleadoRepository.findByContactoEmail("empleado@empleado.com").isEmpty()) {
             log.info("Encontrado!!!!!!!!");
             Empleado empleado = new Empleado();
             Contacto contacto = new Contacto();
@@ -91,12 +92,12 @@ public CommandLineRunner cargarEstados(IEstadoIntervencion estadoIntervencionRep
             empleado.asignarContactoUsuario();
             // ... otros campos necesarios
 
-            empleadoRepository.registrarUsuario(empleado);
+            empleadoRepository.save(empleado);
             System.out.println("Empleado de prueba creado.");
         } else {
             System.out.println("Empleado de prueba ya existe.");
         }
-        if (clienteRepository.findByEmail("cliente@cliente.com").isEmpty()) {
+        if (clienteRepository.findByContactoEmail("cliente@cliente.com").isEmpty()) {
             Cliente cliente = new Cliente();
             Contacto contacto = new Contacto();
             contacto.setCalle("2312");
@@ -113,13 +114,13 @@ public CommandLineRunner cargarEstados(IEstadoIntervencion estadoIntervencionRep
             cliente.asignarContactoUsuario();
             // ... otros campos necesarios
 
-            clienteRepository.registrarUsuario(cliente);
+            clienteRepository.save(cliente);
             System.out.println("Cliente de prueba creado.");
         } else {
             System.out.println("Cliente de prueba ya existe.");
         }
 
-        if (empleadoRepository.findByEmail("admin@admin.com").isEmpty()) {
+        if (empleadoRepository.findByContactoEmail("admin@admin.com").isEmpty()) {
             Empleado admin = new Empleado();
             Contacto contacto = new Contacto();
             contacto.setCalle("123123");
@@ -137,7 +138,7 @@ public CommandLineRunner cargarEstados(IEstadoIntervencion estadoIntervencionRep
             admin.asignarContactoUsuario();
             // ... otros campos necesarios
 
-            empleadoRepository.registrarUsuario(admin);
+            empleadoRepository.save(admin);
             System.out.println("admin de prueba creado.");
         } else {
             System.out.println("admin de prueba ya existe.");

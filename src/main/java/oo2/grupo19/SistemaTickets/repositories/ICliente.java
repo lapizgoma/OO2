@@ -9,6 +9,5 @@ import org.springframework.data.repository.query.Param;
 
 public interface ICliente extends JpaRepository<Cliente,Long> {
     @Query("SELECT c FROM Cliente c WHERE c.contacto.email = :email")
-    Optional<Cliente> findByContacto_Email(@Param("email") String email);
-    Optional<Cliente> findByNombre(String username);
+    Optional<Cliente> findByContactoEmail(@Param("email") String email);
 }

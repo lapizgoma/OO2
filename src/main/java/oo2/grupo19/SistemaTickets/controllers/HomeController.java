@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.ui.Model;
 import lombok.extern.log4j.Log4j2;
-import oo2.grupo19.SistemaTickets.entities.Ticket;
-import oo2.grupo19.SistemaTickets.entities.Usuario;
+import oo2.grupo19.SistemaTickets.dto.TicketDTO;
+import oo2.grupo19.SistemaTickets.dto.UsuarioDTO;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 import oo2.grupo19.SistemaTickets.services.ITicketService;
 import oo2.grupo19.SistemaTickets.services.IUsuarioService;
 
-import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,17 +37,16 @@ public class HomeController <T> {
     @ModelAttribute("nombreUsuario")
     public String getNombreUsuario(Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()) {
-            String email = authentication.getName(); // Email usado en el login
-            Usuario usuario = usuarioService.findByEmail(email).orElse(null);
+            String email = authentication.getName();
+            UsuarioDTO usuario = usuarioService.findByEmail(email);
             if (usuario != null) {
-                logger.info("Usuario HOME: {} (email: {})", usuario.getNombre(), email);
                 return usuario.getNombre();
             } else {
                 logger.warn("Intento de acceso a HOME con usuario no encontrado en la base de datos: {}", email);
-                return "Invitado";
+                return ViewRouteHelper.INDEX;
             }
         }
-        return "Invitado";
+        return ViewRouteHelper.INDEX;
     }
 
     @GetMapping("/home")
@@ -84,7 +83,7 @@ public class HomeController <T> {
     }
 
     private void simplifyGlobalHome(String email, Model model){
-        List<Ticket> tickets = ticketService.traerPorCliente(email);
+        Set<TicketDTO> tickets = ticketService.traerPorCliente(email);
         model.addAttribute("tickets", tickets);
     }
 

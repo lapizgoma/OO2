@@ -1,5 +1,6 @@
 package oo2.grupo19.SistemaTickets.dto.mappers;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -7,9 +8,6 @@ import oo2.grupo19.SistemaTickets.dto.TicketDTO;
 import oo2.grupo19.SistemaTickets.entities.Ticket;
 
 public final class TicketMapper {
-    private TicketMapper() {
-    }
-
     public static TicketDTO mapToTicketDto(Ticket ticket) {
         if (ticket == null) {
             return null;
@@ -17,7 +15,9 @@ public final class TicketMapper {
         TicketDTO dto = new TicketDTO();
         dto.setId(ticket.getId());
         dto.setAsunto(ticket.getAsunto());
-        dto.setEstado(ticket.getEstado() != null ? ticket.getEstado().getEstado() : null);
+        dto.setDetalle(ticket.getDetalle());;
+        dto.setEstado(EstadoTicketMapper.mapEstadoTicketToDto(ticket.getEstado()));
+        dto.setPrioridad(PrioridadMapper.mapPrioridadToDto(ticket.getPrioridad()));
         // Cliente
         if (ticket.getCreadoPor() != null) {
             dto.setCliente(ClienteMapper.mapToClienteDto(ticket.getCreadoPor()));
@@ -46,12 +46,11 @@ public final class TicketMapper {
         return ticket;
     }
 
-    public static Set<TicketDTO> mapToTicketDtoList(Set<Ticket> tickets) {
-        return tickets == null ? Set.of()
-                : tickets.stream().map(TicketMapper::mapToTicketDto).collect(Collectors.toSet());
+    public static Set<TicketDTO> mapToTicketDtoList(List<Ticket> tickets) {
+        return tickets == null ? Set.of() : tickets.stream().map(TicketMapper::mapToTicketDto).collect(Collectors.toSet());
     }
 
-    public static Set<Ticket> mapToTicketEntityList(Set<TicketDTO> dtos) {
+    public static Set<Ticket> mapToTicketEntityList(List<TicketDTO> dtos) {
         return dtos == null ? Set.of() : dtos.stream().map(TicketMapper::mapToTicketEntity).collect(Collectors.toSet());
     }
 }

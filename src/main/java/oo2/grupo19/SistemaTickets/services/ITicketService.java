@@ -1,25 +1,26 @@
 package oo2.grupo19.SistemaTickets.services;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 
+import oo2.grupo19.SistemaTickets.dto.EstadoTicketDTO;
+import oo2.grupo19.SistemaTickets.dto.PrioridadDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketClientDTO;
+import oo2.grupo19.SistemaTickets.dto.TicketDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketEmployeeDTO;
-import oo2.grupo19.SistemaTickets.entities.Ticket;
-import oo2.grupo19.SistemaTickets.entities.estados.EstadoTicket;
-import oo2.grupo19.SistemaTickets.entities.estados.Prioridad;
 
-public interface ITicketService extends IService<Ticket> {
-    Ticket findByIdAndEmpleado(Long idEmpleado, Long idTicket);
-    void actualizarEstadoTicket(Long idEmpleado, Long idTicket, EstadoTicket nuevoEstado);
-    List<Ticket> findTicketByCliente(String email);
-    List<Ticket> findTicketByAsunto(String asunto);
-    List<Ticket> findTicketByPrioridad(Prioridad prioridad);
-    List<Ticket> findTicketByEmpleado(String email);
-    List<Ticket> findTicketByEstado(EstadoTicket estado);
-    List<Ticket> findTicketByFechaHora(LocalDate fecha);
-    List<Ticket> traerPorCliente(String email);
-    List<Ticket> traerPorEstados(long idEstado);
+public interface ITicketService extends IService<TicketDTO> {
+    TicketDTO findByIdAndEmpleado(Long idEmpleado, Long idTicket);
+    void actualizarEstadoTicket(Long idEmpleado, Long idTicket, EstadoTicketDTO nuevoEstado);
+    void actualizarPrioridadTicket(Long idEmpleado, Long idTicket, PrioridadDTO prioridad);
+    Set<TicketDTO> findTicketByCliente(String email);
+    Set<TicketDTO> findTicketByAsunto(String asunto);
+    Set<TicketDTO> findTicketByPrioridad(PrioridadDTO prioridad);
+    Set<TicketDTO> findTicketByEmpleado(String email);
+    Set<TicketDTO> findTicketByEstado(EstadoTicketDTO estado);
+    Set<TicketDTO> findTicketByFechaHora(LocalDate fecha);
+    Set<TicketDTO> traerPorCliente(String email);
+    Set<TicketDTO> traerPorEstado(String estado);
     TicketClientDTO getTicketParaCliente(Long ticketId, String clienteEmail);
     TicketEmployeeDTO getTicketparaEmpleado(Long ticketId, String empleadoEmail);
     TicketEmployeeDTO asignarTicket(Long ticketId, String empleadoEmail);

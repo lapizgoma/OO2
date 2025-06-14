@@ -1,11 +1,6 @@
 package oo2.grupo19.SistemaTickets.controllers;
-import java.util.Optional;
-
-
-
-import java.util.List;
+import java.util.Set;
 import java.time.LocalDate;
-import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,13 +16,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import lombok.extern.log4j.Log4j2;
+import oo2.grupo19.SistemaTickets.dto.ClienteDTO;
+import oo2.grupo19.SistemaTickets.dto.EstadoTicketDTO;
+import oo2.grupo19.SistemaTickets.dto.PrioridadDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketClientDTO;
+import oo2.grupo19.SistemaTickets.dto.TicketDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketEmployeeDTO;
-import oo2.grupo19.SistemaTickets.entities.Cliente;
-import oo2.grupo19.SistemaTickets.entities.Ticket;
-import oo2.grupo19.SistemaTickets.entities.estados.EstadoIntervencion;
-import oo2.grupo19.SistemaTickets.entities.estados.EstadoTicket;
-import oo2.grupo19.SistemaTickets.entities.estados.Prioridad;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 import oo2.grupo19.SistemaTickets.security.SecurityService;
 import oo2.grupo19.SistemaTickets.services.ITicketService;
@@ -61,30 +55,26 @@ public class TicketController {
     @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/create")
     public String createTicket(Model model, Authentication authentication) {
-        Ticket ticket = new Ticket();
+        TicketDTO ticket = new TicketDTO();
         String email = authentication.getName();
-        Optional<Cliente> cliente = clienteService.findByEmail(email);
-        ticket.setCreadoPor(cliente.get());
+        ClienteDTO cliente = clienteService.findByEmail(email);
+        ticket.setCliente(cliente);
         model.addAttribute("ticket", ticket);
-        return "ticket/formTicket";
+        return ViewRouteHelper.FORM_TICKET;
     }
 
     @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping("/create")
     public String postCreate(
-        @ModelAttribute Ticket ticket,
+        @ModelAttribute TicketDTO ticket,
         Authentication authentication,
         Model model,
         @RequestParam("mensaje") String contenido) {
         String email = authentication.getName();
-        Optional<Cliente> clienteOpt = clienteService.findByEmail(email);
-        Cliente clienteDb = clienteOpt.get();
-        EstadoTicket estado = estadoTicketService.findById(1L).orElse(null);
-        if(estado == null) {
-            throw new NotFoundException("Estado no encontrado");
-        }
+        ClienteDTO cliente = clienteService.findByEmail(email);
+        EstadoTicketDTO estado = estadoTicketService.findById(1L);
         ticket.setEstado(estado);
-        ticket.setCreadoPor(clienteDb);
+        ticket.setCliente(cliente);
         ticket.setDetalle(contenido);
         ticketService.save(ticket);
         logger.info("Ticket creado exitosamente por: {}", email);
@@ -125,48 +115,36 @@ public class TicketController {
     @GetMapping("/update-ticket")
     public String showUpdateStatusForm(@RequestParam Long ticketId, Authentication auth, Model model){
         Long empleadoId = securityService.getIdEmpleado(auth);
-        Ticket ticket = ticketService.findByIdAndEmpleado(empleadoId, ticketId);
-        if (ticket == null) {
-            logger.warn("Intento de actualizar estado de ticket no encontrado o sin permiso: {}", ticketId);
-            throw new NotFoundException("No se ha encontrado el ticket o no tiene permiso");
-        }
+        TicketDTO ticket = ticketService.findByIdAndEmpleado(empleadoId, ticketId);
         model.addAttribute("ticket", ticket);
         model.addAttribute("estadosIntervencion", estadoIntervencionService.findAll());
         model.addAttribute("estadoPrioridad",prioridadService.findAll());
         model.addAttribute("title","Modificar prioridad");
         return ViewRouteHelper.TICKET_UPDATE_STATUS; 
     }
-    // TODO: Revisar Optional DTO 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @PostMapping("/update-ticket-priority")
     public String postUpdateTicket(@RequestParam("ticketId") Long idTicket,
                                    Model model,
-                                   @RequestParam("prioridad.id") Long prioridadId){
-        Ticket ticket = ticketService.findById(idTicket).orElse(null);
-        if(ticket == null) {
-            throw new NotFoundException("Ticket no encontrado");
-        }
-        Prioridad prioridad = prioridadService.findById(prioridadId).orElse(null);
-        if(prioridad == null) {
-            throw new NotFoundException("Prioridad no encontrada");
-        }
-        ticket.setPrioridad(prioridad);
-        logger.info("Ticket actualizado: {} con nueva prioridad: {}", idTicket, prioridadId);
-        ticketService.save(ticket);
+                                   Authentication auth,
+                                   @RequestParam("prioridad.prioridad") String prioridad){
+        Long empleadoId = securityService.getIdEmpleado(auth);
+        PrioridadDTO prioridadticket = prioridadService.findByPrioridad(prioridad);
+        ticketService.actualizarPrioridadTicket(empleadoId, idTicket, prioridadticket);
+        logger.info("Ticket actualizado: {} con nueva prioridad: {}", idTicket, prioridad);
         model.addAttribute("title","Ticket update");
-        model.addAttribute("tituloh1","La prioridad / estado ha sido actualizado con exito!");
+        model.addAttribute("tituloh1","La prioridad ha sido actualizado con exito!");
         return ViewRouteHelper.TICKET_SUCCESS;
     }
-    // TODO: HACE FALTA HACER DTO PARA ESTADOINTERVENCION(INFORMACION NO SENSIBLE)
+
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @PostMapping("/update-ticket-status")
-    public String processUpdateStatus(@ModelAttribute Ticket ticket, Authentication auth,Model model) {
+    public String processUpdateStatus(@RequestParam("ticketId") Long idTicket, 
+                                        Authentication auth,Model model,
+                                        @RequestParam("estado.estado") String estado) {
         Long empleadoId = securityService.getIdEmpleado(auth);
-        ticketService.actualizarEstadoTicket(empleadoId, ticket.getId(), ticket.getEstado());
-        Ticket actualizado = ticketService.findByIdAndEmpleado(empleadoId, ticket.getId());
-        List<EstadoIntervencion> estadosIntervencion = estadoIntervencionService.findAll();
-        model.addAttribute("ticket", actualizado);
-        model.addAttribute("estadosIntervencion", estadosIntervencion);
+        EstadoTicketDTO estadoTicket = estadoTicketService.findByEstado(estado);
+        ticketService.actualizarEstadoTicket(empleadoId, idTicket, estadoTicket);
         model.addAttribute("mensaje", "Estado actualizado correctamente");
         return ViewRouteHelper.TICKET_SUCCESS; 
     }
@@ -174,7 +152,7 @@ public class TicketController {
   @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @GetMapping("/list-ticket-por-cliente")
     public String ticketListByCliente(@RequestParam String email, Model model, Authentication authentication){
-        List<Ticket> tickets = ticketService.findTicketByCliente(email);
+        Set<TicketDTO> tickets = ticketService.findTicketByCliente(email);
         model.addAttribute("tickets", tickets);
         if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             return ViewRouteHelper.INDEX_ADMIN;
@@ -187,7 +165,7 @@ public class TicketController {
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @GetMapping("/list-ticket-por-asunto")
     public String ticketListByAsunto(@RequestParam String asunto, Model model, Authentication authentication){
-        List<Ticket> tickets = ticketService.findTicketByAsunto(asunto);
+        Set<TicketDTO> tickets = ticketService.findTicketByAsunto(asunto);
         model.addAttribute("tickets", tickets);
         if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             return ViewRouteHelper.INDEX_ADMIN;
@@ -200,7 +178,7 @@ public class TicketController {
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @GetMapping("/list-ticket-por-empleado")
     public String ticketListByEmpleado(@RequestParam String email, Model model, Authentication authentication){
-        List<Ticket> tickets = ticketService.findTicketByEmpleado(email);
+        Set<TicketDTO> tickets = ticketService.findTicketByEmpleado(email);
         model.addAttribute("tickets", tickets);
         if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             return ViewRouteHelper.INDEX_ADMIN;
@@ -212,15 +190,10 @@ public class TicketController {
 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @GetMapping("/list-ticket-por-estado")
-    public String ticketListByEstado(@RequestParam("estadoTicketId") Long estadoId, Model model, Authentication authentication){
-        Optional<EstadoTicket> optionalEstado = estadoTicketService.findById(estadoId);
-        if (optionalEstado.isPresent()) {
-            EstadoTicket estado = optionalEstado.get();
-            List<Ticket> tickets = ticketService.findTicketByEstado(estado);
-            model.addAttribute("tickets", tickets);
-        } else {
-            model.addAttribute("error", "Estado no encontrado");
-        }
+    public String ticketListByEstado(@RequestParam("estado.estado") String estado, Model model, Authentication authentication){
+        EstadoTicketDTO estadoticket = estadoTicketService.findByEstado(estado);
+        Set<TicketDTO> tickets = ticketService.findTicketByEstado(estadoticket);
+        model.addAttribute("tickets", tickets);
         if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             return ViewRouteHelper.INDEX_ADMIN;
         } else if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
@@ -231,15 +204,10 @@ public class TicketController {
 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @GetMapping("/list-ticket-por-prioridad")
-    public String ticketListByPrioridad(@RequestParam("prioridadId") Long prioridadId, Model model, Authentication authentication){
-        Optional<Prioridad> optionalPrioridad = prioridadService.findById(prioridadId);
-        if (optionalPrioridad.isPresent()) {
-            Prioridad prioridad = optionalPrioridad.get();
-            List<Ticket> tickets = ticketService.findTicketByPrioridad(prioridad);
-            model.addAttribute("tickets", tickets);
-        } else {
-            model.addAttribute("error", "Prioridad no encontrada");
-        }
+    public String ticketListByPrioridad(@RequestParam("priodridad.prioridad") String prioridad, Model model, Authentication authentication){
+        PrioridadDTO prioridadTicket = prioridadService.findByPrioridad(prioridad);
+        Set<TicketDTO> tickets = ticketService.findTicketByPrioridad(prioridadTicket);
+        model.addAttribute("tickets", tickets);
         if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             return ViewRouteHelper.INDEX_ADMIN;
         } else if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
@@ -251,7 +219,7 @@ public class TicketController {
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @GetMapping("/list-ticket-por-fecha")
     public String ticketListByFecha(@RequestParam LocalDate fecha, Model model, Authentication authentication){
-        List<Ticket> tickets = ticketService.findTicketByFechaHora(fecha);
+        Set<TicketDTO> tickets = ticketService.findTicketByFechaHora(fecha);
         model.addAttribute("tickets", tickets);
         if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             return ViewRouteHelper.INDEX_ADMIN;

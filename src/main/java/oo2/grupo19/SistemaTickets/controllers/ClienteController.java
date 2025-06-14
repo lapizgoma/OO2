@@ -37,7 +37,8 @@ public class ClienteController {
             return ViewRouteHelper.CONFIRMATION_QUESTION;
         }
         try {
-            clienteService.eliminarCliente(authentication.getName());
+            Long id = clienteService.findByEmail(authentication.getName()).getId();
+            clienteService.delete(id);
             logger.info("Cuenta eliminada exitosamente para el usuario: {}", authentication.getName());
         } catch (Exception e) {
             logger.error("Error al eliminar la cuenta del usuario: {}", authentication.getName(), e);

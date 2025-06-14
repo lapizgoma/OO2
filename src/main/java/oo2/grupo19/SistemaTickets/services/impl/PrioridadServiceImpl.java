@@ -1,8 +1,10 @@
 package oo2.grupo19.SistemaTickets.services.impl;
 import org.springframework.stereotype.Service;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+import oo2.grupo19.SistemaTickets.dto.PrioridadDTO;
+import oo2.grupo19.SistemaTickets.dto.mappers.PrioridadMapper;
 import oo2.grupo19.SistemaTickets.entities.estados.Prioridad;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
 import oo2.grupo19.SistemaTickets.repositories.estados.IPrioridad;
@@ -20,29 +22,39 @@ public class PrioridadServiceImpl implements IPrioridadService {
     }
 
     @Override
-    public List<Prioridad> findAll() {
-        try {
-            return prioridadRepository.findAll();
-        } catch (Exception e) {
-            throw new NotFoundException("Error: no se ha podido encontrar la lista de prioridades");
-        }
+    public Set<PrioridadDTO> findAll() {
+        return PrioridadMapper.mapToPrioridadDtoSet(prioridadRepository.findAll());
     }
 
     @Override
-    public Optional<Prioridad> findById(Long id) {
-        try {
-            return prioridadRepository.findById(id);
-        } catch (Exception e) {
-            throw new NotFoundException("Error: no se ha podido encontrar la prioridad");
-        }
+    public PrioridadDTO findById(Long id) {
+        return PrioridadMapper.mapPrioridadToDto(
+            prioridadRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("No se ha encontrado la prioridad con el id: " + id))
+        );
     }
 
     @Override
-    public void save(Prioridad prioridad) {
-        try {
+    public PrioridadDTO findByPrioridad(String prioridad) {
+        return PrioridadMapper.mapPrioridadToDto(
+            prioridadRepository.findByPrioridad(prioridad)
+                .orElseThrow(() -> new NotFoundException("No se ha encontrado la prioridad "))
+        );
+    }
+
+    @Override
+    public void save(PrioridadDTO prioridaddto) {
+        if (prioridaddto == null) {
+            throw new IllegalArgumentException("El contacto no puede ser null");
+        }
+        Optional<Prioridad> prioridadOpt = prioridadRepository.findByPrioridad(prioridaddto.getPrioridad());
+        if(prioridadOpt.isPresent()) {
+            prioridaddto.setId(prioridadOpt.get().getId());
+            Prioridad prioridad = PrioridadMapper.mapDtoToPrioridad(prioridaddto);
             prioridadRepository.save(prioridad);
-        } catch (Exception e) {
-            throw new RuntimeException("Error: no se ha podido guardar la prioridad", e);
+        } else {
+        Prioridad prioridad = PrioridadMapper.mapDtoToPrioridad(prioridaddto);
+        prioridadRepository.save(prioridad);
         }
     }
 

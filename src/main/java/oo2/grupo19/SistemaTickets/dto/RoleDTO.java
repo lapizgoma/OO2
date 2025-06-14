@@ -1,5 +1,4 @@
 package oo2.grupo19.SistemaTickets.dto;
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,9 +12,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @EqualsAndHashCode
-public class PersonaJuridicaDTO {
+public class RoleDTO {
     private Long id;
-    private String razonSocial;
-    private String cuit;
-    private String codigoAcceso;
+    private String type;
 }

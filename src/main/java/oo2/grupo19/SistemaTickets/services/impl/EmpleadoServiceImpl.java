@@ -1,14 +1,16 @@
 package oo2.grupo19.SistemaTickets.services.impl;
 
 import java.util.HashSet;
-import java.util.List;
+import java.util.Set;
 import java.util.Optional;
 
 import oo2.grupo19.SistemaTickets.services.IEmpleadoService;
-import oo2.grupo19.SistemaTickets.services.IUsuarioService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import oo2.grupo19.SistemaTickets.dto.EmpleadoDTO;
+import oo2.grupo19.SistemaTickets.dto.mappers.EmpleadoMapper;
 import oo2.grupo19.SistemaTickets.entities.Empleado;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
 import oo2.grupo19.SistemaTickets.repositories.IEmpleado;
@@ -18,128 +20,76 @@ import oo2.grupo19.SistemaTickets.repositories.ITicket;
 @Service
 public class EmpleadoServiceImpl implements IEmpleadoService {
     
-   private final IEmpleado empleadoRepository;
+    private final IEmpleado empleadoRepository;
     private final ITicket ticketRepository;
-    private final IUsuarioService usuarioService;
+    private final PasswordEncoder passwordEncoder;
 
-    public EmpleadoServiceImpl(IEmpleado empleadoRepository, ITicket ticketRepository, IUsuarioService usuarioService) {
+    public EmpleadoServiceImpl(IEmpleado empleadoRepository, ITicket ticketRepository, PasswordEncoder passwordEncoder) {
         this.empleadoRepository = empleadoRepository;
         this.ticketRepository = ticketRepository;
-        this.usuarioService = usuarioService;
+        this.passwordEncoder = passwordEncoder;
     }
-
 
     @Override
     @Transactional
     public void delete(Long id) {
-        if (!empleadoRepository.existsById(id)) {
-            throw new NotFoundException("No se ha encontrado el empleado con ese id");
-        }
-        empleadoRepository.deleteById(id);
+        Empleado empleado = empleadoRepository.findById(id).orElseThrow(() -> new NotFoundException("No se ha encontrado el empleado con ese id"));
+        empleado.darDeBaja();
+        empleadoRepository.save(empleado);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Empleado> findAll() {
-        return empleadoRepository.findAll();
+    public Set<EmpleadoDTO> findAll() {
+        return EmpleadoMapper.mapToEmpleadoDtoSet(empleadoRepository.findAll());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Empleado> findById(Long id) {
-        Optional<Empleado> empleado = empleadoRepository.findById(id);
-        if (empleado.isEmpty()) {
-            throw new NotFoundException("No se ha encontrado el empleado con ese id");
-        }
-        return empleado;
+    public EmpleadoDTO findById(Long id) {
+        Empleado empleado = empleadoRepository.findById(id).orElseThrow(() -> new NotFoundException("No se ha encontrado el empleado con ese id"));
+        return EmpleadoMapper.mapToEmpleadoDto(empleado);
     }
 
     @Override
     @Transactional
-    public void save(Empleado object) {
-        if(object == null) {
+    public void save(EmpleadoDTO empleadodto) {
+        if(empleadodto == null) {
             throw new IllegalArgumentException("El empleado no puede ser null");
         }
-        if(object.getId() != null && object.getId() > 0){
-            object.setTickets(new HashSet<>(ticketRepository.findAll()));
+        Optional<Empleado> empleadoOpt = empleadoRepository.findByContactoEmail(empleadodto.getEmail());
+        if(empleadoOpt.isPresent()) {
+            empleadodto.setId(empleadoOpt.get().getId());
+            Empleado empleado = EmpleadoMapper.mapToEmpleadoEntity(empleadodto);
+            empleadoRepository.save(empleado);
+        } else {
+        Empleado empleado = EmpleadoMapper.mapToEmpleadoEntity(empleadodto);
+        String passwordHash = passwordEncoder.encode(empleado.getPassword());
+        empleado.setPassword(passwordHash);
+        long ultimoLegajo;
+        if(empleadoRepository.findAll().isEmpty()) {
+            ultimoLegajo = 10000;
+        } else {
+            ultimoLegajo = Long.parseLong(empleadoRepository.findAll().getLast().getNroLegajo()) + 1;
         }
-        empleadoRepository.save(object);
-    }
-
-    @Transactional(readOnly = true)
-    public Optional<Empleado> traerEmpleado(String email){
-        try{
-            return empleadoRepository.findByContactoEmail(email);
-        }catch(Exception e){
-            throw new NotFoundException("No se ha encontrado el empleado con ese email");
-        }
-    }
-
-    @Transactional(readOnly = true)
-	public List<Empleado> traerEmpleados(){
-        try{
-            return empleadoRepository.findAllEmpleados();
-        }catch(Exception e){
-            throw new NotFoundException("No se ha podido encontrar los empleados");
+        empleado.setNroLegajo(Long.toString(ultimoLegajo));
+        empleado.setTickets(new HashSet<>(ticketRepository.findAll()));
+        empleadoRepository.save(empleado);
         }
     }
 
     @Transactional(readOnly = true)
-	public List<Empleado> traerEmpleadosActivos(){
+    public EmpleadoDTO findByEmail(String email){
+        Empleado empleado = empleadoRepository.findByContactoEmail(email).orElseThrow(() -> new NotFoundException("No se ha encontrado el empleado con ese email"));
+        return EmpleadoMapper.mapToEmpleadoDto(empleado);
+    }
+
+    @Transactional(readOnly = true)
+	public Set<EmpleadoDTO> findAllActive(){
         try{
-            return empleadoRepository.findAllByDeletedFalse();
+            return EmpleadoMapper.mapToEmpleadoDtoSet(empleadoRepository.findAllByDeletedFalse());
         }catch(Exception e){
             throw new NotFoundException("No se ha podido encontrar los empleados activos");
         }
     }
-    
-    public void agregarEmpleado(Empleado empleado){
-        try{
-            long ultimoLegajo;
-
-            if(traerEmpleados().isEmpty()) {
-                ultimoLegajo = 10000;
-            } else {
-                ultimoLegajo = Long.parseLong(traerEmpleados().getLast().getNroLegajo()) + 1;
-            }
-            empleado.setNroLegajo(Long.toString(ultimoLegajo));
-            usuarioService.registrarUsuario(empleado);
-        }catch(Exception e){
-            throw new RuntimeException("No se ha podido persistir el empleado");
-        }
-    }
-
-    @Transactional
-    public void darBajaEmpleado(Long id){
-        Optional <Empleado> empleado = findById(id);
-        if(empleado.isPresent()){
-            empleado.get().darDeBaja();
-        }else{
-            throw new NotFoundException("No se ha encontrado el empleado con ese id");
-        }
-    }
-
-    @Transactional
-    public List<Empleado> listarTodos() {
-        return empleadoRepository.findAll();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Empleado> findAllEmpleados() {
-        return empleadoRepository.findAllEmpleados();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Empleado> findAllByDeletedFalse() {
-        return empleadoRepository.findAllByDeletedFalse();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Optional<Empleado> findByNombre(String nombre) {
-        return empleadoRepository.findByNombre(nombre);
-    }
-
 }
