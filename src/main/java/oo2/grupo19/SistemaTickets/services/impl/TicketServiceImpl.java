@@ -10,9 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import oo2.grupo19.SistemaTickets.dto.EstadoTicketDTO;
 import oo2.grupo19.SistemaTickets.dto.PrioridadDTO;
-import oo2.grupo19.SistemaTickets.dto.TicketClientDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketDTO;
-import oo2.grupo19.SistemaTickets.dto.TicketEmployeeDTO;
 import oo2.grupo19.SistemaTickets.dto.mappers.TicketClientMapper;
 import oo2.grupo19.SistemaTickets.dto.mappers.TicketEmployeeMapper;
 import oo2.grupo19.SistemaTickets.dto.mappers.TicketMapper;
@@ -190,7 +188,7 @@ public class TicketServiceImpl implements ITicketService{
             Empleado empleadoEntity = empleadoRepository.findByContactoEmail(empleadoEmail)
                 .orElseThrow(() -> new NotFoundException("Empleado no encontrado"));
 
-            return TicketEmployeeMapper.mapToTicketEmployeeDto(ticketEntity, empleadoEntity);
+            return TicketMapper.mapToTicketEmployeeDto(ticketEntity, empleadoEntity);
         } catch (Exception e) {
             throw new NotFoundException("Error al obtener el ticket para el empleado");
         }
@@ -212,7 +210,7 @@ public class TicketServiceImpl implements ITicketService{
 
             ticketRepository.save(ticketEntity);
 
-            return TicketEmployeeMapper.mapToTicketEmployeeDto(ticketEntity, empleadoEntity);
+            return TicketMapper.mapToTicketEmployeeDto(ticketEntity, empleadoEntity);
         } catch (Exception e) {
             throw new NotFoundException("Error al asignar el ticket al empleado");
         }

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import oo2.grupo19.SistemaTickets.dto.PersonaJuridicaDTO;
+import oo2.grupo19.SistemaTickets.dto.personaJuridica.PersonaJuridicaDTO;
 import oo2.grupo19.SistemaTickets.entities.PersonaJuridica;
 
 public final class PersonaJuridicaMapper {
@@ -12,21 +12,29 @@ public final class PersonaJuridicaMapper {
         if (personaJuridica == null) {
             return null;
         }
+
         PersonaJuridicaDTO dto = new PersonaJuridicaDTO();
+
         dto.setRazonSocial(personaJuridica.getRazonSocial());
         dto.setCuit(personaJuridica.getCuit());
         dto.setCodigoAcceso(personaJuridica.getCodigoAcceso());
+
         return dto;
     }
 
-    public static PersonaJuridica mapToPersonaJuridica(PersonaJuridicaDTO personaJuridicaDTO) {
-        if (personaJuridicaDTO == null) {
+    public static PersonaJuridica mapToPersonaJuridica(PersonaJuridicaDTO personaJuridicaDTO)
+    {
+        if (personaJuridicaDTO == null)
+        {
             return null;
         }
+
         PersonaJuridica personaJuridica = new PersonaJuridica();
+
         personaJuridica.setRazonSocial(personaJuridicaDTO.getRazonSocial());
         personaJuridica.setCuit(personaJuridicaDTO.getCuit());
         personaJuridica.setCodigoAcceso(personaJuridicaDTO.getCodigoAcceso());
+
         return personaJuridica;
     }
 

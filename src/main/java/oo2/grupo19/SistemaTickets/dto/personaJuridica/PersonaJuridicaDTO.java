@@ -1,4 +1,4 @@
-package oo2.grupo19.SistemaTickets.dto;
+package oo2.grupo19.SistemaTickets.dto.personaJuridica;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

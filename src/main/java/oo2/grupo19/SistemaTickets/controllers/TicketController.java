@@ -94,7 +94,7 @@ public class TicketController {
         }
         else if (authentication.getAuthorities ().stream ().anyMatch (a -> a.getAuthority ().equals ("ROLE_CUSTOMER"))) 
         {
-            TicketClientDTO ticket = ticketService.getTicketParaCliente(idTicket, authentication.getName ());
+            TicketDTO ticket = ticketService.getTicketParaCliente(idTicket, authentication.getName ());
             model.addAttribute("ticketClientDTO", ticket);
         }
 
