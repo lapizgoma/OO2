@@ -40,7 +40,7 @@ public final class ClienteMapper {
 
     public static Cliente mapToClienteEntity(ClienteDTO dto) {
         if (dto == null) return null;
-        
+
         Cliente cliente = new Cliente();
         cliente.setId(dto.getId());
         cliente.setNombre(dto.getNombre());

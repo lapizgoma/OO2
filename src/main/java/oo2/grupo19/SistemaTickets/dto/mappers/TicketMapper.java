@@ -1,5 +1,6 @@
 package oo2.grupo19.SistemaTickets.dto.mappers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -41,6 +42,11 @@ public final class TicketMapper {
         Ticket ticket = new Ticket();
         ticket.setId(dto.getId());
         ticket.setAsunto(dto.getAsunto());
+        // ticket.setCreadoPor(ClienteMapper.mapToClienteEntity(dto.getCliente()));
+        ticket.setEstado(EstadoTicketMapper.mapDtoToEstadoTicket(dto.getEstado()));
+        ticket.setLstIntervencion(dto.getIntervencion().stream().map(IntervencionMapper::mapToIntervencionEntity)
+                    .collect(Collectors.toSet()));
+        ticket.setDetalle(dto.getDetalle());
         // Estado y relaciones deben ser seteadas por el servicio según lógica de
         // negocio
         return ticket;

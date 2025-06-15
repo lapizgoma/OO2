@@ -79,6 +79,7 @@ public class TicketServiceImpl implements ITicketService{
             throw new IllegalArgumentException("El empleado no puede ser null");
         }
         Ticket ticket = TicketMapper.mapToTicketEntity(ticketdto);
+        ticket.setCreadoPor(clienteRepository.findByContactoEmail(ticketdto.getCliente().getEmail()).orElseThrow());
         ticketRepository.save(ticket);
     }     
 

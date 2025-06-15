@@ -1,4 +1,5 @@
 package oo2.grupo19.SistemaTickets.controllers;
+import java.util.HashSet;
 import java.util.Set;
 import java.time.LocalDate;
 
@@ -75,7 +76,9 @@ public class TicketController {
         EstadoTicketDTO estado = estadoTicketService.findById(1L);
         ticket.setEstado(estado);
         ticket.setCliente(cliente);
+        log.info("Detalle: " + contenido);
         ticket.setDetalle(contenido);
+        ticket.setIntervencion(new HashSet<>());
         ticketService.save(ticket);
         logger.info("Ticket creado exitosamente por: {}", email);
         model.addAttribute("title","Ticket create");

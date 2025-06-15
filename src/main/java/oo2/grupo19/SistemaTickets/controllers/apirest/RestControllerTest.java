@@ -1,6 +1,7 @@
 package oo2.grupo19.SistemaTickets.controllers.apirest;
 
 import lombok.extern.log4j.Log4j2;
+import oo2.grupo19.SistemaTickets.dto.ClienteDTO;
 import oo2.grupo19.SistemaTickets.dto.EmpleadoDTO;
 import oo2.grupo19.SistemaTickets.dto.UsuarioDTO;
 import oo2.grupo19.SistemaTickets.dto.api.LoginRequestDTO;
@@ -14,11 +15,14 @@ import oo2.grupo19.SistemaTickets.services.ITicketService;
 import oo2.grupo19.SistemaTickets.services.IUsuarioService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -48,12 +52,10 @@ public class RestControllerTest {
         try {
             if (usuarioService.validarCredenciales(loginRequest.getEmail(), loginRequest.getPassword())) {
                 UsuarioDTO usuario = usuarioService.findByEmail(loginRequest.getEmail());
-                String role = usuario.get().getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .collect(Collectors.joining(","));
+                String role = usuario.getRole();
                     
                 return ResponseEntity.ok(Map.of(
-                    "username", usuario.get().getUsername(),
+                    "username", usuario,
                     "role", role
                 ));
             }
@@ -67,21 +69,7 @@ public class RestControllerTest {
     @GetMapping("/clientes")
     public ResponseEntity<?> mostrarClientes(@AuthenticationPrincipal Usuario usuario) {
         try {
-            if (!usuario.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tiene permisos para ver esta información");
-            }
-            
-            return ResponseEntity.ok(clienteService.findAll().stream()
-                .map(cliente -> {
-                    var dto = ClienteMapper.mapToClienteDto(cliente);
-                    if (cliente instanceof Cliente c) {
-                        dto.setOrganizacion(c.tieneOrganizacion() ? 
-                            c.getOrganizacion().getRazonSocial() : "Sin organización");
-                    }
-                    return dto;
-                })
-                .collect(Collectors.toList()));
+            return ResponseEntity.ok(clienteService.findAll());
         } catch (Exception e) {
             log.error("Error al obtener clientes: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

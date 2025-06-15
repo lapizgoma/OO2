@@ -6,6 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.entities.Contacto;
@@ -27,10 +28,12 @@ import oo2.grupo19.SistemaTickets.repositories.estados.IRole;
 public class LoadEstados {
     private final IEmpleado empleadoRepository;
     private final ICliente clienteRepository;
+    private final PasswordEncoder passwordEncoder;
     
-    public LoadEstados(IEmpleado empleadoRepository, ICliente clienteRepository) {
+    public LoadEstados(IEmpleado empleadoRepository, ICliente clienteRepository, PasswordEncoder passwordEncoder) {
         this.empleadoRepository = empleadoRepository;
         this.clienteRepository = clienteRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
 @Bean
@@ -84,7 +87,7 @@ public CommandLineRunner cargarEstados(IEstadoIntervencion estadoIntervencionRep
             contacto.setTelefono("3333333");
             empleado.setNombre("empleado");
             empleado.setApellido("de prueba");
-            empleado.setPassword("empleado");
+            empleado.setPassword(passwordEncoder.encode("empleado"));
             empleado.setNroLegajo("13333");
             empleado.setDni("11111111");
             empleado.agregarRoles(roleRepository.findById(2L).get());
@@ -107,11 +110,12 @@ public CommandLineRunner cargarEstados(IEstadoIntervencion estadoIntervencionRep
             contacto.setTelefono("443333");
             cliente.setNombre("cliente");
             cliente.setApellido("de prueba");
-            cliente.setPassword("cliente");
+            cliente.setPassword(passwordEncoder.encode("cliente"));
             cliente.setDni("22222222");
             cliente.agregarRoles(roleRepository.findById(1L).get());
             cliente.setContacto(contacto);
             cliente.asignarContactoUsuario();
+            
             // ... otros campos necesarios
 
             clienteRepository.save(cliente);
@@ -130,7 +134,7 @@ public CommandLineRunner cargarEstados(IEstadoIntervencion estadoIntervencionRep
             contacto.setTelefono("44442244");
             admin.setNombre("admin");
             admin.setApellido("de prueba");
-            admin.setPassword("admin");
+            admin.setPassword(passwordEncoder.encode("admin"));
             admin.setNroLegajo("4444");
             admin.setDni("44444444");
             admin.agregarRoles(roleRepository.findById(3L).get());

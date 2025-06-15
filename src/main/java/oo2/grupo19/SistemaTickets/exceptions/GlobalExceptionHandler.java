@@ -40,11 +40,4 @@ public class GlobalExceptionHandler {
         model.addAttribute("message", ex.getMessage());
         return ViewRouteHelper.ERROR_INDEX;
     }
-
-    @ExceptionHandler(Exception.class)
-    public String CustomException(Exception ex, Model model){
-        model.addAttribute("title", "Error");
-        model.addAttribute("message", String.format("Unexpected error: %s (%s)", ex.getMessage(), ex.getCause()));
-        return ViewRouteHelper.ERROR_INDEX;
-    }
 }

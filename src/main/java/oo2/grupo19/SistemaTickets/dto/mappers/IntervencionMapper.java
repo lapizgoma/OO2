@@ -33,6 +33,7 @@ public final class IntervencionMapper {
         Intervencion intervencion = new Intervencion();
         intervencion.setId(dto.getId());
         intervencion.setDescripcion(dto.getDescripcion() != null ? dto.getDescripcion() : dto.getContenido());
+        intervencion.setTicket(TicketMapper.mapToTicketEntity(dto.getTicket()));
         // Fecha: parse if present
         if (dto.getFecha() != null) {
             try {

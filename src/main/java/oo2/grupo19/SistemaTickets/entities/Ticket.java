@@ -48,7 +48,7 @@ public class Ticket {
 	private String asunto;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false, mappedBy = "ticket")
-	private Set<Intervencion> lstIntervencion = new HashSet<>();
+	private Set<Intervencion> lstIntervencion;
 
 	@ManyToMany
 	@JoinTable(name = "empleado_ticket", joinColumns = @JoinColumn(name = "ticket_id"), inverseJoinColumns = @JoinColumn(name = "empleado_id"))
