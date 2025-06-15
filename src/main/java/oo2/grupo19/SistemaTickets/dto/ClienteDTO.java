@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import oo2.grupo19.SistemaTickets.entities.estados.enums.RoleType;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,4 +26,6 @@ public class ClienteDTO {
     private String organizacion;
     private String cuit;
     private String codigoAcceso;
+    private RoleType role;
+    private Long idContacto;
 }

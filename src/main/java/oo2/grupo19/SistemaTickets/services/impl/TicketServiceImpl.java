@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.dto.EstadoTicketDTO;
 import oo2.grupo19.SistemaTickets.dto.PrioridadDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketClientDTO;
@@ -30,6 +31,7 @@ import oo2.grupo19.SistemaTickets.services.ITicketService;
 
 
 @Service
+@Log4j2
 @Primary
 public class TicketServiceImpl implements ITicketService{
     
@@ -76,12 +78,17 @@ public class TicketServiceImpl implements ITicketService{
     @Transactional
     public void save(TicketDTO ticketdto) {
         if(ticketdto == null) {
-            throw new IllegalArgumentException("El empleado no puede ser null");
+            throw new IllegalArgumentException("El ticket no puede ser null");
         }
+        log.info("Contacto guardandose: " + ticketdto);
         Ticket ticket = TicketMapper.mapToTicketEntity(ticketdto);
-        ticket.setCreadoPor(clienteRepository.findByContactoEmail(ticketdto.getCliente().getEmail()).orElseThrow());
+        ticket.setCreadoPor(clienteRepository.findByContactoEmail(ticketdto.getCliente().getEmail()).get());
+        ticket.setEstado(estadoTicketRepository.findByEstado(ticketdto.getEstado().getEstado()).get());
+        if(ticketdto.getPrioridad() != null){
+            ticket.setPrioridad(prioridadRepository.findByPrioridad(ticketdto.getPrioridad().getPrioridad()).get());
+        }
         ticketRepository.save(ticket);
-    }     
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -161,8 +168,8 @@ public class TicketServiceImpl implements ITicketService{
 
     @Override
     @Transactional(readOnly = true)
-    public Set<TicketDTO> traerPorCliente(String email) {
-        return TicketMapper.mapToTicketDtoList(ticketRepository.traerPorCliente(email));
+    public Set<TicketClientDTO> traerParaCliente(String email) {
+        return TicketClientMapper.mapToTicketDtoSet(ticketRepository.traerPorCliente(email));
     }
 
     @Transactional (readOnly = true)

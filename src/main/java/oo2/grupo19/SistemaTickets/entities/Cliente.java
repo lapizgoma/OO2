@@ -9,12 +9,14 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Table(name = "cliente")
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 public class Cliente extends Usuario {
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

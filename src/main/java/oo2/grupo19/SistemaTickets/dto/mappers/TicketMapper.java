@@ -1,11 +1,12 @@
 package oo2.grupo19.SistemaTickets.dto.mappers;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import oo2.grupo19.SistemaTickets.dto.IntervencionDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketDTO;
+import oo2.grupo19.SistemaTickets.entities.Intervencion;
 import oo2.grupo19.SistemaTickets.entities.Ticket;
 
 public final class TicketMapper {
@@ -42,10 +43,7 @@ public final class TicketMapper {
         Ticket ticket = new Ticket();
         ticket.setId(dto.getId());
         ticket.setAsunto(dto.getAsunto());
-        // ticket.setCreadoPor(ClienteMapper.mapToClienteEntity(dto.getCliente()));
-        ticket.setEstado(EstadoTicketMapper.mapDtoToEstadoTicket(dto.getEstado()));
-        ticket.setLstIntervencion(dto.getIntervencion().stream().map(IntervencionMapper::mapToIntervencionEntity)
-                    .collect(Collectors.toSet()));
+        ticket.setLstIntervencion(verifyIfIsEmpty(dto.getIntervencion()));
         ticket.setDetalle(dto.getDetalle());
         // Estado y relaciones deben ser seteadas por el servicio según lógica de
         // negocio
@@ -58,5 +56,13 @@ public final class TicketMapper {
 
     public static Set<Ticket> mapToTicketEntityList(List<TicketDTO> dtos) {
         return dtos == null ? Set.of() : dtos.stream().map(TicketMapper::mapToTicketEntity).collect(Collectors.toSet());
+    }
+
+    private static Set<Intervencion> verifyIfIsEmpty(Set<IntervencionDTO> invertencionesDto) {
+        if(invertencionesDto == null || invertencionesDto.isEmpty()) {
+            return Set.of();
+        }
+        return invertencionesDto.stream().map(IntervencionMapper::mapToIntervencionEntity)
+                    .collect(Collectors.toSet());
     }
 }

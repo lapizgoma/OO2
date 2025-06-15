@@ -4,11 +4,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.dto.ClienteDTO;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.entities.Contacto;
 import oo2.grupo19.SistemaTickets.entities.PersonaJuridica;
 
+@Log4j2
 public final class ClienteMapper {
     public static ClienteDTO mapToClienteDto(Cliente cliente) {
         if (cliente == null) {
@@ -19,6 +21,7 @@ public final class ClienteMapper {
         dto.setApellido(cliente.getApellido());
         
         if (cliente.getContacto() != null) {
+            dto.setIdContacto(cliente.getContacto().getId());
             dto.setEmail(cliente.getContacto().getEmail());
             dto.setTelefono(cliente.getContacto().getTelefono());
             dto.setDireccionCompleta(
@@ -47,30 +50,27 @@ public final class ClienteMapper {
         cliente.setApellido(dto.getApellido());
         cliente.setDni(dto.getDni());
         cliente.setPassword(dto.getPassword());
-
-        // Mapear contacto
-        Contacto contacto = new Contacto();
-        contacto.setEmail(dto.getEmail());
-        contacto.setTelefono(dto.getTelefono());
         
-        // Separar la dirección completa
-        String[] direccionParts = dto.getDireccionCompleta().split(",");
-        if (direccionParts.length >= 3) {
-            contacto.setCalle(direccionParts[0].trim());
-            contacto.setNroPuerta(direccionParts[1].trim());
-            contacto.setLocalidad(direccionParts[2].trim());
-        }
+        if (dto.getIdContacto() == null) {
+            Contacto contacto = new Contacto();
+            contacto.setEmail(dto.getEmail());
+            contacto.setTelefono(dto.getTelefono());
+            contacto.setUsuario(cliente);
         
+            // Separar la dirección completa
+            String[] direccionParts = dto.getDireccionCompleta().split(",");
+            if (direccionParts.length >= 3) {
+                contacto.setCalle(direccionParts[0].trim());
+                contacto.setNroPuerta(direccionParts[1].trim());
+                contacto.setLocalidad(direccionParts[2].trim());
+            }
         cliente.setContacto(contacto);
-        contacto.setUsuario(cliente);
-
-        // Mapear organización si existe
-        if (dto.getOrganizacion() != null && !dto.getOrganizacion().isEmpty()) {
-            PersonaJuridica org = new PersonaJuridica();
-            org.setRazonSocial(dto.getOrganizacion());
-            org.setCodigoAcceso(dto.getCodigoAcceso());
-            cliente.setOrganizacion(org);
-        }
+    } else {
+        // Si tiene ID, crear un contacto con solo el ID
+        Contacto contacto = new Contacto();
+        contacto.setId(dto.getIdContacto());
+        cliente.setContacto(contacto);
+    }
 
         return cliente;
     }

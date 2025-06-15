@@ -58,24 +58,24 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
             throw new IllegalArgumentException("El empleado no puede ser null");
         }
         Optional<Empleado> empleadoOpt = empleadoRepository.findByContactoEmail(empleadodto.getEmail());
+        Empleado empleado;
         if(empleadoOpt.isPresent()) {
             empleadodto.setId(empleadoOpt.get().getId());
-            Empleado empleado = EmpleadoMapper.mapToEmpleadoEntity(empleadodto);
-            empleadoRepository.save(empleado);
+            empleado = EmpleadoMapper.mapToEmpleadoEntity(empleadodto);
         } else {
-        Empleado empleado = EmpleadoMapper.mapToEmpleadoEntity(empleadodto);
-        String passwordHash = passwordEncoder.encode(empleado.getPassword());
-        empleado.setPassword(passwordHash);
-        long ultimoLegajo;
-        if(empleadoRepository.findAll().isEmpty()) {
-            ultimoLegajo = 10000;
-        } else {
-            ultimoLegajo = Long.parseLong(empleadoRepository.findAll().getLast().getNroLegajo()) + 1;
+            empleado = EmpleadoMapper.mapToEmpleadoEntity(empleadodto);
+            String passwordHash = passwordEncoder.encode(empleado.getPassword());
+            empleado.setPassword(passwordHash);
+            long ultimoLegajo;
+            if(empleadoRepository.findAll().isEmpty()) {
+                ultimoLegajo = 10000;
+            } else {
+                ultimoLegajo = Long.parseLong(empleadoRepository.findAll().getLast().getNroLegajo()) + 1;
+            }
+            empleado.setNroLegajo(Long.toString(ultimoLegajo));
+            empleado.setTickets(new HashSet<>(ticketRepository.findAll()));
         }
-        empleado.setNroLegajo(Long.toString(ultimoLegajo));
-        empleado.setTickets(new HashSet<>(ticketRepository.findAll()));
         empleadoRepository.save(empleado);
-        }
     }
 
     @Transactional(readOnly = true)

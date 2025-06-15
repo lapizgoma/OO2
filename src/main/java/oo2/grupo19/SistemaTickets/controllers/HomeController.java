@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.ui.Model;
 import lombok.extern.log4j.Log4j2;
+import oo2.grupo19.SistemaTickets.dto.TicketClientDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketDTO;
 import oo2.grupo19.SistemaTickets.dto.UsuarioDTO;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
@@ -64,14 +65,17 @@ public class HomeController <T> {
     @GetMapping("/{rol}/home")
     public String homeGlobal(@PathVariable String rol, Authentication authentication, Model model){
         String email = authentication.getName();
-        simplifyGlobalHome(email,model);
+
         log.info(rol);
         switch (rol) {
             case "customer":
+                simplifyGlobalHome(email,model);
                 return ViewRouteHelper.INDEX_USER;
             case "employee":
+                simplifyGlobalHome(model);
                 return ViewRouteHelper.INDEX_EMPLOYEE;
             case "admin":
+                simplifyGlobalHome(model);
                 return ViewRouteHelper.INDEX_ADMIN;
             default:
                 throw new StatusCustomExceptions.AccessDeniedException("No tienes acceso a esta vista :/");
@@ -83,7 +87,12 @@ public class HomeController <T> {
     }
 
     private void simplifyGlobalHome(String email, Model model){
-        Set<TicketDTO> tickets = ticketService.traerPorCliente(email);
+        Set<TicketClientDTO> tickets = ticketService.traerParaCliente(email);
+        model.addAttribute("tickets", tickets);
+    }
+
+    private void simplifyGlobalHome(Model model){
+        Set<TicketDTO> tickets = ticketService.findAll();
         model.addAttribute("tickets", tickets);
     }
 

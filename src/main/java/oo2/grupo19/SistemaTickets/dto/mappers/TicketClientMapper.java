@@ -2,9 +2,12 @@ package oo2.grupo19.SistemaTickets.dto.mappers;
 
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import oo2.grupo19.SistemaTickets.dto.TicketClientDTO;
+import oo2.grupo19.SistemaTickets.dto.TicketDTO;
 import oo2.grupo19.SistemaTickets.dto.IntervencionDTO;
 import oo2.grupo19.SistemaTickets.entities.Ticket;
 import oo2.grupo19.SistemaTickets.entities.Intervencion;
@@ -37,5 +40,9 @@ public final class TicketClientMapper {
             dto.setUsuarioApellido(ticket.getCreadoPor().getApellido());
         }
         return dto;
+    }
+
+    public static Set<TicketClientDTO> mapToTicketDtoSet(List<Ticket> tickets) {
+        return tickets == null ? Set.of() : tickets.stream().map(TicketClientMapper::mapToTicketClientDto).collect(Collectors.toSet());
     }
 }

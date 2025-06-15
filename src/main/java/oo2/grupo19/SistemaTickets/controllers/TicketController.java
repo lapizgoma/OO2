@@ -55,11 +55,8 @@ public class TicketController {
 
     @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/create")
-    public String createTicket(Model model, Authentication authentication) {
+    public String createTicket(Model model) {
         TicketDTO ticket = new TicketDTO();
-        String email = authentication.getName();
-        ClienteDTO cliente = clienteService.findByEmail(email);
-        ticket.setCliente(cliente);
         model.addAttribute("ticket", ticket);
         return ViewRouteHelper.FORM_TICKET;
     }
@@ -74,11 +71,9 @@ public class TicketController {
         String email = authentication.getName();
         ClienteDTO cliente = clienteService.findByEmail(email);
         EstadoTicketDTO estado = estadoTicketService.findById(1L);
-        ticket.setEstado(estado);
         ticket.setCliente(cliente);
-        log.info("Detalle: " + contenido);
+        ticket.setEstado(estado);
         ticket.setDetalle(contenido);
-        ticket.setIntervencion(new HashSet<>());
         ticketService.save(ticket);
         logger.info("Ticket creado exitosamente por: {}", email);
         model.addAttribute("title","Ticket create");

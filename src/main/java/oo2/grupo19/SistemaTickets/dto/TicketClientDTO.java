@@ -1,5 +1,6 @@
 package oo2.grupo19.SistemaTickets.dto;
 
+import java.util.Comparator;
 import java.util.Set;
 
 import lombok.AllArgsConstructor;
@@ -24,4 +25,14 @@ public class TicketClientDTO {
 	private String estado;
 	private String usuarioNombre;
 	private String usuarioApellido;
+
+	public IntervencionDTO getUltimaIntervencion() {
+		if (intervenciones == null || intervenciones.isEmpty()) {
+			return null;
+		}
+
+		return intervenciones.stream()
+				.max(Comparator.comparing(IntervencionDTO::getId)) // o el campo que uses
+				.orElse(null);
+	}
 }

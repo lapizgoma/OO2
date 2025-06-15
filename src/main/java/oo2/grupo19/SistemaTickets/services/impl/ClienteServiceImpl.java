@@ -12,6 +12,7 @@ import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.dto.ClienteDTO;
 import oo2.grupo19.SistemaTickets.dto.mappers.ClienteMapper;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
+import oo2.grupo19.SistemaTickets.entities.Contacto;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.*;
 import oo2.grupo19.SistemaTickets.repositories.ICliente;
 import oo2.grupo19.SistemaTickets.repositories.estados.IRole;
@@ -60,14 +61,15 @@ public class ClienteServiceImpl implements IClienteService {
         Optional<Cliente> clienteOpt = clienteRepository.findByContactoEmail(clientedto.getEmail());
         if(clienteOpt.isPresent()) {
             clientedto.setId(clienteOpt.get().getId());
+            clientedto.setIdContacto(clienteOpt.get().getContacto().getId());
             Cliente cliente = ClienteMapper.mapToClienteEntity(clientedto);
             clienteRepository.save(cliente);
         } else {
-        Cliente cliente = ClienteMapper.mapToClienteEntity(clientedto);
-        String passwordHash = passwordEncoder.encode(cliente.getPassword());
-        cliente.agregarRoles(roleRepository.findById(1L).orElseThrow(() -> new NotFoundException("Rol no encontrado")));
-        cliente.setPassword(passwordHash);
-        clienteRepository.save(cliente);
+            Cliente cliente = ClienteMapper.mapToClienteEntity(clientedto);
+            String passwordHash = passwordEncoder.encode(cliente.getPassword());
+            cliente.agregarRoles(roleRepository.findById(1L).orElseThrow(() -> new NotFoundException("Rol no encontrado")));
+            cliente.setPassword(passwordHash);
+            clienteRepository.save(cliente);
         }
     }
 
