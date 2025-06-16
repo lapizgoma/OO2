@@ -21,15 +21,17 @@ import org.slf4j.LoggerFactory;
 @Controller
 @RequestMapping("/grupo")
 @Log4j2
-public class PersonaJuridicaController {
+public class PersonaJuridicaController 
+{
     private IPersonaJuridicaService personaJuridicaService;
     private static final Logger logger = LoggerFactory.getLogger(PersonaJuridicaController.class);
 
-    public PersonaJuridicaController (IPersonaJuridicaService personaJuridicaService) {
+    public PersonaJuridicaController (IPersonaJuridicaService personaJuridicaService) 
+    {
         this.personaJuridicaService = personaJuridicaService;
     }
 
-    @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping ("/crear")
     public String addPersonaJuridica (Model model, Authentication authentication) 
     {
@@ -39,7 +41,7 @@ public class PersonaJuridicaController {
         return ViewRouteHelper.FORM_PERSONA_JURIDICA;
     }
 
-    @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping ("/crear")
     public String postAddPersonaJuridica (
         @ModelAttribute PersonaJuridicaDTO personaJuridicaDTO,
@@ -50,7 +52,7 @@ public class PersonaJuridicaController {
         return "redirect:/grupo/" + personaJuridicaDTO.getCodigoAcceso ();
     }
 
-    @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN', 'CUSTOMER')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping ("/{code}")
     public String verPersonaJuridica (@PathVariable String code, Model model) 
     {
