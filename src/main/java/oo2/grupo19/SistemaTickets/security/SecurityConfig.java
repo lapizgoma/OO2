@@ -59,7 +59,7 @@ public class SecurityConfig implements WebMvcConfigurer{
     @Bean
     public LogoutHandler customLogoutHandler() {
         return (request, response, authentication) -> {
-            request.getSession().removeAttribute("cliente");
+            request.getSession().removeAttribute("CUSTOMER");
             request.getSession().removeAttribute("logout");
         };
     }
