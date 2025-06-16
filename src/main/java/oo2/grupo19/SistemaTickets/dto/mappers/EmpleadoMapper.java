@@ -24,54 +24,25 @@ public final class EmpleadoMapper {
             return null;
         }
         EmpleadoDTO dto = new EmpleadoDTO();
-        dto.setId(empleado.getId());
         dto.setNombre(empleado.getNombre());
         dto.setApellido(empleado.getApellido());
-        dto.setEmail(empleado.getContacto().getEmail());
-        dto.setTelefono(empleado.getContacto().getTelefono());
         dto.setNroLegajo(empleado.getNroLegajo());
         dto.setDni(empleado.getDni());
-        dto.setDireccionCompleta(empleado.getContacto().getCalle() + ", " + empleado.getContacto().getNroPuerta() + ", " + empleado.getContacto().getLocalidad());
+        dto.setContacto(ContactoMapper.mapToContactoDto(empleado.getContacto()));
         return dto;
     }
 
-    public static EmpleadoDTO mapToEmpleadoDtoNoId(Empleado empleado) {
-        if (empleado == null) {
-            return null;
-        }
-        EmpleadoDTO dto = new EmpleadoDTO();
-        dto.setNombre(empleado.getNombre());
-        dto.setApellido(empleado.getApellido());
-        dto.setEmail(empleado.getContacto().getEmail());
-        dto.setTelefono(empleado.getContacto().getTelefono());
-        dto.setNroLegajo(empleado.getNroLegajo());
-        dto.setDni(empleado.getDni());
-        dto.setDireccionCompleta(empleado.getContacto().getCalle() + ", " + empleado.getContacto().getNroPuerta() + ", " + empleado.getContacto().getLocalidad());
-        return dto;
-    }
-
-    public static Empleado mapToEmpleadoEntity(EmpleadoDTO dto) {
+    public static Empleado mapToEmpleadoEntity(EmpleadoDTO dto, Empleado empleado) {
         if (dto == null) return null;
-        Empleado empleado = new Empleado();
-        empleado.setId(dto.getId());
         empleado.setNombre(dto.getNombre());
         empleado.setApellido(dto.getApellido());
         empleado.setPassword(dto.getPassword());
-        empleado.getContacto().setEmail(dto.getEmail());
-        empleado.getContacto().setTelefono(dto.getTelefono());
         empleado.setNroLegajo(dto.getNroLegajo());
         empleado.setDni(dto.getDni());
-        empleado.getContacto().setCalle(dto.getDireccionCompleta().split(",")[0].trim());
-        empleado.getContacto().setNroPuerta(dto.getDireccionCompleta().split(",")[1].trim());
-        empleado.getContacto().setLocalidad(dto.getDireccionCompleta().split(",")[2].trim());
         return empleado;
     }
 
     public static Set<EmpleadoDTO> mapToEmpleadoDtoSet(List<Empleado> empleados) {
         return empleados == null ? Set.of() : empleados.stream().map(EmpleadoMapper::mapToEmpleadoDto).collect(Collectors.toSet());
-    }
-
-    public static Set<Empleado> mapToEmpleadoEntitySet(List<EmpleadoDTO> dtos) {
-        return dtos == null ? Set.of() : dtos.stream().map(EmpleadoMapper::mapToEmpleadoEntity).collect(Collectors.toSet());
     }
 }

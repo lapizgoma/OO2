@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import oo2.grupo19.SistemaTickets.entities.estados.enums.RoleType;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,14 +14,11 @@ import oo2.grupo19.SistemaTickets.entities.estados.enums.RoleType;
 @ToString
 @EqualsAndHashCode
 public class EmpleadoDTO {
-	private Long id;
 	private String nombre;
 	private String dni;
 	private String nroLegajo;
 	private String apellido;
 	private String password;
-	private String email;
-	private String telefono;
-	private String direccionCompleta;
-	private RoleType role;
+	private ContactoDTO contacto;
+	private String role;
 }
