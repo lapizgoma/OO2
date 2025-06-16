@@ -47,7 +47,7 @@ public class PersonaJuridicaController
         @ModelAttribute PersonaJuridicaDTO personaJuridicaDTO,
         Authentication authentication) 
     {
-        personaJuridicaService.save(personaJuridicaDTO);
+        personaJuridicaService.crearPersonaJuridica (personaJuridicaDTO);
         logger.info("Persona jurídica creada con código: {} por: {}", personaJuridicaDTO.getCodigoAcceso(), authentication.getName());
         return "redirect:/grupo/" + personaJuridicaDTO.getCodigoAcceso ();
     }
