@@ -8,6 +8,7 @@ import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.AccessDenied
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.AlreadyExistsException;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotAuthorizedException;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
+import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.InvalidInputException;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 
 @ControllerAdvice
@@ -47,4 +48,11 @@ public class GlobalExceptionHandler {
     //     model.addAttribute("message", String.format("Unexpected error: %s (%s)", ex.getMessage(), ex.getCause()));
     //     return ViewRouteHelper.ERROR_INDEX;
     // }
+
+    @ExceptionHandler(InvalidInputException.class)
+    public String InvalidInputException(InvalidInputException ex, Model model) {
+        model.addAttribute("title", "Invalid Input");
+        model.addAttribute("message", ex.getMessage());
+        return ViewRouteHelper.ERROR_INDEX;
+    }
 }

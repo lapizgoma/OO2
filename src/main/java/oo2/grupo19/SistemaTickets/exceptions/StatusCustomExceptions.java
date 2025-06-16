@@ -22,4 +22,12 @@ public class StatusCustomExceptions {
         }
     }
 
+    public static class InvalidInputException extends RuntimeException
+    {
+        public InvalidInputException(String message)
+        {
+            super(message);
+        }
+    }
+
 }
