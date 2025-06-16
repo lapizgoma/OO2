@@ -59,9 +59,10 @@ public class PrioridadServiceImpl implements IPrioridadService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(String id) {
+        Long prioridadId = Long.parseLong(id);
         try {
-            prioridadRepository.deleteById(id);
+            prioridadRepository.deleteById(prioridadId);
         } catch (Exception e) {
             throw new NotFoundException("Error: no se ha podido eliminar la prioridad");
         }

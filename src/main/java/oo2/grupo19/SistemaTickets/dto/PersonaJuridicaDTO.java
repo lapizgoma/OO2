@@ -14,7 +14,6 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 public class PersonaJuridicaDTO {
-    private Long id;
     private String razonSocial;
     private String cuit;
     private String codigoAcceso;

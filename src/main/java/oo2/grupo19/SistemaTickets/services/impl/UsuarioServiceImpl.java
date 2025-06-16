@@ -28,9 +28,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Override
     @Transactional
-    public void delete(Long id) {
+    public void delete(String email) {
         try {
-            usuarioRepository.deleteById(id);
+            usuarioRepository.findByContactoEmail(email);
         } catch (Exception e) {
             throw new NotFoundException("No se ha podido eliminar el Usuario");
         }

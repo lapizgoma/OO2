@@ -33,9 +33,10 @@ public class IntervencionServiceImpl implements IIntervencionService{
 
     @Override
     @Transactional
-    public void delete(Long id) {
+    public void delete(String id) {
+        Long interventionId = Long.parseLong(id);
         try{
-            intervencionRepository.deleteById(id);
+            intervencionRepository.deleteById(interventionId);
         }catch(Exception e){
             throw new NotFoundException("Error: no se ha podido encontrar la intervención");
         }

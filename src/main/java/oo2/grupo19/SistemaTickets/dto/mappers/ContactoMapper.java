@@ -13,7 +13,6 @@ public final class ContactoMapper {
             return null;
         }
         ContactoDTO dto = new ContactoDTO();
-        dto.setId(contacto.getId());
         dto.setEmail(contacto.getEmail());
         dto.setTelefono(contacto.getTelefono());
         dto.setCalle(contacto.getCalle());
@@ -35,10 +34,8 @@ public final class ContactoMapper {
         return dto;
     }
 
-    public static Contacto mapToContactoEntity(ContactoDTO dto) {
+    public static Contacto mapToContactoEntity(ContactoDTO dto, Contacto contacto) {
         if (dto == null) return null;
-        Contacto contacto = new Contacto();
-        contacto.setId(dto.getId());
         contacto.setEmail(dto.getEmail());
         contacto.setTelefono(dto.getTelefono());
         contacto.setCalle(dto.getCalle());
@@ -50,10 +47,5 @@ public final class ContactoMapper {
     public static Set<ContactoDTO> mapToContactoDtoSet(List<Contacto> contactos) {
         return contactos == null ? Set.of() :
             contactos.stream().map(ContactoMapper::mapToContactoDto).collect(Collectors.toSet());
-    }
-
-    public static Set<Contacto> mapToContactoEntitySet(List<ContactoDTO> dtos) {
-        return dtos == null ? Set.of() :
-            dtos.stream().map(ContactoMapper::mapToContactoEntity).collect(Collectors.toSet());
     }
 }

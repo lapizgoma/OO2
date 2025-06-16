@@ -6,5 +6,5 @@ public interface IService<T> {
     Set<T> findAll();
     T findById(Long id);
     void save(T object);
-    void delete(Long id);
+    void delete(String id);
 }

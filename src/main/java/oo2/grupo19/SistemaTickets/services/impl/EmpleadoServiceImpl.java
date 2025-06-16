@@ -32,8 +32,8 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
 
     @Override
     @Transactional
-    public void delete(Long id) {
-        Empleado empleado = empleadoRepository.findById(id).orElseThrow(() -> new NotFoundException("No se ha encontrado el empleado con ese id"));
+    public void delete(String email) {
+        Empleado empleado = empleadoRepository.findByContactoEmail(email).orElseThrow(() -> new NotFoundException("No se ha encontrado el empleado con ese id"));
         empleado.darDeBaja();
         empleadoRepository.save(empleado);
     }

@@ -53,9 +53,10 @@ public class EstadoTicketServiceImpl implements IEstadoTicketService {
 
     @Override
     @Transactional
-    public void delete(Long id) {
+    public void delete(String id) {
+        Long estadoId = Long.parseLong(id);
         try {
-            estadoTicketRepository.deleteById(id);
+            estadoTicketRepository.deleteById(estadoId);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }

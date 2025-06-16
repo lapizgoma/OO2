@@ -15,15 +15,13 @@ public final class PersonaJuridicaMapper {
         PersonaJuridicaDTO dto = new PersonaJuridicaDTO();
         dto.setRazonSocial(personaJuridica.getRazonSocial());
         dto.setCuit(personaJuridica.getCuit());
-        dto.setCodigoAcceso(personaJuridica.getCodigoAcceso());
         return dto;
     }
 
-    public static PersonaJuridica mapToPersonaJuridica(PersonaJuridicaDTO personaJuridicaDTO) {
+    public static PersonaJuridica mapToPersonaJuridicaEntity(PersonaJuridicaDTO personaJuridicaDTO, PersonaJuridica personaJuridica) {
         if (personaJuridicaDTO == null) {
             return null;
         }
-        PersonaJuridica personaJuridica = new PersonaJuridica();
         personaJuridica.setRazonSocial(personaJuridicaDTO.getRazonSocial());
         personaJuridica.setCuit(personaJuridicaDTO.getCuit());
         personaJuridica.setCodigoAcceso(personaJuridicaDTO.getCodigoAcceso());
@@ -32,9 +30,5 @@ public final class PersonaJuridicaMapper {
 
     public static Set<PersonaJuridicaDTO> mapToPersonaJuridicaDtoSet(List<PersonaJuridica> entities) {
         return entities == null ? Set.of() : entities.stream().map(PersonaJuridicaMapper::mapToPersonaJuridicaDto).collect(Collectors.toSet());
-    }
-
-    public static Set<PersonaJuridica> mapToPersonaJuridicaEntitySet(List<PersonaJuridicaDTO> dtos) {
-        return dtos == null ? Set.of() : dtos.stream().map(PersonaJuridicaMapper::mapToPersonaJuridica).collect(Collectors.toSet());
     }
 }

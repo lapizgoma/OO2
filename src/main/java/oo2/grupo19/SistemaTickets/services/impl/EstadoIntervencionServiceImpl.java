@@ -23,9 +23,10 @@ public class EstadoIntervencionServiceImpl implements IEstadoIntervencionService
 
     @Override
     @Transactional
-    public void delete(Long id) {
+    public void delete(String id) {
+        Long estadoId = Long.parseLong(id);
         try {
-            estadoRepository.deleteById(id);
+            estadoRepository.deleteById(estadoId);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }

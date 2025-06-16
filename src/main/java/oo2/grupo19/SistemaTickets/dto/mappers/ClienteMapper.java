@@ -7,8 +7,6 @@ import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.dto.ClienteDTO;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
-import oo2.grupo19.SistemaTickets.entities.Contacto;
-import oo2.grupo19.SistemaTickets.entities.PersonaJuridica;
 
 @Log4j2
 public final class ClienteMapper {
@@ -19,59 +17,18 @@ public final class ClienteMapper {
         ClienteDTO dto = new ClienteDTO();
         dto.setNombre(cliente.getNombre());
         dto.setApellido(cliente.getApellido());
-        
-        if (cliente.getContacto() != null) {
-            dto.setIdContacto(cliente.getContacto().getId());
-            dto.setEmail(cliente.getContacto().getEmail());
-            dto.setTelefono(cliente.getContacto().getTelefono());
-            dto.setDireccionCompleta(
-                cliente.getContacto().getCalle() + ", " + 
-                cliente.getContacto().getNroPuerta() + ", " + 
-                cliente.getContacto().getLocalidad()
-            );
-        }
-        
         dto.setDni(cliente.getDni());
-        
-        if (cliente.getOrganizacion() != null) {
-            dto.setOrganizacion(cliente.getOrganizacion().getRazonSocial());
-            dto.setCodigoAcceso(cliente.getOrganizacion().getCodigoAcceso());
-        }
-        
+        dto.setContacto(ContactoMapper.mapToContactoDto(cliente.getContacto()));
+        dto.setOrganizacion(PersonaJuridicaMapper.mapToPersonaJuridicaDto(cliente.getOrganizacion()));
         return dto;
     }
 
-    public static Cliente mapToClienteEntity(ClienteDTO dto) {
+    public static Cliente mapToClienteEntity(ClienteDTO dto, Cliente cliente) {
         if (dto == null) return null;
-
-        Cliente cliente = new Cliente();
-        cliente.setId(dto.getId());
         cliente.setNombre(dto.getNombre());
         cliente.setApellido(dto.getApellido());
         cliente.setDni(dto.getDni());
         cliente.setPassword(dto.getPassword());
-        
-        if (dto.getIdContacto() == null) {
-            Contacto contacto = new Contacto();
-            contacto.setEmail(dto.getEmail());
-            contacto.setTelefono(dto.getTelefono());
-            contacto.setUsuario(cliente);
-        
-            // Separar la dirección completa
-            String[] direccionParts = dto.getDireccionCompleta().split(",");
-            if (direccionParts.length >= 3) {
-                contacto.setCalle(direccionParts[0].trim());
-                contacto.setNroPuerta(direccionParts[1].trim());
-                contacto.setLocalidad(direccionParts[2].trim());
-            }
-        cliente.setContacto(contacto);
-    } else {
-        // Si tiene ID, crear un contacto con solo el ID
-        Contacto contacto = new Contacto();
-        contacto.setId(dto.getIdContacto());
-        cliente.setContacto(contacto);
-    }
-
         return cliente;
     }
 
@@ -79,13 +36,6 @@ public final class ClienteMapper {
         return clientes == null ? Set.of() : 
             clientes.stream()
                 .map(ClienteMapper::mapToClienteDto)
-                .collect(Collectors.toSet());
-    }
-
-    public static Set<Cliente> mapToClienteEntitySet(List<ClienteDTO> dtos) {
-        return dtos == null ? Set.of() : 
-            dtos.stream()
-                .map(ClienteMapper::mapToClienteEntity)
                 .collect(Collectors.toSet());
     }
 }

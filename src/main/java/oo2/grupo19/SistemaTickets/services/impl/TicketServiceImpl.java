@@ -51,9 +51,10 @@ public class TicketServiceImpl implements ITicketService{
 
     @Override
     @Transactional
-    public void delete(Long id) {
+    public void delete(String id) {
+        Long ticketId = Long.parseLong(id);
         try {
-            ticketRepository.deleteById(id);
+            ticketRepository.deleteById(ticketId);
         } catch (Exception e) {
             throw new NotFoundException("Error no se ha podido eliminar el ticket");
         }
@@ -82,7 +83,7 @@ public class TicketServiceImpl implements ITicketService{
         }
         log.info("Contacto guardandose: " + ticketdto);
         Ticket ticket = TicketMapper.mapToTicketEntity(ticketdto);
-        ticket.setCreadoPor(clienteRepository.findByContactoEmail(ticketdto.getCliente().getEmail()).get());
+        ticket.setCreadoPor(clienteRepository.findByContactoEmail(ticketdto.getCliente().getContacto().getEmail()).get());
         ticket.setEstado(estadoTicketRepository.findByEstado(ticketdto.getEstado().getEstado()).get());
         if(ticketdto.getPrioridad() != null){
             ticket.setPrioridad(prioridadRepository.findByPrioridad(ticketdto.getPrioridad().getPrioridad()).get());

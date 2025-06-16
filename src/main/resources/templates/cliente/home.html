@@ -44,7 +44,7 @@
                                 <div class="ticket-detail"><strong>Fecha:</strong> <span th:text="${ticket.fechaHoraCreado}"></span></div>
                                 <div class="ticket-detail-label mt-2">Última intervención: <span class="ticket-detail-content text-white-50" th:if="${ticket.intervenciones.isEmpty()}">Sin intervenciones</span></div>
                                 <div class="ticket-detail-content" th:if="${ticket.ultimaIntervencion != null}"
-                                     th:text="${ticket.ultimaIntervencion.descripcion} + ' - ' + ${ticket.ultimaIntervencion.estado.estado}"></div>">    
+                                     th:text="${ticket.ultimaIntervencion.descripcion} + ' - ' + ${ticket.ultimaIntervencion.estado.estado}"></div>  
                                 </div>
                                 
                             </div>

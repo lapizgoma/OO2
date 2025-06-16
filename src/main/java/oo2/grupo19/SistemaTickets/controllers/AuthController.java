@@ -25,11 +25,11 @@ import org.slf4j.LoggerFactory;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final IClienteService clienteRepository;
+    private final IClienteService clienteService;
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
-    public AuthController(IClienteService clienteRepository) {
-        this.clienteRepository = clienteRepository;
+    public AuthController(IClienteService clienteService) {
+        this.clienteService = clienteService;
     }
 
     @GetMapping("/login")
@@ -74,13 +74,14 @@ public class AuthController {
             return ViewRouteHelper.REGISTER;
         }
         try {
-            clienteRepository.save(cliente);
-            logger.info("Usuario registrado exitosamente: {}", cliente.getEmail());
+            clienteService.save(cliente);
+            logger.info("Usuario registrado exitosamente: {}", cliente.getContacto().getEmail());
         } catch (Exception e) {
             logger.error("Error inesperado al registrar usuario", e);
             throw new RuntimeException("Error inesperado al registrar usuario: " + e.getMessage());
         }
-        return ViewRouteHelper.INDEX;
+        //Alerta de registro exitoso y despues mandar al login
+        return ViewRouteHelper.LOGIN;
     }
 
     private boolean isUserAuthenticated(Authentication auth){

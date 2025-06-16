@@ -25,9 +25,10 @@ public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService{
 
     @Override
     @Transactional
-    public void delete(Long id) {
+    public void delete(String id) {
+        Long personaId = Long.parseLong(id);
         try {
-            repository.deleteById(id);
+            repository.deleteById(personaId);
         } catch (Exception e) {
             throw new NotFoundException("No se pudo eliminar la Persona Jurídica"+ e.getMessage());
         }
@@ -50,19 +51,20 @@ public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService{
 
     @Override
     @Transactional
-    public void save(PersonaJuridicaDTO dto) {
-        if (dto == null) {
+    public void save(PersonaJuridicaDTO personaDto) {
+        if (personaDto == null) {
             throw new IllegalArgumentException("El contacto no puede ser null");
         }
-        Optional<PersonaJuridica> estadoOpt = repository.findByCuit(dto.getCuit());
-        if(estadoOpt.isPresent()) {
-            dto.setId(estadoOpt.get().getId());
-            PersonaJuridica personaJuridica = PersonaJuridicaMapper.mapToPersonaJuridica(dto);
-            repository.save(personaJuridica);
+        Optional<PersonaJuridica> personaOpt = repository.findByCuit(personaDto.getCuit());
+        if(personaOpt.isPresent()) {
+            PersonaJuridica personaDB = repository.findById(personaOpt.get().getId()).get();
+            PersonaJuridica personaNew = PersonaJuridicaMapper.mapToPersonaJuridicaEntity(personaDto, personaDB);
+            personaNew.setId(personaDB.getId());
+            repository.save(personaNew);
         } else {
         String codigoAcceso = UUID.randomUUID ().toString ().replace ("-", "").substring (0, 12);
-        dto.setCodigoAcceso (codigoAcceso);
-        PersonaJuridica personaJuridica = PersonaJuridicaMapper.mapToPersonaJuridica(dto);
+        personaDto.setCodigoAcceso (codigoAcceso);
+        PersonaJuridica personaJuridica = PersonaJuridicaMapper.mapToPersonaJuridicaEntity(personaDto, new PersonaJuridica());
         repository.save(personaJuridica);
         }
     }

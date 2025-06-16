@@ -23,11 +23,12 @@ public class ContactoServiceImpl implements IService<ContactoDTO> {
 
     @Override
     @Transactional
-    public void delete(Long id) {
-        if (!contactoRepository.existsById(id)) {
+    public void delete(String id) {
+        Long contactoId = Long.parseLong(id);
+        if (!contactoRepository.existsById(contactoId)) {
             throw new NotFoundException("Contacto con id " + id + " no existe");
         }
-        contactoRepository.deleteById(id);        
+        contactoRepository.deleteById(contactoId);        
     }
 
     @Override
@@ -52,11 +53,12 @@ public class ContactoServiceImpl implements IService<ContactoDTO> {
         
         Optional<Contacto> contactoOpt = contactoRepository.findByEmail(contactodto.getEmail());
         if(contactoOpt.isPresent()) {
-            contactodto.setId(contactoOpt.get().getId());
-            Contacto contacto = ContactoMapper.mapToContactoEntity(contactodto);
+            Contacto contactoDB = contactoRepository.findById(contactoOpt.get().getId()).get();
+            Contacto contacto = ContactoMapper.mapToContactoEntity(contactodto, contactoDB);
+            contacto.setId(contactoDB.getId());
             contactoRepository.save(contacto);
         } else {
-        Contacto contacto = ContactoMapper.mapToContactoEntity(contactodto);
+        Contacto contacto = ContactoMapper.mapToContactoEntity(contactodto, new Contacto());
         contactoRepository.save(contacto);
         }
     }  

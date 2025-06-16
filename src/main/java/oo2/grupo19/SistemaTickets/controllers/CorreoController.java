@@ -29,7 +29,7 @@ public class CorreoController {
 
     @GetMapping("/texto")
     public String enviarTextoPlano(Authentication auth) {
-        String email = clienteService.findByEmail(auth.getName()).getEmail();
+        String email = clienteService.findByEmail(auth.getName()).getContacto().getEmail();
         try {
             emailService.enviarCorreoPlano(email, "Prueba texto plano", "Hola desde Spring Boot.");
             logger.info("Correo de texto enviado a: {}", email);
@@ -43,7 +43,7 @@ public class CorreoController {
     @GetMapping("/html")
     public Integer enviarCorreoHtml(Authentication auth) {
         Map<String, Object> datos = new HashMap<>();
-         String email = clienteService.findByEmail(auth.getName()).getEmail();
+         String email = clienteService.findByEmail(auth.getName()).getContacto().getEmail();
         datos.put("nombre", email);
         try {
             emailService.enviarCorreoHtml(email, "Correo con HTML", "email", datos);

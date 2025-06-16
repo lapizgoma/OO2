@@ -30,6 +30,8 @@ public class ClienteController {
 
     @PreAuthorize ("hasRole ('CUSTOMER')")
     @GetMapping("/eliminar")
+    // Se puede hacer una alerta en el navegador para confirmar y despues reenviar al home
+    //      vale la pena que le salga un mensaje? se puede hacer una alerta de eliminado correcto tambien y mejorar el flujo de la web sin tanto click
     public String confirmationPage(@RequestParam(required = false) Boolean confirmed, Authentication authentication, HttpServletRequest request) {
         if (confirmed == null || !confirmed) 
         {
@@ -37,8 +39,8 @@ public class ClienteController {
             return ViewRouteHelper.CONFIRMATION_QUESTION;
         }
         try {
-            Long id = clienteService.findByEmail(authentication.getName()).getId();
-            clienteService.delete(id);
+            String email = authentication.getName();
+            clienteService.delete(email);
             logger.info("Cuenta eliminada exitosamente para el usuario: {}", authentication.getName());
         } catch (Exception e) {
             logger.error("Error al eliminar la cuenta del usuario: {}", authentication.getName(), e);
