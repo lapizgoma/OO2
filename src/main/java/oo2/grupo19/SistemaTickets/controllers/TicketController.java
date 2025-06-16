@@ -16,10 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import lombok.extern.log4j.Log4j2;
-import oo2.grupo19.SistemaTickets.dto.ClienteDTO;
 import oo2.grupo19.SistemaTickets.dto.EstadoTicketDTO;
 import oo2.grupo19.SistemaTickets.dto.PrioridadDTO;
-import oo2.grupo19.SistemaTickets.dto.TicketClientDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketEmployeeDTO;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
@@ -41,7 +39,8 @@ public class TicketController {
     private final SecurityService securityService;
     private final IPrioridadService prioridadService;
 
-    public TicketController(ITicketService ticketService, IPrioridadService prioridadService, IEstadoIntervencionService estadoIntervencionService, IClienteService clienteService, SecurityService securityService, IEstadoTicketService estadoTicketService) {
+    public TicketController(ITicketService ticketService, IPrioridadService prioridadService, IEstadoIntervencionService estadoIntervencionService,
+                                IClienteService clienteService, SecurityService securityService, IEstadoTicketService estadoTicketService) {
         this.ticketService = ticketService;
         this.estadoIntervencionService = estadoIntervencionService;
         this.clienteService = clienteService;
@@ -68,9 +67,8 @@ public class TicketController {
         Model model,
         @RequestParam("mensaje") String contenido) {
         String email = authentication.getName();
-        ClienteDTO cliente = clienteService.findByEmail(email);
         EstadoTicketDTO estado = estadoTicketService.findById(1L);
-        ticket.setCliente(cliente);
+        ticket.setClienteEmail(clienteService.findByEmail(email).getContacto().getEmail());
         ticket.setEstado(estado);
         ticket.setDetalle(contenido);
         ticketService.save(ticket);
@@ -91,7 +89,7 @@ public class TicketController {
         }
         else if (authentication.getAuthorities ().stream ().anyMatch (a -> a.getAuthority ().equals ("ROLE_CUSTOMER"))) 
         {
-            TicketClientDTO ticket = ticketService.getTicketParaCliente(idTicket, authentication.getName ());
+            TicketDTO ticket = ticketService.getTicketParaCliente(idTicket, authentication.getName ());
             model.addAttribute("ticketClientDTO", ticket);
         }
 
@@ -112,7 +110,7 @@ public class TicketController {
     @GetMapping("/update-ticket")
     public String showUpdateStatusForm(@RequestParam Long ticketId, Authentication auth, Model model){
         Long empleadoId = securityService.getIdEmpleado(auth);
-        TicketDTO ticket = ticketService.findByIdAndEmpleado(empleadoId, ticketId);
+        TicketEmployeeDTO ticket = ticketService.findByIdAndEmpleado(empleadoId, ticketId);
         model.addAttribute("ticket", ticket);
         model.addAttribute("estadosIntervencion", estadoIntervencionService.findAll());
         model.addAttribute("estadoPrioridad",prioridadService.findAll());
@@ -129,7 +127,6 @@ public class TicketController {
         PrioridadDTO prioridadticket = prioridadService.findByPrioridad(prioridad);
         ticketService.actualizarPrioridadTicket(empleadoId, idTicket, prioridadticket);
         logger.info("Ticket actualizado: {} con nueva prioridad: {}", idTicket, prioridad);
-        model.addAttribute("title","Ticket update");
         model.addAttribute("tituloh1","La prioridad ha sido actualizado con exito!");
         return ViewRouteHelper.TICKET_SUCCESS;
     }
@@ -149,7 +146,7 @@ public class TicketController {
   @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @GetMapping("/list-ticket-por-cliente")
     public String ticketListByCliente(@RequestParam String email, Model model, Authentication authentication){
-        Set<TicketDTO> tickets = ticketService.findTicketByCliente(email);
+        Set<TicketEmployeeDTO> tickets = ticketService.findTicketByCliente(email);
         model.addAttribute("tickets", tickets);
         if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             return ViewRouteHelper.INDEX_ADMIN;
@@ -162,7 +159,7 @@ public class TicketController {
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @GetMapping("/list-ticket-por-asunto")
     public String ticketListByAsunto(@RequestParam String asunto, Model model, Authentication authentication){
-        Set<TicketDTO> tickets = ticketService.findTicketByAsunto(asunto);
+        Set<TicketEmployeeDTO> tickets = ticketService.findTicketByAsunto(asunto);
         model.addAttribute("tickets", tickets);
         if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             return ViewRouteHelper.INDEX_ADMIN;
@@ -175,7 +172,7 @@ public class TicketController {
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @GetMapping("/list-ticket-por-empleado")
     public String ticketListByEmpleado(@RequestParam String email, Model model, Authentication authentication){
-        Set<TicketDTO> tickets = ticketService.findTicketByEmpleado(email);
+        Set<TicketEmployeeDTO> tickets = ticketService.findTicketByEmpleado(email);
         model.addAttribute("tickets", tickets);
         if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             return ViewRouteHelper.INDEX_ADMIN;
@@ -189,7 +186,7 @@ public class TicketController {
     @GetMapping("/list-ticket-por-estado")
     public String ticketListByEstado(@RequestParam("estado.estado") String estado, Model model, Authentication authentication){
         EstadoTicketDTO estadoticket = estadoTicketService.findByEstado(estado);
-        Set<TicketDTO> tickets = ticketService.findTicketByEstado(estadoticket);
+        Set<TicketEmployeeDTO> tickets = ticketService.findTicketByEstado(estadoticket);
         model.addAttribute("tickets", tickets);
         if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             return ViewRouteHelper.INDEX_ADMIN;
@@ -203,7 +200,7 @@ public class TicketController {
     @GetMapping("/list-ticket-por-prioridad")
     public String ticketListByPrioridad(@RequestParam("priodridad.prioridad") String prioridad, Model model, Authentication authentication){
         PrioridadDTO prioridadTicket = prioridadService.findByPrioridad(prioridad);
-        Set<TicketDTO> tickets = ticketService.findTicketByPrioridad(prioridadTicket);
+        Set<TicketEmployeeDTO> tickets = ticketService.findTicketByPrioridad(prioridadTicket);
         model.addAttribute("tickets", tickets);
         if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             return ViewRouteHelper.INDEX_ADMIN;
@@ -216,7 +213,7 @@ public class TicketController {
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @GetMapping("/list-ticket-por-fecha")
     public String ticketListByFecha(@RequestParam LocalDate fecha, Model model, Authentication authentication){
-        Set<TicketDTO> tickets = ticketService.findTicketByFechaHora(fecha);
+        Set<TicketEmployeeDTO> tickets = ticketService.findTicketByFechaHora(fecha);
         model.addAttribute("tickets", tickets);
         if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             return ViewRouteHelper.INDEX_ADMIN;

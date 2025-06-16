@@ -1,5 +1,8 @@
 package oo2.grupo19.SistemaTickets.dto.mappers;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -17,52 +20,36 @@ public final class TicketMapper {
         TicketDTO dto = new TicketDTO();
         dto.setId(ticket.getId());
         dto.setAsunto(ticket.getAsunto());
-        dto.setDetalle(ticket.getDetalle());;
-        dto.setEstado(EstadoTicketMapper.mapEstadoTicketToDto(ticket.getEstado()));
-        dto.setPrioridad(PrioridadMapper.mapPrioridadToDto(ticket.getPrioridad()));
-        // Cliente
-        if (ticket.getCreadoPor() != null) {
-            dto.setCliente(ClienteMapper.mapToClienteDto(ticket.getCreadoPor()));
+        dto.setDetalle(ticket.getDetalle());
+        dto.setClienteEmail(ticket.getCreadoPor().getContacto().getEmail());
+        // Hace falta este if??
+        if (ticket.getFechaHora() != null) {
+            dto.setFechaHoraCreado(ticket.getFechaHora().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
         }
-        // Empleados
-        if (ticket.getListEmpleado() != null) {
-            dto.setEmpleados(ticket.getListEmpleado().stream().map(EmpleadoMapper::mapToEmpleadoDto)
-                    .collect(Collectors.toSet()));
-        }
-        // Intervenciones
+        Set<IntervencionDTO> intervenciones = new HashSet<>();
         if (ticket.getLstIntervencion() != null) {
-            dto.setIntervencion(ticket.getLstIntervencion().stream().map(IntervencionMapper::mapToIntervencionDto)
-                    .collect(Collectors.toSet()));
+            for (Intervencion intervencion : ticket.getLstIntervencion()) {
+                intervenciones.add(IntervencionMapper.mapToIntervencionDto(intervencion));
+            }
         }
+        // Es necesario trabajar las entities con sets?
+        dto.setIntervenciones(IntervencionMapper.mapToIntervencionDtoSet(ticket.getLstIntervencion().stream().collect(Collectors.toList())));
+        // Estado
+        dto.setEstado(EstadoTicketMapper.mapEstadoTicketToDto(ticket.getEstado()));
         return dto;
     }
 
-    public static Ticket mapToTicketEntity(TicketDTO dto) {
+    public static Ticket mapToTicketEntity(TicketDTO dto, Ticket ticket) {
         if (dto == null)
             return null;
-        Ticket ticket = new Ticket();
         ticket.setId(dto.getId());
         ticket.setAsunto(dto.getAsunto());
-        ticket.setLstIntervencion(verifyIfIsEmpty(dto.getIntervencion()));
         ticket.setDetalle(dto.getDetalle());
-        // Estado y relaciones deben ser seteadas por el servicio según lógica de
-        // negocio
+        ticket.setFechaHora(LocalDateTime.parse(dto.getFechaHoraCreado(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
         return ticket;
     }
 
-    public static Set<TicketDTO> mapToTicketDtoList(List<Ticket> tickets) {
+    public static Set<TicketDTO> mapToTicketDtoSet(List<Ticket> tickets) {
         return tickets == null ? Set.of() : tickets.stream().map(TicketMapper::mapToTicketDto).collect(Collectors.toSet());
-    }
-
-    public static Set<Ticket> mapToTicketEntityList(List<TicketDTO> dtos) {
-        return dtos == null ? Set.of() : dtos.stream().map(TicketMapper::mapToTicketEntity).collect(Collectors.toSet());
-    }
-
-    private static Set<Intervencion> verifyIfIsEmpty(Set<IntervencionDTO> invertencionesDto) {
-        if(invertencionesDto == null || invertencionesDto.isEmpty()) {
-            return Set.of();
-        }
-        return invertencionesDto.stream().map(IntervencionMapper::mapToIntervencionEntity)
-                    .collect(Collectors.toSet());
     }
 }

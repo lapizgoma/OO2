@@ -21,19 +21,6 @@ public final class ContactoMapper {
         return dto;
     }
 
-    public static ContactoDTO mapToContactoDtoNoId(Contacto contacto) {
-        if (contacto == null) {
-            return null;
-        }
-        ContactoDTO dto = new ContactoDTO();
-        dto.setEmail(contacto.getEmail());
-        dto.setTelefono(contacto.getTelefono());
-        dto.setCalle(contacto.getCalle());
-        dto.setNroPuerta(contacto.getNroPuerta());
-        dto.setLocalidad(contacto.getLocalidad());
-        return dto;
-    }
-
     public static Contacto mapToContactoEntity(ContactoDTO dto, Contacto contacto) {
         if (dto == null) return null;
         contacto.setEmail(dto.getEmail());

@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.ui.Model;
 import lombok.extern.log4j.Log4j2;
-import oo2.grupo19.SistemaTickets.dto.TicketClientDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketDTO;
 import oo2.grupo19.SistemaTickets.dto.UsuarioDTO;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
@@ -87,7 +86,7 @@ public class HomeController <T> {
     }
 
     private void simplifyGlobalHome(String email, Model model){
-        Set<TicketClientDTO> tickets = ticketService.traerParaCliente(email);
+        Set<TicketDTO> tickets = ticketService.traerParaCliente(email);
         model.addAttribute("tickets", tickets);
     }
 

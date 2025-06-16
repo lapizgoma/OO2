@@ -11,10 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.dto.EstadoTicketDTO;
 import oo2.grupo19.SistemaTickets.dto.PrioridadDTO;
-import oo2.grupo19.SistemaTickets.dto.TicketClientDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketEmployeeDTO;
-import oo2.grupo19.SistemaTickets.dto.mappers.TicketClientMapper;
 import oo2.grupo19.SistemaTickets.dto.mappers.TicketEmployeeMapper;
 import oo2.grupo19.SistemaTickets.dto.mappers.TicketMapper;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
@@ -41,7 +39,8 @@ public class TicketServiceImpl implements ITicketService{
     private final IEstadoTicket estadoTicketRepository;
     private final IPrioridad prioridadRepository;
 
-    public TicketServiceImpl(ITicket ticketRepository, ICliente clienteRepository, IEmpleado empleadoRepository, IEstadoTicket estadoTicketRepository, IPrioridad prioridadRepository) {
+    public TicketServiceImpl(ITicket ticketRepository, ICliente clienteRepository, IEmpleado empleadoRepository,
+                                IEstadoTicket estadoTicketRepository, IPrioridad prioridadRepository) {
         this.ticketRepository = ticketRepository;
         this.clienteRepository = clienteRepository;
         this.empleadoRepository= empleadoRepository;
@@ -63,7 +62,7 @@ public class TicketServiceImpl implements ITicketService{
     @Override
     @Transactional(readOnly = true)
     public Set<TicketDTO> findAll() {
-        return TicketMapper.mapToTicketDtoList(ticketRepository.findAll());
+        return TicketMapper.mapToTicketDtoSet(ticketRepository.findAll());
     }
 
     @Override
@@ -81,20 +80,16 @@ public class TicketServiceImpl implements ITicketService{
         if(ticketdto == null) {
             throw new IllegalArgumentException("El ticket no puede ser null");
         }
-        log.info("Contacto guardandose: " + ticketdto);
-        Ticket ticket = TicketMapper.mapToTicketEntity(ticketdto);
-        ticket.setCreadoPor(clienteRepository.findByContactoEmail(ticketdto.getCliente().getContacto().getEmail()).get());
-        ticket.setEstado(estadoTicketRepository.findByEstado(ticketdto.getEstado().getEstado()).get());
-        if(ticketdto.getPrioridad() != null){
-            ticket.setPrioridad(prioridadRepository.findByPrioridad(ticketdto.getPrioridad().getPrioridad()).get());
-        }
-        ticketRepository.save(ticket);
+        Ticket ticketNew = TicketMapper.mapToTicketEntity(ticketdto, new Ticket());
+        ticketNew.setCreadoPor(clienteRepository.findByContactoEmail(ticketdto.getClienteEmail()).get());
+        ticketNew.setEstado(estadoTicketRepository.findByEstado(ticketdto.getEstado().getEstado()).get());
+        ticketRepository.save(ticketNew);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public TicketDTO findByIdAndEmpleado(Long idEmpleado, Long idTicket) {
-        return TicketMapper.mapToTicketDto(
+    public TicketEmployeeDTO findByIdAndEmpleado(Long idEmpleado, Long idTicket) {
+        return TicketEmployeeMapper.mapToTicketEmployeeDto(
             ticketRepository.traerPorEmpleadoYId(idTicket, idEmpleado)
                 .orElseThrow(() -> new NotFoundException("No se ha encontrado el ticket con el id: " + idTicket + " o no tiene permiso"))
         );
@@ -103,10 +98,8 @@ public class TicketServiceImpl implements ITicketService{
     @Override
     @Transactional
     public void actualizarEstadoTicket(Long idEmpleado, Long idTicket, EstadoTicketDTO nuevoEstado) {
-        Ticket ticket = TicketMapper.mapToTicketEntity(this.findByIdAndEmpleado(idEmpleado, idTicket));
-        if (ticket == null) {
-            throw new NotFoundException("No se ha encontrado el ticket o no tiene permiso");
-        }
+        Ticket ticket = ticketRepository.traerPorEmpleadoYId(idEmpleado, idTicket)
+                            .orElseThrow(() -> new NotFoundException("No se ha encontrado el ticket o no tiene permiso"));
         ticket.setEstado(estadoTicketRepository.findByEstado(nuevoEstado.getEstado())
             .orElseThrow(() -> new NotFoundException("No se ha encontrado el estado: " + nuevoEstado.getEstado())));
         ticketRepository.save(ticket);
@@ -115,10 +108,8 @@ public class TicketServiceImpl implements ITicketService{
     @Override
     @Transactional
     public void actualizarPrioridadTicket(Long idEmpleado, Long idTicket, PrioridadDTO prioridad) {
-        Ticket ticket = TicketMapper.mapToTicketEntity(this.findByIdAndEmpleado(idEmpleado, idTicket));
-        if (ticket == null) {
-            throw new NotFoundException("No se ha encontrado el ticket o no tiene permiso");
-        }
+        Ticket ticket = ticketRepository.traerPorEmpleadoYId(idEmpleado, idTicket)
+                            .orElseThrow(() -> new NotFoundException("No se ha encontrado el ticket o no tiene permiso"));
         ticket.setPrioridad(prioridadRepository.findByPrioridad(prioridad.getPrioridad())
             .orElseThrow(() -> new NotFoundException("No se ha encontrado la prioridad: " + prioridad.getPrioridad())));
         ticketRepository.save(ticket);
@@ -126,60 +117,55 @@ public class TicketServiceImpl implements ITicketService{
 
     @Override
     @Transactional
-    public Set<TicketDTO> findTicketByCliente(String email) {
-        return TicketMapper.mapToTicketDtoList(ticketRepository.traerPorCliente(email));
+    public Set<TicketEmployeeDTO> findTicketByCliente(String email) {
+        return TicketEmployeeMapper.mapToTicketEmployeeDtoSet(ticketRepository.traerPorCliente(email));
     }
 
     @Override
     @Transactional
-    public Set<TicketDTO> findTicketByAsunto(String asunto) {
-        return TicketMapper.mapToTicketDtoList(ticketRepository.traerPorAsunto(asunto));
+    public Set<TicketEmployeeDTO> findTicketByAsunto(String asunto) {
+        return TicketEmployeeMapper.mapToTicketEmployeeDtoSet(ticketRepository.traerPorAsunto(asunto));
     }
 
     @Override
     @Transactional
-    public Set<TicketDTO> findTicketByEmpleado(String email) {
-        return TicketMapper.mapToTicketDtoList(ticketRepository.traerPorCliente(email));
+    public Set<TicketEmployeeDTO> findTicketByEmpleado(String email) {
+        return TicketEmployeeMapper.mapToTicketEmployeeDtoSet(ticketRepository.traerPorCliente(email));
     }
 
     @Override
     @Transactional
-    public Set<TicketDTO> findTicketByEstado(EstadoTicketDTO estado) {
-        return TicketMapper.mapToTicketDtoList(ticketRepository.traerPorEstado(estado.getEstado()));
+    public Set<TicketEmployeeDTO> findTicketByEstado(EstadoTicketDTO estado) {
+        return TicketEmployeeMapper.mapToTicketEmployeeDtoSet(ticketRepository.traerPorEstado(estado.getEstado()));
     }
 
     @Override
     @Transactional
-    public Set<TicketDTO> findTicketByPrioridad(PrioridadDTO prioridad) {
-        return TicketMapper.mapToTicketDtoList(ticketRepository.traerPorPrioridad(prioridad.getPrioridad()));
+    public Set<TicketEmployeeDTO> findTicketByPrioridad(PrioridadDTO prioridad) {
+        return TicketEmployeeMapper.mapToTicketEmployeeDtoSet(ticketRepository.traerPorPrioridad(prioridad.getPrioridad()));
     }
 
     @Override
     @Transactional
-    public Set<TicketDTO> findTicketByFechaHora(LocalDate fecha) {
+    public Set<TicketEmployeeDTO> findTicketByFechaHora(LocalDate fecha) {
         LocalDateTime inicio = fecha.atStartOfDay();
         LocalDateTime fin = inicio.plusDays(1);
-        return TicketMapper.mapToTicketDtoList(ticketRepository.traerPorRangoFecha(inicio, fin));
+        return TicketEmployeeMapper.mapToTicketEmployeeDtoSet(ticketRepository.traerPorRangoFecha(inicio, fin));
     }
 
     @Transactional(readOnly = true)
-    public TicketDTO traerPorCliente(Long idCliente) {
-        return TicketMapper.mapToTicketDto(ticketRepository.findByCreadoPor_Id(idCliente));
+    public Set<TicketEmployeeDTO> traerPorCliente(Long idCliente) {
+        return TicketEmployeeMapper.mapToTicketEmployeeDtoSet(ticketRepository.findByCreadoPor_Id(idCliente));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Set<TicketClientDTO> traerParaCliente(String email) {
-        return TicketClientMapper.mapToTicketDtoSet(ticketRepository.traerPorCliente(email));
-    }
-
-    @Transactional (readOnly = true)
-    public Set<TicketDTO> traerPorEstado(String estado) {
-        return TicketMapper.mapToTicketDtoList(ticketRepository.traerPorEstado(estado));
+    public Set<TicketDTO> traerParaCliente(String email) {
+        return TicketMapper.mapToTicketDtoSet(ticketRepository.traerPorCliente(email));
     }
 
     @Transactional(readOnly = true)
-    public TicketClientDTO getTicketParaCliente(Long ticketId, String clienteEmail) {
+    public TicketDTO getTicketParaCliente(Long ticketId, String clienteEmail) {
         Ticket ticketEntity = ticketRepository.findById(ticketId)
             .orElseThrow(() -> new NotFoundException("No pudimos encontrar el Ticket que buscás"));
         Cliente clienteEntity = clienteRepository.findByContactoEmail(clienteEmail)
@@ -188,7 +174,7 @@ public class TicketServiceImpl implements ITicketService{
         if (!ticketEntity.usuarioPertenece(clienteEntity)) {
             throw new StatusCustomExceptions.NotAuthorizedException("No estas autorizado para ver el ticket");
         }
-        return TicketClientMapper.mapToTicketClientDto(ticketEntity);
+        return TicketMapper.mapToTicketDto(ticketEntity);
     }
 
     @Transactional(readOnly = true)
@@ -196,10 +182,7 @@ public class TicketServiceImpl implements ITicketService{
         try {
             Ticket ticketEntity = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new NotFoundException("No pudimos encontrar el Ticket que buscás"));
-            Empleado empleadoEntity = empleadoRepository.findByContactoEmail(empleadoEmail)
-                .orElseThrow(() -> new NotFoundException("Empleado no encontrado"));
-
-            return TicketEmployeeMapper.mapToTicketEmployeeDto(ticketEntity, empleadoEntity);
+            return TicketEmployeeMapper.mapToTicketEmployeeDto(ticketEntity);
         } catch (Exception e) {
             throw new NotFoundException("Error al obtener el ticket para el empleado");
         }
@@ -221,7 +204,7 @@ public class TicketServiceImpl implements ITicketService{
 
             ticketRepository.save(ticketEntity);
 
-            return TicketEmployeeMapper.mapToTicketEmployeeDto(ticketEntity, empleadoEntity);
+            return TicketEmployeeMapper.mapToTicketEmployeeDto(ticketEntity);
         } catch (Exception e) {
             throw new NotFoundException("Error al asignar el ticket al empleado");
         }

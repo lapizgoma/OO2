@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import oo2.grupo19.SistemaTickets.entities.estados.Prioridad;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,11 +21,8 @@ public class TicketEmployeeDTO {
 	private String detalle;
 	private String fechaHoraCreado;
 	private Set<IntervencionDTO> intervenciones;
-	private Set<EmpleadoDTO> listEmpleados;
-	private String estado;
-	private Prioridad prioridad;
-	private String usuarioNombre;
-	private String usuarioApellido;
-	private ContactoDTO usuarioContactoDTO;
-	private boolean empleadoPertenece;
+	private Set<EmpleadoDTO> empleados;
+	private EstadoTicketDTO estado;
+	private PrioridadDTO prioridad;
+	private ClienteDTO cliente;
 }

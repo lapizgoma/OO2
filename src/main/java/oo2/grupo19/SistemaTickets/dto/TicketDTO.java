@@ -1,5 +1,6 @@
 package oo2.grupo19.SistemaTickets.dto;
 
+import java.util.Comparator;
 import java.util.Set;
 
 import lombok.AllArgsConstructor;
@@ -19,9 +20,18 @@ public class TicketDTO {
 	private Long id;
 	private String asunto;
 	private String detalle;
-	private Set<EmpleadoDTO> empleados;
-	private Set<IntervencionDTO> intervencion;
+	private String fechaHoraCreado;
+	private Set<IntervencionDTO> intervenciones;
 	private EstadoTicketDTO estado;
-	private PrioridadDTO prioridad;
-	private ClienteDTO cliente;
+	private String clienteEmail;
+
+	public IntervencionDTO getUltimaIntervencion() {
+		if (intervenciones == null || intervenciones.isEmpty()) {
+			return null;
+		}
+
+		return intervenciones.stream()
+				.max(Comparator.comparing(IntervencionDTO::getId)) // o el campo que uses
+				.orElse(null);
+	}
 }
