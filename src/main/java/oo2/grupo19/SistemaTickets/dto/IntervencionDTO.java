@@ -15,10 +15,9 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class IntervencionDTO {
     private Long id;
-    private String contenido;
-    private EmpleadoDeIntervencionDTO realizadoPor;
-    private String fecha;
     private String descripcion;
-    private TicketDTO ticket;
-    private EstadoIntervencionDTO estado;
+    private String fecha;
+    private String estado;
+    private String empleadoEmail;
+    private Long ticketId;
 }

@@ -146,6 +146,7 @@ public class TicketController {
   @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @GetMapping("/list-ticket-por-cliente")
     public String ticketListByCliente(@RequestParam String email, Model model, Authentication authentication){
+        // Revisar el service este pq nose si la query del repository es la mejor
         Set<TicketEmployeeDTO> tickets = ticketService.findTicketByCliente(email);
         model.addAttribute("tickets", tickets);
         if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {

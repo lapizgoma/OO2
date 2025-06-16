@@ -1,7 +1,6 @@
 package oo2.grupo19.SistemaTickets.services.impl;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.Set;
 
@@ -16,8 +15,11 @@ import oo2.grupo19.SistemaTickets.entities.Ticket;
 import oo2.grupo19.SistemaTickets.entities.Usuario;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoIntervencion;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
+import oo2.grupo19.SistemaTickets.repositories.IEmpleado;
 import oo2.grupo19.SistemaTickets.repositories.IIntervencion;
 import oo2.grupo19.SistemaTickets.repositories.ITicket;
+import oo2.grupo19.SistemaTickets.repositories.estados.IEstadoIntervencion;
+import oo2.grupo19.SistemaTickets.repositories.estados.IEstadoTicket;
 import oo2.grupo19.SistemaTickets.services.IIntervencionService;
 
 @Service
@@ -25,10 +27,17 @@ public class IntervencionServiceImpl implements IIntervencionService{
 
     private final IIntervencion intervencionRepository;
     private final ITicket ticketRepository;
+    private final IEmpleado empleadoRepository;
+    private final IEstadoIntervencion estadoIntervencionRepository;
+    private final IEstadoTicket estadoTicketRepository;
 
-    public IntervencionServiceImpl(IIntervencion intervencionRepository, ITicket ticketRepository) {
+    public IntervencionServiceImpl(IIntervencion intervencionRepository, ITicket ticketRepository,
+                                        IEmpleado empleadoRepository, IEstadoIntervencion estadoIntervencionRepository, IEstadoTicket estadoTicketRepository) {
         this.intervencionRepository = intervencionRepository;
         this.ticketRepository = ticketRepository;
+        this.empleadoRepository = empleadoRepository;
+        this.estadoIntervencionRepository = estadoIntervencionRepository;
+        this.estadoTicketRepository = estadoTicketRepository;
     }
 
     @Override
@@ -63,26 +72,39 @@ public class IntervencionServiceImpl implements IIntervencionService{
         if (intervenciondto == null) {
             throw new IllegalArgumentException("El contacto no puede ser null");
         }
-        Optional<Intervencion> estadoOpt = intervencionRepository.findByFecha(
-            LocalDateTime.parse(intervenciondto.getFecha(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))
-        );
+        Optional<Intervencion> estadoOpt = intervencionRepository.findById(intervenciondto.getId());
         if(estadoOpt.isPresent()) {
-            intervenciondto.setId(estadoOpt.get().getId());
-            Intervencion intervencion = IntervencionMapper.mapToIntervencionEntity(intervenciondto);
-            intervencionRepository.save(intervencion);
+            Intervencion intervencionDB = intervencionRepository.findById(intervenciondto.getId()).get();
+            Intervencion intervencionNew = IntervencionMapper.mapToIntervencionEntity(intervenciondto, intervencionDB);
+            Empleado empleado = intervencionDB.getRealizadoPor();
+            intervencionNew.setRealizadoPor(empleado);
+            Ticket ticket = intervencionDB.getTicket();
+            intervencionNew.setTicket(ticket);
+            EstadoIntervencion estado = estadoIntervencionRepository.findByEstado(intervenciondto.getEstado()).get();
+            intervencionNew.setEstado(estado);
+            intervencionRepository.save(intervencionNew);
         } else {
-        Intervencion intervencion = IntervencionMapper.mapToIntervencionEntity(intervenciondto);
+        Intervencion intervencion = IntervencionMapper.mapToIntervencionEntity(intervenciondto, new Intervencion());
+        intervencion.setRealizadoPor(empleadoRepository.findByContactoEmail(intervenciondto.getEmpleadoEmail()).get());
+        intervencion.setTicket(ticketRepository.traerPorEmpleadoYId(empleadoRepository.findByContactoEmail(intervenciondto.getEmpleadoEmail()).get().getId(),
+                                    intervenciondto.getTicketId()).get());
+        intervencion.setEstado(estadoIntervencionRepository.findByEstado(intervenciondto.getEstado()).get());
+        Ticket ticket = ticketRepository.findById(intervenciondto.getTicketId()).get();
+        ticket.agregarEmpleado(empleadoRepository.findByContactoEmail(intervenciondto.getEmpleadoEmail()).get());
+        if(ticket.getEstado().getEstado().equals("PENDIENTE")) {
+            ticket.setEstado(estadoTicketRepository.findByEstado("ABIERTO").get());
+        }
         intervencionRepository.save(intervencion);
         }
     }
 
     @Transactional(readOnly = true)
-    public Set<IntervencionDTO> traerIntervencionPorCliente(Long idCliente){
+    public Set<IntervencionDTO> traerIntervencionPorEmpleado(Long idEmpleado){
         try {
-            Optional<Usuario> usuarioOptional = Optional.of(traerUsuarioDesdeIntervencion(idCliente));
+            Optional<Usuario> usuarioOptional = Optional.of(traerEmpleadoDesdeIntervencion(idEmpleado));
             if(usuarioOptional.isPresent()) {            
                 return IntervencionMapper.mapToIntervencionDtoSet(
-                    intervencionRepository.traerIntervencionPorCliente(idCliente)
+                    intervencionRepository.traerIntervencionPorEmpleado(idEmpleado)
                 );
             }
             throw new NotFoundException("El usuario no existe");
@@ -99,7 +121,7 @@ public class IntervencionServiceImpl implements IIntervencionService{
     @Transactional(readOnly = true)
 	public Set<IntervencionDTO> traer(LocalDateTime fecha,Empleado empleado) {
 		try {
-            Optional<Usuario> usuarioOptional = Optional.of(traerUsuarioDesdeIntervencion(empleado.getId()));
+            Optional<Usuario> usuarioOptional = Optional.of(traerEmpleadoDesdeIntervencion(empleado.getId()));
             if(usuarioOptional.isPresent()) {
                 return IntervencionMapper.mapToIntervencionDtoSet(intervencionRepository.traer(fecha, empleado));            
             }
@@ -110,9 +132,9 @@ public class IntervencionServiceImpl implements IIntervencionService{
 	}
     
     @Transactional(readOnly = true)
-	public Set<IntervencionDTO> traerFecha(LocalDateTime fechaInicio, LocalDateTime fechaFinal, Long idCliente){
+	public Set<IntervencionDTO> traerPorRangoFecha(LocalDateTime fechaInicio, LocalDateTime fechaFinal, Long idCliente){
 		try {
-            Optional<Usuario> usuarioOptional = Optional.of(traerUsuarioDesdeIntervencion(idCliente));
+            Optional<Usuario> usuarioOptional = Optional.of(traerEmpleadoDesdeIntervencion(idCliente));
             if(usuarioOptional.isPresent()) {
                 return IntervencionMapper.mapToIntervencionDtoSet(
                     intervencionRepository.traerFecha(fechaInicio, fechaFinal, idCliente)
@@ -125,30 +147,12 @@ public class IntervencionServiceImpl implements IIntervencionService{
 	}
 
 	@Transactional(readOnly = true)
-	public IntervencionDTO traerFecha(LocalDateTime fecha) {
+	public IntervencionDTO traerPorFecha(LocalDateTime fecha) {
 		return IntervencionMapper.mapToIntervencionDto(intervencionRepository.findByFecha(fecha).orElseThrow(() -> new NotFoundException("No se ha encontrado la intervención")));
 	}
 
 	@Transactional(readOnly = true)
-	public Usuario traerUsuarioDesdeIntervencion(Long idCliente) {
-		return intervencionRepository.traerClienteDesdeIntervencion(idCliente);		
+	public Empleado traerEmpleadoDesdeIntervencion(Long idEmpleado) {
+		return intervencionRepository.traerEmpleadoDesdeIntervencion(idEmpleado);		
 	}
-
-    @Override
-    @Transactional
-    public void actualizarEstadoIntervencion(Long empleadoId, Long ticketId, Long intervencionId, EstadoIntervencion nuevoEstado) {
-        Ticket ticket = ticketRepository.traerPorEmpleadoYId(empleadoId, ticketId)
-            .orElseThrow(() -> new NotFoundException("No se ha encontrado el ticket con el id: " + ticketId + " o no tiene permiso"));
-        if (ticket == null) {
-            throw new NotFoundException("No se ha encontrado el ticket o no tiene permiso");
-        }
-
-        Intervencion intervencion = ticket.getLstIntervencion().stream().filter(i -> i.getId().equals(intervencionId)).findFirst()
-        .orElseThrow(() -> new NotFoundException("Intervención no encontrada"));
-
-        intervencion.setEstado(nuevoEstado);
-        intervencionRepository.save(intervencion);
-    }
-
-
 }
