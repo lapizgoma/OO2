@@ -78,7 +78,7 @@ public class RestControllerTest {
     public ResponseEntity<?> registrarEmpleado(@Valid @RequestBody EmpleadoDTO empleado) {
         try {
             empleadoService.save(empleado);
-            log.info("Empleado registrado exitosamente: {}", empleado.getEmail());
+            log.info("Empleado registrado exitosamente: {}", empleado.getContacto().getEmail());
             return ResponseEntity.status(HttpStatus.CREATED).body("Empleado registrado exitosamente");
         } catch (Exception e) {
             log.error("Error al registrar empleado: {}", e.getMessage());

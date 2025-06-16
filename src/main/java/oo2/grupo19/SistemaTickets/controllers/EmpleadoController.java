@@ -76,7 +76,7 @@ public class EmpleadoController {
             return ViewRouteHelper.EMPLEADO_REGISTER;
         }
         empleadoService.save(empleado);
-        logger.info("Empleado registrado exitosamente (ID): {} por {}", empleado.getId(), auth.getName());
+        logger.info("Empleado registrado exitosamente (ID): {} por {}", empleado.getContacto().getEmail(), auth.getName());
         return ViewRouteHelper.EMPLEADO_REGISTRADO;
     }
     

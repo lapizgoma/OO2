@@ -11,8 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import oo2.grupo19.SistemaTickets.dto.EmpleadoDTO;
 import oo2.grupo19.SistemaTickets.dto.mappers.EmpleadoMapper;
+import oo2.grupo19.SistemaTickets.entities.Contacto;
 import oo2.grupo19.SistemaTickets.entities.Empleado;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
+import oo2.grupo19.SistemaTickets.repositories.IContacto;
 import oo2.grupo19.SistemaTickets.repositories.IEmpleado;
 import oo2.grupo19.SistemaTickets.repositories.ITicket;
 
@@ -23,11 +25,13 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
     private final IEmpleado empleadoRepository;
     private final ITicket ticketRepository;
     private final PasswordEncoder passwordEncoder;
+    private final IContacto contactoRepository;
 
-    public EmpleadoServiceImpl(IEmpleado empleadoRepository, ITicket ticketRepository, PasswordEncoder passwordEncoder) {
+    public EmpleadoServiceImpl(IEmpleado empleadoRepository, ITicket ticketRepository, PasswordEncoder passwordEncoder, IContacto contactoRepository) {
         this.empleadoRepository = empleadoRepository;
         this.ticketRepository = ticketRepository;
         this.passwordEncoder = passwordEncoder;
+        this.contactoRepository = contactoRepository;
     }
 
     @Override
@@ -57,13 +61,15 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
         if(empleadodto == null) {
             throw new IllegalArgumentException("El empleado no puede ser null");
         }
-        Optional<Empleado> empleadoOpt = empleadoRepository.findByContactoEmail(empleadodto.getEmail());
+        Optional<Empleado> empleadoOpt = empleadoRepository.findByContactoEmail(empleadodto.getContacto().getEmail());
         Empleado empleado;
         if(empleadoOpt.isPresent()) {
-            empleadodto.setId(empleadoOpt.get().getId());
-            empleado = EmpleadoMapper.mapToEmpleadoEntity(empleadodto);
+            empleado = EmpleadoMapper.mapToEmpleadoEntity(empleadodto, empleadoOpt.get());
+            empleado.setId(empleadoOpt.get().getId());
+            Contacto contactoDB = contactoRepository.findById(empleadoOpt.get().getContacto().getId()).get();
+            empleado.setContacto(contactoDB);
         } else {
-            empleado = EmpleadoMapper.mapToEmpleadoEntity(empleadodto);
+            empleado = EmpleadoMapper.mapToEmpleadoEntity(empleadodto, new Empleado());
             String passwordHash = passwordEncoder.encode(empleado.getPassword());
             empleado.setPassword(passwordHash);
             long ultimoLegajo;

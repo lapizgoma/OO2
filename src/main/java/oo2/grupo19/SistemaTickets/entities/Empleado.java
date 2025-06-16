@@ -5,7 +5,6 @@ import java.util.Set;
 import java.util.HashSet;
 import org.hibernate.annotations.CreationTimestamp;
 
-import oo2.grupo19.SistemaTickets.dto.EmpleadoDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
@@ -33,13 +32,6 @@ public class Empleado extends Usuario {
 
   @ManyToMany(mappedBy = "listEmpleado")
   private Set<Ticket> tickets = new HashSet<>();
-
-  public EmpleadoDTO empleadoToDto() {
-    EmpleadoDTO empleadoDto = new EmpleadoDTO();
-    empleadoDto.setId(this.id);
-    empleadoDto.setNombre(this.nombre);
-    return empleadoDto;
-  }
 
   public void darDeBaja() {
     this.setDeleted(true);
