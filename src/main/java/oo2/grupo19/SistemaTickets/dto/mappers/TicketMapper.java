@@ -1,12 +1,10 @@
 package oo2.grupo19.SistemaTickets.dto.mappers;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import oo2.grupo19.SistemaTickets.dto.IntervencionDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketDTO;
 import oo2.grupo19.SistemaTickets.entities.Intervencion;
@@ -22,16 +20,17 @@ public final class TicketMapper {
         dto.setAsunto(ticket.getAsunto());
         dto.setDetalle(ticket.getDetalle());
         dto.setClienteEmail(ticket.getCreadoPor().getContacto().getEmail());
-        // Hace falta este if??
         dto.setFechaHoraCreado(ticket.getFechaHora().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
         Set<IntervencionDTO> intervenciones = new HashSet<>();
         if (ticket.getLstIntervencion() != null) {
             for (Intervencion intervencion : ticket.getLstIntervencion()) {
                 intervenciones.add(IntervencionMapper.mapToIntervencionDto(intervencion));
             }
+            dto.setIntervenciones(IntervencionMapper.mapToIntervencionDtoSet(ticket.getLstIntervencion().stream().collect(Collectors.toList())));
+        }else{
+            dto.setIntervenciones(intervenciones);
         }
         // Es necesario trabajar las entities con sets?
-        dto.setIntervenciones(IntervencionMapper.mapToIntervencionDtoSet(ticket.getLstIntervencion().stream().collect(Collectors.toList())));
         // Estado
         dto.setEstado(EstadoTicketMapper.mapEstadoTicketToDto(ticket.getEstado()));
         return dto;
@@ -43,7 +42,6 @@ public final class TicketMapper {
         ticket.setId(dto.getId());
         ticket.setAsunto(dto.getAsunto());
         ticket.setDetalle(dto.getDetalle());
-        ticket.setFechaHora(LocalDateTime.parse(dto.getFechaHoraCreado(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
         return ticket;
     }
 

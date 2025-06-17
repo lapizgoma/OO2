@@ -31,14 +31,14 @@ public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService
     @Transactional
     public void delete(String id)
     {
-        Long personaJuridicaID = Long.parseLong(id);
         try
         {
-            repository.deleteById(personaJuridicaID);
+            Long personaJuridicaID = Long.parseLong (id);
+            repository.deleteById (personaJuridicaID);
         }
         catch (Exception e)
         {
-            throw new NotFoundException("No se pudo eliminar la Persona Jurídica"+ e.getMessage());
+            throw new NotFoundException ("No se pudo eliminar la Persona Jurídica"+ e.getMessage());
         }
     }
 
@@ -48,11 +48,11 @@ public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService
     {
         try
         {
-            return PersonaJuridicaMapper.mapToPersonaJuridicaDtoSet (repository.findAll());
+            return PersonaJuridicaMapper.mapToPersonaJuridicaDtoSet (repository.findAll ());
         }
         catch (Exception e)
         {
-            throw new NotFoundException("No se pudo listar las Personas Jurídicas: " + e.getMessage());
+            throw new NotFoundException ("No se pudo listar las Personas Jurídicas: " + e.getMessage());
         }
     }
 
@@ -62,38 +62,48 @@ public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService
     {
         try
         {
-            return PersonaJuridicaMapper.mapToPersonaJuridicaDto(repository.findById(id).orElseThrow());
+            return PersonaJuridicaMapper.mapToPersonaJuridicaDto (repository.findById (id).orElseThrow ());
         }
         catch (Exception e)
         {
-            throw new NotFoundException("No se pudo encontrar la Persona Jurídica: " + e.getMessage());
+            throw new NotFoundException ("No se pudo encontrar la Persona Jurídica: " + e.getMessage ());
         }
     }
 
     /**
-     * @deprecated Este método no conviene usarlo
-     *             Usá {@link #crearPersonaJuridica(PersonaJuridicaDTO)} en su lugar.
+     * Este método solo actualiza Personas Jurídicas existentes en base a su CUIT.
+     * Para crear una Persona Jurídica, usá {@link #crearPersonaJuridica(PersonaJuridicaDTO)} en su lugar.
      */
     @Override
-    @Deprecated
-    public void save(PersonaJuridicaDTO object)
+    @Transactional
+    public void save(PersonaJuridicaDTO dto)
     {
         try
         {
-            repository.save(PersonaJuridicaMapper.mapToPersonaJuridicaEntity(object, new PersonaJuridica ()));
+            String code = dto.getCodigoAcceso ();
+
+            if (code == null || code.length () != PersonaJuridica.CODIGO_ACCESO_LENGTH) 
+            {
+                throw new InvalidInputException ("El código de acceso debe tener " + PersonaJuridica.CODIGO_ACCESO_LENGTH + " caracteres.");
+            }
+
+            PersonaJuridica personaJuridicaEntity = repository.findByCuit (dto.getCuit ()).orElseThrow (() -> new NotFoundException ("No hay una Persona Jurídica bajo ese CUIT :/"));
+
+            repository.save(PersonaJuridicaMapper.mapToPersonaJuridicaEntity (dto, personaJuridicaEntity));
         }
         catch (Exception e)
         {
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException (e.getMessage());
         }
     }
 
     @Override
+    @Transactional
     public PersonaJuridicaDTO crearPersonaJuridica (PersonaJuridicaDTO personaJuridicaDTO)
     {
-        if (!repository.findByCuit(personaJuridicaDTO.getCuit()).isEmpty()) 
+        if (!repository.findByCuit (personaJuridicaDTO.getCuit ()).isEmpty ()) 
         {
-            throw new AlreadyExistsException("Persona Jurídica bajo ese CUIT ya se encuentra registrada.");
+            throw new AlreadyExistsException ("Persona Jurídica bajo ese CUIT ya se encuentra registrada.");
         }
 
         String codigoAcceso = UUID.randomUUID ().toString ().replace ("-", "").substring (0, PersonaJuridica.CODIGO_ACCESO_LENGTH);
@@ -110,13 +120,12 @@ public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService
     @Transactional(readOnly = true)
     public PersonaJuridicaDTO findByCode (String code) 
     {
-        // log.info("Buscando Persona Jurídica con código {}", code);
         if (code == null || code.length () != PersonaJuridica.CODIGO_ACCESO_LENGTH) 
         {
-            throw new InvalidInputException("El código de acceso debe tener " + PersonaJuridica.CODIGO_ACCESO_LENGTH + " caracteres");
+            throw new InvalidInputException("El código de acceso debe tener " + PersonaJuridica.CODIGO_ACCESO_LENGTH + " caracteres.");
         }
 
-        PersonaJuridica personaJuridicaEntity = repository.findByCodigoAcceso(code).orElseThrow(() -> new NotFoundException ("No hay una Persona Jurídica bajo con ese código :/"));
+        PersonaJuridica personaJuridicaEntity = repository.findByCodigoAcceso(code).orElseThrow(() -> new NotFoundException ("No hay una Persona Jurídica con ese código :/"));
         
         return PersonaJuridicaMapper.mapToPersonaJuridicaDto(personaJuridicaEntity);
     }

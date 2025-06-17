@@ -65,28 +65,30 @@
         <div th:each="empleado : ${empleados}" class="col">
           <div
             class="employee-card p-3"
-            data-email="${empleado.email}"
+            data-email="${empleado.contacto.email}"
           >
             <h5 class="text-primary mb-2">
               [[${empleado.nombre}]] [[${empleado.apellido}]]
             </h5>
             <p class="text-white-50 mb-1">DNI: [[${empleado.dni}]]</p>
             <p class="text-white-50 mb-1">Legajo: [[${empleado.nroLegajo}]]</p>
-            <a class="btn btn-link p-0 text-decoration-none" data-bs-toggle="collapse" th:href="'#detalleEmpleado' + ${empleado.id}" role="button" aria-expanded="false" th:aria-controls="'detalleEmpleado' + ${empleado.id}">
+            <a class="btn btn-link p-0 text-decoration-none" data-bs-toggle="collapse" role="button" aria-expanded="false" th:aria-controls="'detalleEmpleado'">
       Más...
     </a>
 
-    <div class="collapse mt-3" th:id="'detalleEmpleado' + ${empleado.id}">
+    <div class="collapse mt-3">
       <hr />
-      <p class="card-text mb-1"><strong>Email:</strong> <span th:text="${empleado.email}"></span></p>
-      <p class="card-text mb-1"><strong>Teléfono:</strong> <span th:text="${empleado.telefono}"></span></p>
+      <p class="card-text mb-1"><strong>Email:</strong> <span th:text="${empleado.contacto.email}"></span></p>
+      <p class="card-text mb-1"><strong>Teléfono:</strong> <span th:text="${empleado.contacto.telefono}"></span></p>
       <p class="card-text mb-1">
         <strong>Dirección:</strong>
-        <span th:text="${empleado.direccionCompleta}"></span>
+        <span th:text="${empleado.contacto.localidad}"></span>
+        <span th:text="${empleado.contacto.calle}"></span>
+        <span th:text="${empleado.contacto.nroPuerta}"></span>
       </p>
     </div>
             <form
-              th:action="@{/empleados/{id}(id=${empleado.id})}"
+              th:action="@{/empleados/{id}(id=${empleado.contacto.email})}"
               method="post"
               class="mt-2"
             >

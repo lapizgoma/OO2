@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,7 @@ public class Empleado extends Usuario {
   private LocalDateTime baja;
 
   @ManyToMany(mappedBy = "listEmpleado")
+  @OrderBy("id ASC")
   private Set<Ticket> tickets = new HashSet<>();
 
   public void darDeBaja() {

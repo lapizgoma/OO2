@@ -26,6 +26,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
@@ -73,6 +74,7 @@ public class Usuario implements UserDetails {
 
     @ManyToMany(fetch = FetchType.EAGER, targetEntity = Role.class)
     @JoinTable(name = "users_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @OrderBy("id ASC")
     private Set<Role> roles;
 
     public void asignarContactoUsuario() {

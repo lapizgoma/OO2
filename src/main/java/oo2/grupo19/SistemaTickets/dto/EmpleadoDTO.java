@@ -21,4 +21,10 @@ public class EmpleadoDTO {
 	private String password;
 	private ContactoDTO contacto;
 	private String role;
+
+	public EmpleadoDTO(String nombre, String password) {
+		this.nombre = nombre;
+		this.password = password;
+	}
+
 }

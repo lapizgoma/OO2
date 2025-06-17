@@ -51,12 +51,11 @@ public class EmailServiceImpl implements EmailService {
 
             helper.setTo(destinatario);
             helper.setSubject(asunto);
-            helper.setText(cuerpo, true); // true = HTML
+            helper.setText(cuerpo, true);
             helper.setFrom(mailFrom);
 
             mailSender.send(mensaje);
         } catch (MessagingException e) {
-            // Aquí podrías loguear el error o lanzar una excepción personalizada
             throw new RuntimeException("Error al enviar correo HTML: " + e.getMessage(), e);
         } catch (Exception e) {
             throw new RuntimeException("Error inesperado al enviar correo HTML: " + e.getMessage(), e);

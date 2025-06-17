@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Intervencion creada</title>
+    <meta charset="UTF-8">
+</head>
+<body style="font-family: Arial, sans-serif; color: #333;">
+    <h2>Hola, <span th:text="${nombre}">Usuario</span>!</h2>
+
+    <p><strong><span th:text="${mensaje}"></span></strong></p>
+
+    <p>
+        <strong>Descripcion:</strong> <span th:text="${descripcion}">Descripcion del ticket</span><br/>
+        <strong>Número de Ticket:</strong> <span th:text="${'TCK-' + id}">TCK-000</span><br/>
+    </p>
+
+    <hr/>
+    <p style="font-size: small; color: gray;">
+        Este es un correo automático. Por favor no responder.
+    </p>
+</body>
+</html>

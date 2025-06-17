@@ -84,7 +84,7 @@ public class TicketServiceImpl implements ITicketService{
         ticketNew.setCreadoPor(clienteRepository.findByContactoEmail(ticketdto.getClienteEmail()).get());
         ticketNew.setEstado(estadoTicketRepository.findByEstado(ticketdto.getEstado().getEstado()).get());
         ticketRepository.save(ticketNew);
-    }
+    } 
 
     @Override
     @Transactional(readOnly = true)
@@ -92,6 +92,15 @@ public class TicketServiceImpl implements ITicketService{
         return TicketEmployeeMapper.mapToTicketEmployeeDto(
             ticketRepository.traerPorEmpleadoYId(idTicket, idEmpleado)
                 .orElseThrow(() -> new NotFoundException("No se ha encontrado el ticket con el id: " + idTicket + " o no tiene permiso"))
+        );
+    }
+
+
+    @Override
+    public TicketDTO findUltimoPorEmailYAsunto(String email, String asunto) {
+        return TicketMapper.mapToTicketDto(
+            ticketRepository.findUltimoPorEmailYAsunto(email, asunto)
+                .orElseThrow(() -> new NotFoundException("No se ha encontrado el ticket con el asunto: " + asunto + " para el cliente: " + email))
         );
     }
 
@@ -180,11 +189,12 @@ public class TicketServiceImpl implements ITicketService{
     @Transactional(readOnly = true)
     public TicketEmployeeDTO getTicketparaEmpleado(Long ticketId) {
         try {
-            Ticket ticketEntity = ticketRepository.traerPorId(ticketId)
-                .orElseThrow();
+            Ticket ticketEntity = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new NotFoundException("No pudimos encontrar el Ticket que buscás"));
+            log.info ("EMPLEADO PIDE TICKET ID: " + ticketId.toString ());
             return TicketEmployeeMapper.mapToTicketEmployeeDto(ticketEntity);
         } catch (Exception e) {
-            throw new NotFoundException("Error al obtener el ticket para el empleado");
+            throw new NotFoundException("Error al obtener el ticket para el empleado" + e.getMessage());
         }
     }
 

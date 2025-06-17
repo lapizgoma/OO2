@@ -2,7 +2,6 @@ package oo2.grupo19.SistemaTickets.services;
 
 import java.time.LocalDate;
 import java.util.Set;
-
 import oo2.grupo19.SistemaTickets.dto.EstadoTicketDTO;
 import oo2.grupo19.SistemaTickets.dto.PrioridadDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketDTO;
@@ -22,4 +21,5 @@ public interface ITicketService extends IService<TicketDTO> {
     TicketDTO getTicketParaCliente(Long ticketId, String clienteEmail);
     TicketEmployeeDTO getTicketparaEmpleado(Long ticketId);
     TicketEmployeeDTO asignarTicket(Long ticketId, String empleadoEmail);
+    TicketDTO findUltimoPorEmailYAsunto(String email,String asunto);
 }

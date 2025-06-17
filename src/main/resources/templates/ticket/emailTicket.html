@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Ticket Creado</title>
+    <meta charset="UTF-8">
+</head>
+<body style="font-family: Arial, sans-serif; color: #333;">
+    <h2>Hola, <span th:text="${nombre}">Usuario</span>!</h2>
+
+    <p><strong>¡Su ticket ha sido creado exitosamente!</strong></p>
+
+    <p>
+        <strong>Asunto:</strong> <span th:text="${asunto}">Asunto del ticket</span><br/>
+        <strong>Número de Ticket:</strong> <span th:text="${'TCK-' + id}">TCK-000</span><br/>
+        <strong>Fecha de Creación:</strong> <span th:text="${fechaTicket}">01/01/2025 12:00</span>
+    </p>
+
+    <p th:text="${mensaje}">Mensaje adicional aquí.</p>
+
+    <hr/>
+    <p style="font-size: small; color: gray;">
+        Este es un correo automático. Por favor no responder.
+    </p>
+</body>
+</html>

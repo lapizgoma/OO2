@@ -2,6 +2,7 @@ package oo2.grupo19.SistemaTickets.dto;
 
 import java.util.Comparator;
 import java.util.Set;
+import java.util.TreeSet;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -21,7 +22,7 @@ public class TicketDTO {
 	private String asunto;
 	private String detalle;
 	private String fechaHoraCreado;
-	private Set<IntervencionDTO> intervenciones;
+	private Set<IntervencionDTO> intervenciones = new TreeSet<>(Comparator.comparing(IntervencionDTO::getId)).reversed();
 	private EstadoTicketDTO estado;
 	private String clienteEmail;
 

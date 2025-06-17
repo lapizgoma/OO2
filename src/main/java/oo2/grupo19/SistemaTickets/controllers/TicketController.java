@@ -1,12 +1,10 @@
 package oo2.grupo19.SistemaTickets.controllers;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -26,7 +24,9 @@ import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 import oo2.grupo19.SistemaTickets.security.SecurityService;
 import oo2.grupo19.SistemaTickets.services.ITicketService;
 import oo2.grupo19.SistemaTickets.services.IEstadoTicketService;
+import oo2.grupo19.SistemaTickets.services.EmailService;
 import oo2.grupo19.SistemaTickets.services.IClienteService;
+import oo2.grupo19.SistemaTickets.services.IEmpleadoService;
 import oo2.grupo19.SistemaTickets.services.IEstadoIntervencionService;
 import oo2.grupo19.SistemaTickets.services.IPrioridadService;
 @Controller
@@ -40,15 +40,16 @@ public class TicketController {
     private final IEstadoIntervencionService estadoIntervencionService;
     private final SecurityService securityService;
     private final IPrioridadService prioridadService;
+    private final EmailService emailService;
 
-    public TicketController(ITicketService ticketService, IPrioridadService prioridadService, IEstadoIntervencionService estadoIntervencionService,
-                                IClienteService clienteService, SecurityService securityService, IEstadoTicketService estadoTicketService) {
+    public TicketController(ITicketService ticketService, IPrioridadService prioridadService, IEstadoIntervencionService    estadoIntervencionService,IClienteService clienteService, SecurityService securityService, IEstadoTicketService estadoTicketService, EmailService emailService, IEmpleadoService empleadoService) {
         this.ticketService = ticketService;
         this.estadoIntervencionService = estadoIntervencionService;
         this.clienteService = clienteService;
         this.securityService = securityService;
         this.estadoTicketService = estadoTicketService;
         this.prioridadService = prioridadService;
+        this.emailService = emailService;
     }
 
     private static final Logger logger = LoggerFactory.getLogger(TicketController.class);
@@ -76,18 +77,20 @@ public class TicketController {
         ticket.setFechaHoraCreado(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
         ticketService.save(ticket);
         logger.info("Ticket creado exitosamente por: {}", email);
+        sendEmailTicketCreate(ticketService.findUltimoPorEmailYAsunto(ticket.getClienteEmail(), ticket.getAsunto()));
         model.addAttribute("title","Ticket create");
         model.addAttribute("titulo-h1","El ticket ha sido creado con exito!! Puede volver al home");
         return ViewRouteHelper.TICKET_SUCCESS;
     }
     
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE', 'ADMIN')")
-    @GetMapping("/{id}")
-    public String verTicket(@PathVariable long id, Authentication authentication, Model model) {
-        log.info("ticketid:", id);
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
+    @GetMapping("/{idTicket}")
+    public String verTicket(@PathVariable long idTicket, Authentication authentication, Model model) {
+        
+        // No se muestra el nombre del empleado que creó la intervencion. Buscar una solucion o hacer que no muestre nada.
         if (authentication.getAuthorities ().stream ().anyMatch (a -> a.getAuthority ().equals ("ROLE_EMPLOYEE"))) 
-        {
-            TicketEmployeeDTO ticket = ticketService.getTicketparaEmpleado(id);
+        {  
+            TicketEmployeeDTO ticket = ticketService.getTicketparaEmpleado(idTicket, authentication.getName ());
             model.addAttribute("ticketEmployeeDTO", ticket);
         }
         else if (authentication.getAuthorities ().stream ().anyMatch (a -> a.getAuthority ().equals ("ROLE_CUSTOMER"))) 
@@ -95,9 +98,9 @@ public class TicketController {
             TicketDTO ticket = ticketService.getTicketParaCliente(id, authentication.getName ());
             model.addAttribute("ticketClientDTO", ticket);
         }
-
         return ViewRouteHelper.VIEW_TICKET;
     }
+
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     // TODO: cambiar a POST cuando esté la vista de tickets
     @GetMapping("/asignar/{idTicket}")
@@ -231,4 +234,15 @@ public class TicketController {
         public String showFilterPage() {
     return "ticket/formTicketsFiltrar";  // La vista con los formularios de filtro 
     }
+
+    private void sendEmailTicketCreate(TicketDTO ticket){
+        Map<String,Object> infoClient = new HashMap<>();
+        infoClient.put("nombre",clienteService.findByEmail(ticket.getClienteEmail()).getNombre());
+        infoClient.put("mensaje","Su ticket ha sido creado con exito, aguarde la respuesta de un empleado");
+        infoClient.put("asunto", ticket.getAsunto());
+        infoClient.put("fechaTicket", ticket.getFechaHoraCreado());
+        infoClient.put("id",ticket.getId());
+        emailService.enviarCorreoHtml(ticket.getClienteEmail(), "Su ticket fue registrado en el sistema", ViewRouteHelper.TICKET_SUCCESS_MAIL, infoClient);
+    }
+
 }

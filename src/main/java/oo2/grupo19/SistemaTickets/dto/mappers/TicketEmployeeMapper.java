@@ -6,9 +6,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.dto.TicketEmployeeDTO;
 import oo2.grupo19.SistemaTickets.entities.Ticket;
 
+@Log4j2
 public final class TicketEmployeeMapper {
     public static TicketEmployeeDTO mapToTicketEmployeeDto(Ticket ticket) {
         if (ticket == null) {
@@ -21,8 +23,12 @@ public final class TicketEmployeeMapper {
         dto.setFechaHoraCreado(ticket.getFechaHora().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
         dto.setIntervenciones(IntervencionMapper.mapToIntervencionDtoSet(ticket.getLstIntervencion().stream().collect(Collectors.toList())));
         dto.setEstado(EstadoTicketMapper.mapEstadoTicketToDto(ticket.getEstado()));
-        dto.setPrioridad(PrioridadMapper.mapPrioridadToDto(ticket.getPrioridad()));
+        if (ticket.getPrioridad() != null) 
+        {
+            dto.setPrioridad(PrioridadMapper.mapPrioridadToDto(ticket.getPrioridad()));
+        }
         dto.setCliente(ClienteMapper.mapToClienteDto(ticket.getCreadoPor()));
+        // log.info ("MAPPER SUCCESS: " + ticket.getId().toString ());
         return dto;
     }
 
