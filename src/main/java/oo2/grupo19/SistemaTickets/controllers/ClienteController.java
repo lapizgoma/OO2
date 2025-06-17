@@ -1,16 +1,22 @@
 package oo2.grupo19.SistemaTickets.controllers;
 
 import oo2.grupo19.SistemaTickets.services.IClienteService;
+import oo2.grupo19.SistemaTickets.services.IPersonaJuridicaService;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
+import oo2.grupo19.SistemaTickets.dto.ClienteDTO;
+import oo2.grupo19.SistemaTickets.dto.personaJuridica.PersonaJuridicaDTO;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 
 import static oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
@@ -22,10 +28,34 @@ import org.slf4j.LoggerFactory;
 @RequestMapping("/cuenta")
 public class ClienteController {
     private IClienteService clienteService;
+    private IPersonaJuridicaService personaJuridicaService;
     private static final Logger logger = LoggerFactory.getLogger(ClienteController.class);
 
-    public ClienteController (IClienteService clienteService) {
+    public ClienteController (IClienteService clienteService, IPersonaJuridicaService personaJuridicaService) {
         this.clienteService = clienteService;
+        this.personaJuridicaService = personaJuridicaService;
+    }
+
+    @GetMapping("/perfil")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public String perfil(Model model, Authentication authentication) {
+        model.addAttribute("cliente", clienteService.findByEmail(authentication.getName()));
+        return ViewRouteHelper.PROFILE;
+    }
+
+    @PostMapping("/editar")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public String editarPerfil(@ModelAttribute ClienteDTO cliente,@RequestParam(required = false) String codigoAcceso, Model model) {
+        if(codigoAcceso != null && !codigoAcceso.isEmpty()) {
+            log.info("Codigo de acceso proporcionado: {}", codigoAcceso);
+            PersonaJuridicaDTO personaJuridicaDTO = personaJuridicaService.findByCode(codigoAcceso);
+            personaJuridicaDTO.setCodigoAcceso(codigoAcceso);
+            cliente.setOrganizacion(personaJuridicaDTO);
+        }
+        log.info("Actualizando perfil del cliente: {}", cliente);
+        clienteService.save(cliente);
+        model.addAttribute("mensajeExitoso", "El perfil se ha actualizado correctamente.");
+        return "redirect:/" + ViewRouteHelper.INDEX_USER;
     }
 
     @PreAuthorize ("hasRole ('CUSTOMER')")

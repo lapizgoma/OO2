@@ -68,13 +68,14 @@ public class ClienteServiceImpl implements IClienteService {
             throw new IllegalArgumentException("El empleado no puede ser null");
         }
         Optional<Cliente> clienteOpt = clienteRepository.findByContactoEmail(clientedto.getContacto().getEmail());
+        Cliente cliente = null;
         if(clienteOpt.isPresent()) {
-            Cliente clienteNew = nuevoClienteSiEstaPresente(clientedto);
-            clienteRepository.save(clienteNew);
+            cliente = actualizarClienteSiEstaPresente(clientedto);
         } else {
-            Cliente cliente = clienteSiNoEstaPresente(clientedto);
-            clienteRepository.save(cliente);
+            cliente = crearClienteSiNoEstaPresente(clientedto);
         }
+        log.info("Guardando cliente: " + cliente.toString());
+        clienteRepository.save(cliente);
     }
 
     @Override
@@ -83,16 +84,20 @@ public class ClienteServiceImpl implements IClienteService {
         return ClienteMapper.mapToClienteDto(clienteRepository.findByContactoEmail(email).orElseThrow(() -> new NotFoundException("Cliente no encontrado")));
     }
     
-    private Cliente nuevoClienteSiEstaPresente(ClienteDTO clientedto) {
+    private Cliente actualizarClienteSiEstaPresente(ClienteDTO clientedto) {
         Cliente clienteNew = transformarDatosCliente(clientedto);
         Contacto contactoNew = transformarDatosContacto(clientedto,clienteNew.getContacto().getId());
         clienteNew.setContacto(contactoNew);
+        contactoNew.setUsuario(clienteNew);
+        log.info("Tiene organizacion? : " + clienteNew.tieneOrganizacion() + " Codigo de acceso: " + clientedto.getOrganizacion().getCodigoAcceso());
+        PersonaJuridica organizacionDB = null;
         if (clienteNew.tieneOrganizacion()) {
-            PersonaJuridica organizacionDB = personaJuridicaRepository.findById(clienteNew.getOrganizacion().getId()).get();
-            PersonaJuridica organizacionNew = PersonaJuridicaMapper.mapToPersonaJuridicaEntity(clientedto.getOrganizacion(), organizacionDB);
-            organizacionNew.setId(organizacionDB.getId());
-            clienteNew.setOrganizacion(organizacionNew);
+            organizacionDB = personaJuridicaRepository.findById(clienteNew.getOrganizacion().getId()).get();
+        }else if (!clientedto.getOrganizacion().getCodigoAcceso().isEmpty()){
+            organizacionDB = personaJuridicaRepository.findByCodigoAcceso(clientedto.getOrganizacion().getCodigoAcceso()).get();
         }
+        setearOrganizacion(clientedto, clienteNew, organizacionDB);
+        log.info("Nueva entidad cliente: " + clienteNew.toString());
         return clienteNew;
     }
 
@@ -110,7 +115,7 @@ public class ClienteServiceImpl implements IClienteService {
         return contactoNew;
     }
 
-    private Cliente clienteSiNoEstaPresente(ClienteDTO clientedto) {
+    private Cliente crearClienteSiNoEstaPresente(ClienteDTO clientedto) {
         Cliente cliente = ClienteMapper.mapToClienteEntity(clientedto, new Cliente());
         String passwordHash = passwordEncoder.encode(cliente.getPassword());
         cliente.agregarRoles(roleRepository.findById(1L).orElseThrow(() -> new NotFoundException("Rol no encontrado")));
@@ -118,5 +123,13 @@ public class ClienteServiceImpl implements IClienteService {
         cliente.setContacto(ContactoMapper.mapToContactoEntity(clientedto.getContacto(), new Contacto()));
         cliente.setOrganizacion(PersonaJuridicaMapper.mapToPersonaJuridicaEntity(clientedto.getOrganizacion(), new PersonaJuridica()));
         return cliente;
+    }
+
+    private void setearOrganizacion(ClienteDTO clientedto, Cliente clienteNew, PersonaJuridica organizacionDB) {
+        PersonaJuridica organizacionNew = PersonaJuridicaMapper.
+                                            mapToPersonaJuridicaEntity(clientedto.getOrganizacion(),
+                                            (clientedto.getOrganizacion() != null) ? organizacionDB : new PersonaJuridica());
+        organizacionNew.setId(organizacionDB.getId());
+        clienteNew.setOrganizacion(organizacionNew);
     }
 }

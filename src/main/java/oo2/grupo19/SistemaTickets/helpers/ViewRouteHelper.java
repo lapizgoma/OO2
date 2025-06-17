@@ -12,6 +12,7 @@ public class ViewRouteHelper {
     public static final String INDEX_USER = "customer/home";
     public static final String CONFIRMATION_QUESTION = "customer/confirmationQuestion";
     public static final String REMOVAL_SUCCESS = "customer/accountRemovalSuccess";
+    public static final String PROFILE = "customer/profile";
 
     public static final String INDEX_EMPLOYEE = "employee/home";
     public static final String EMPLEADO_REGISTER = "employee/registerEmpleado";

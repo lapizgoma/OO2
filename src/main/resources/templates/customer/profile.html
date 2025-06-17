@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil</title>
+</head>
+<body>
+    <!-- El formulario sigue usando th:object para cliente -->
+    <form th:action="@{/cuenta/editar}" th:object="${cliente}" method="post">
+        <h1>Editar Perfil</h1>
+        
+        <input type="hidden" id="password" th:field="*{password}">
+        <input type="hidden" id="dni" th:field="*{dni}">
+        <div>
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" th:field="*{nombre}">
+        </div>
+
+        <div>
+            <label for="apellido">Apellido:</label>
+            <input type="text" id="apellido" th:field="*{apellido}">
+        </div>
+
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" th:field="*{contacto.email}">
+        </div>
+
+        <div>
+            <label for="telefono">Teléfono:</label>
+            <input type="text" id="telefono" th:field="*{contacto.telefono}">
+        </div>
+
+        <div>
+            <label for="calle">Calle:</label>
+            <input type="text" id="calle" th:field="*{contacto.calle}">
+        </div>
+
+        <div>
+            <label for="nroPuerta">Número de Puerta:</label>
+            <input type="text" id="nroPuerta" th:field="*{contacto.nroPuerta}">
+        </div>
+
+        <div>
+            <label for="localidad">Localidad:</label>
+            <input type="text" id="localidad" th:field="*{contacto.localidad}">
+        </div>
+
+        <div th:if="${cliente.organizacion == null}">
+            <label for="codigoAcceso">Código de acceso:</label>
+            <input type="text" id="codigoAcceso" name="codigoAcceso"
+                   th:value="${codigoAcceso}" />
+        </div>
+
+        <button type="submit">Guardar Cambios</button>
+    </form>
+</body>
+</html>
