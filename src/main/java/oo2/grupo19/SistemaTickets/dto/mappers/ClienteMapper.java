@@ -18,6 +18,7 @@ public final class ClienteMapper {
         dto.setNombre(cliente.getNombre());
         dto.setApellido(cliente.getApellido());
         dto.setDni(cliente.getDni());
+        dto.setPassword(cliente.getPassword());
         dto.setContacto(ContactoMapper.mapToContactoDto(cliente.getContacto()));
         dto.setOrganizacion(PersonaJuridicaMapper.mapToPersonaJuridicaDto(cliente.getOrganizacion()));
         return dto;
