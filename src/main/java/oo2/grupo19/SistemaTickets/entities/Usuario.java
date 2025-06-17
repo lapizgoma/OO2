@@ -1,7 +1,6 @@
 package oo2.grupo19.SistemaTickets.entities;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import oo2.grupo19.SistemaTickets.entities.estados.Role;
 
 import java.util.Collection;

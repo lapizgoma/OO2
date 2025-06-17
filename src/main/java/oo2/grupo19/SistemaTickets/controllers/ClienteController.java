@@ -13,10 +13,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.dto.ClienteDTO;
 import oo2.grupo19.SistemaTickets.dto.personaJuridica.PersonaJuridicaDTO;
+import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 
 import static oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
@@ -45,7 +48,7 @@ public class ClienteController {
 
     @PostMapping("/editar")
     @PreAuthorize("hasRole('CUSTOMER')")
-    public String editarPerfil(@ModelAttribute ClienteDTO cliente,@RequestParam(required = false) String codigoAcceso, Model model) {
+    public String editarPerfil(@ModelAttribute ClienteDTO cliente,@RequestParam(required = false) String codigoAcceso, RedirectAttributes redirectAttributes) {
         if(codigoAcceso != null && !codigoAcceso.isEmpty()) {
             log.info("Codigo de acceso proporcionado: {}", codigoAcceso);
             PersonaJuridicaDTO personaJuridicaDTO = personaJuridicaService.findByCode(codigoAcceso);
@@ -54,7 +57,7 @@ public class ClienteController {
         }
         log.info("Actualizando perfil del cliente: {}", cliente);
         clienteService.save(cliente);
-        model.addAttribute("mensajeExitoso", "El perfil se ha actualizado correctamente.");
+        redirectAttributes.addFlashAttribute("mensajeExito", "El perfil se ha actualizado correctamente.");
         return "redirect:/" + ViewRouteHelper.INDEX_USER;
     }
 
