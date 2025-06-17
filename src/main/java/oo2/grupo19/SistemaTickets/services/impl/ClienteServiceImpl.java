@@ -69,27 +69,10 @@ public class ClienteServiceImpl implements IClienteService {
         }
         Optional<Cliente> clienteOpt = clienteRepository.findByContactoEmail(clientedto.getContacto().getEmail());
         if(clienteOpt.isPresent()) {
-            Cliente clienteDB = clienteRepository.findById(clienteOpt.get().getId()).get();
-            Cliente clienteNew = ClienteMapper.mapToClienteEntity(clientedto, clienteDB);
-            Contacto contactoDB = contactoRepository.findById(clienteDB.getContacto().getId()).get();
-            Contacto contactoNew = ContactoMapper.mapToContactoEntity(clientedto.getContacto(), contactoDB);
-            clienteNew.setId(clienteDB.getId());
-            contactoNew.setId(contactoDB.getId());
-            clienteNew.setContacto(contactoNew);
-            if (clienteNew.tieneOrganizacion()) {
-                PersonaJuridica organizacionDB = personaJuridicaRepository.findById(clienteDB.getOrganizacion().getId()).get();
-                PersonaJuridica organizacionNew = PersonaJuridicaMapper.mapToPersonaJuridicaEntity(clientedto.getOrganizacion(), organizacionDB);
-                organizacionNew.setId(organizacionDB.getId());
-                clienteNew.setOrganizacion(organizacionNew);
-            }
+            Cliente clienteNew = nuevoClienteSiEstaPresente(clientedto);
             clienteRepository.save(clienteNew);
         } else {
-            Cliente cliente = ClienteMapper.mapToClienteEntity(clientedto, new Cliente());
-            String passwordHash = passwordEncoder.encode(cliente.getPassword());
-            cliente.agregarRoles(roleRepository.findById(1L).orElseThrow(() -> new NotFoundException("Rol no encontrado")));
-            cliente.setPassword(passwordHash);
-            cliente.setContacto(ContactoMapper.mapToContactoEntity(clientedto.getContacto(), new Contacto()));
-            cliente.setOrganizacion(PersonaJuridicaMapper.mapToPersonaJuridicaEntity(clientedto.getOrganizacion(), new PersonaJuridica()));
+            Cliente cliente = clienteSiNoEstaPresente(clientedto);
             clienteRepository.save(cliente);
         }
     }
@@ -98,5 +81,42 @@ public class ClienteServiceImpl implements IClienteService {
     @Transactional(readOnly = true)
     public ClienteDTO findByEmail(String email){
         return ClienteMapper.mapToClienteDto(clienteRepository.findByContactoEmail(email).orElseThrow(() -> new NotFoundException("Cliente no encontrado")));
+    }
+    
+    private Cliente nuevoClienteSiEstaPresente(ClienteDTO clientedto) {
+        Cliente clienteNew = transformarDatosCliente(clientedto);
+        Contacto contactoNew = transformarDatosContacto(clientedto,clienteNew.getContacto().getId());
+        clienteNew.setContacto(contactoNew);
+        if (clienteNew.tieneOrganizacion()) {
+            PersonaJuridica organizacionDB = personaJuridicaRepository.findById(clienteNew.getOrganizacion().getId()).get();
+            PersonaJuridica organizacionNew = PersonaJuridicaMapper.mapToPersonaJuridicaEntity(clientedto.getOrganizacion(), organizacionDB);
+            organizacionNew.setId(organizacionDB.getId());
+            clienteNew.setOrganizacion(organizacionNew);
+        }
+        return clienteNew;
+    }
+
+    private Cliente transformarDatosCliente(ClienteDTO clientedto){
+        Cliente clienteDB = clienteRepository.findByContactoEmail(clientedto.getContacto().getEmail()).get();
+        Cliente clienteNew = ClienteMapper.mapToClienteEntity(clientedto, clienteDB);
+        clienteNew.setId(clienteDB.getId());
+        return clienteNew;
+    }
+
+    private Contacto transformarDatosContacto(ClienteDTO clientedto, Long idContacto){
+        Contacto contactoDB = contactoRepository.findById(idContacto).get();
+        Contacto contactoNew = ContactoMapper.mapToContactoEntity(clientedto.getContacto(), contactoDB);
+        contactoNew.setId(contactoDB.getId());
+        return contactoNew;
+    }
+
+    private Cliente clienteSiNoEstaPresente(ClienteDTO clientedto) {
+        Cliente cliente = ClienteMapper.mapToClienteEntity(clientedto, new Cliente());
+        String passwordHash = passwordEncoder.encode(cliente.getPassword());
+        cliente.agregarRoles(roleRepository.findById(1L).orElseThrow(() -> new NotFoundException("Rol no encontrado")));
+        cliente.setPassword(passwordHash);
+        cliente.setContacto(ContactoMapper.mapToContactoEntity(clientedto.getContacto(), new Contacto()));
+        cliente.setOrganizacion(PersonaJuridicaMapper.mapToPersonaJuridicaEntity(clientedto.getOrganizacion(), new PersonaJuridica()));
+        return cliente;
     }
 }
