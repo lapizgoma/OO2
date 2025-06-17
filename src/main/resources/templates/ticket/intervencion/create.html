@@ -9,17 +9,17 @@
     
     <h1>Crear intervencion</h1>
     <form th:action="@{/intervencion/create}" th:object="${intervencion}" method="post">
-        <input type="hidden" name="ticketId" th:value="${ticketId}">
-        <input type="hidden" name="empleadoId" th:value="${empleadoId}">
+        <input type="hidden" th:field="*{ticketId}" />
+
         <div>
             <label for="descripcion">Descripcion</label>
             <input type="text" th:field="*{descripcion}">
         </div>
 
-        <select th:field="*{estado.id}">
+        <select th:field="*{estado}">
             <option value="">Seleccione un estado</option>
             <option th:each="est : ${intervencionEstados}" 
-                    th:value="${est.id}" 
+                    th:value="${est.estado}"
                     th:text="${est.estado}">
             </option>
         </select>

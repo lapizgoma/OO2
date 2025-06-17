@@ -7,6 +7,7 @@ import java.util.Set;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.dto.IntervencionDTO;
 import oo2.grupo19.SistemaTickets.dto.mappers.IntervencionMapper;
 import oo2.grupo19.SistemaTickets.entities.Empleado;
@@ -22,6 +23,7 @@ import oo2.grupo19.SistemaTickets.repositories.estados.IEstadoIntervencion;
 import oo2.grupo19.SistemaTickets.repositories.estados.IEstadoTicket;
 import oo2.grupo19.SistemaTickets.services.IIntervencionService;
 
+@Log4j2
 @Service
 public class IntervencionServiceImpl implements IIntervencionService{
 
@@ -70,31 +72,53 @@ public class IntervencionServiceImpl implements IIntervencionService{
     @Transactional
     public void save(IntervencionDTO intervenciondto) {
         if (intervenciondto == null) {
-            throw new IllegalArgumentException("El contacto no puede ser null");
+            throw new IllegalArgumentException("La intervención no puede ser null");
         }
-        Optional<Intervencion> estadoOpt = intervencionRepository.findById(intervenciondto.getId());
-        if(estadoOpt.isPresent()) {
-            Intervencion intervencionDB = intervencionRepository.findById(intervenciondto.getId()).get();
+        
+        log.info("Estado recibido en DTO: {}", intervenciondto.getEstado());
+        
+        if(intervenciondto.getId() != null) {
+            // Actualización de intervención existente
+            Intervencion intervencionDB = intervencionRepository.findById(intervenciondto.getId())
+                .orElseThrow(() -> new NotFoundException("Intervención no encontrada"));
             Intervencion intervencionNew = IntervencionMapper.mapToIntervencionEntity(intervenciondto, intervencionDB);
-            Empleado empleado = intervencionDB.getRealizadoPor();
-            intervencionNew.setRealizadoPor(empleado);
-            Ticket ticket = intervencionDB.getTicket();
-            intervencionNew.setTicket(ticket);
-            EstadoIntervencion estado = estadoIntervencionRepository.findByEstado(intervenciondto.getEstado()).get();
+            
+            EstadoIntervencion estado = estadoIntervencionRepository.findByEstado(intervenciondto.getEstado())
+                .orElseThrow(() -> new NotFoundException("Estado no encontrado: " + intervenciondto.getEstado()));
+            
             intervencionNew.setEstado(estado);
+            intervencionNew.setRealizadoPor(intervencionDB.getRealizadoPor());
+            intervencionNew.setTicket(intervencionDB.getTicket());
+            
             intervencionRepository.save(intervencionNew);
         } else {
-        Intervencion intervencion = IntervencionMapper.mapToIntervencionEntity(intervenciondto, new Intervencion());
-        intervencion.setRealizadoPor(empleadoRepository.findByContactoEmail(intervenciondto.getEmpleadoEmail()).get());
-        intervencion.setTicket(ticketRepository.traerPorEmpleadoYId(empleadoRepository.findByContactoEmail(intervenciondto.getEmpleadoEmail()).get().getId(),
-                                    intervenciondto.getTicketId()).get());
-        intervencion.setEstado(estadoIntervencionRepository.findByEstado(intervenciondto.getEstado()).get());
-        Ticket ticket = ticketRepository.findById(intervenciondto.getTicketId()).get();
-        ticket.agregarEmpleado(empleadoRepository.findByContactoEmail(intervenciondto.getEmpleadoEmail()).get());
-        if(ticket.getEstado().getEstado().equals("PENDIENTE")) {
-            ticket.setEstado(estadoTicketRepository.findByEstado("ABIERTO").get());
-        }
-        intervencionRepository.save(intervencion);
+            // Creación de nueva intervención
+            log.info("Creando nueva intervención: {}", intervenciondto);
+            
+            Empleado empleado = empleadoRepository.findByContactoEmail(intervenciondto.getEmpleadoEmail())
+                .orElseThrow(() -> new NotFoundException("Empleado no encontrado"));
+                
+            Ticket ticket = ticketRepository.findById(intervenciondto.getTicketId())
+                .orElseThrow(() -> new NotFoundException("Ticket no encontrado"));
+                
+            EstadoIntervencion estado = estadoIntervencionRepository.findByEstado(intervenciondto.getEstado())
+                .orElseThrow(() -> new NotFoundException("Estado no encontrado: " + intervenciondto.getEstado()));
+                
+            Intervencion intervencion = new Intervencion();
+            intervencion.setDescripcion(intervenciondto.getDescripcion());
+            intervencion.setFecha(LocalDateTime.now());
+            intervencion.setEstado(estado);
+            intervencion.setRealizadoPor(empleado);
+            intervencion.setTicket(ticket);
+            
+            ticket.agregarEmpleado(empleado);
+            if(ticket.getEstado().getEstado().equals("PENDIENTE")) {
+                ticket.setEstado(estadoTicketRepository.findByEstado("ABIERTO")
+                    .orElseThrow(() -> new NotFoundException("Estado de ticket no encontrado")));
+            }
+            
+            log.info("Guardando intervención: {}", intervencion);
+            intervencionRepository.save(intervencion);
         }
     }
 
@@ -146,7 +170,7 @@ public class IntervencionServiceImpl implements IIntervencionService{
         }
 	}
 
-	@Transactional(readOnly = true)
+    @Transactional(readOnly = true)
 	public IntervencionDTO traerPorFecha(LocalDateTime fecha) {
 		return IntervencionMapper.mapToIntervencionDto(intervencionRepository.findByFecha(fecha).orElseThrow(() -> new NotFoundException("No se ha encontrado la intervención")));
 	}

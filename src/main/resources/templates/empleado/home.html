@@ -45,12 +45,12 @@
                             <div class="ticket-details">
                                  <div class="ticket-detail"><strong>Detalle:</strong> <span th:text="${ticket.detalle}"></span></div>
                                 <div class="ticket-detail"><strong>Estado:</strong> <span th:text="${ticket.estado.estado}"></span></div>
-                                <div class="ticket-detail"><strong>Fecha:</strong> <span th:text="${ticket.fechaHora}"></span></div>
+                                <div class="ticket-detail"><strong>Fecha:</strong> <span th:text="${ticket.fechaHoraCreado}"></span></div>
                                 <div class="ticket-detail-label mt-2">Última intervención:</div>
                                 <div class="ticket-detail-content" th:if="${ticket.ultimaIntervencion != null}"
                                      th:text="${ticket.ultimaIntervencion.descripcion}">
                                 </div>
-                                <div class="ticket-detail-content text-white-50" th:if="${ticket.lstIntervencion == null || ticket.lstIntervencion.isEmpty()}">Sin intervenciones</div>
+                                <div class="ticket-detail-content text-white-50" th:if="${ticket.intervenciones == null || ticket.intervenciones.isEmpty()}">Sin intervenciones</div>
                             </div>
                         </div>
                     </a>

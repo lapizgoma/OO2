@@ -22,5 +22,4 @@ public interface ITicketService extends IService<TicketDTO> {
     TicketEmployeeDTO getTicketparaEmpleado(Long ticketId, String empleadoEmail);
     TicketEmployeeDTO asignarTicket(Long ticketId, String empleadoEmail);
     TicketDTO findUltimoPorEmailYAsunto(String email,String asunto);
-
 }

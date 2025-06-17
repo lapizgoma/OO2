@@ -1,6 +1,5 @@
 package oo2.grupo19.SistemaTickets.dto.mappers;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
@@ -28,7 +27,6 @@ public final class IntervencionMapper {
         if (dto == null) return null;
         intervencion.setId(dto.getId());
         intervencion.setDescripcion(dto.getDescripcion());
-        intervencion.setFecha(LocalDateTime.parse(dto.getFecha(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
         return intervencion;
     }   
     

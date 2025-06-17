@@ -64,11 +64,11 @@
                             </div>
                         </div>
                     </div>
-                    <!-- <div class="mb-3">
+                    <div class="mb-3">
                         <a class="btn btn-primary" th:href="@{/intervencion/create/{idTicket}(idTicket=${ticketEmployeeDTO.id})}">Crear Intervención</a>
-                        <a class="btn btn-primary" th:if="${ticketEmployeeDTO.empleadoPertenece}" th:href="@{/ticket/update-ticket-estado(ticketId=${idTicket})}">Cambiar Estado</a>
+                        <a class="btn btn-primary" th:if="${ticketEmployeeDTO.cliente != null}" th:href="@{/ticket/update-ticket-estado(ticketId=${idTicket})}">Cambiar Estado</a>
 
-                    </div> -->
+                    </div>
                 </div>
                 <!-- Intervenciones a la derecha -->
                 <div class="col-lg-4">
@@ -80,7 +80,7 @@
                                     <div><strong class="text-primary">Fecha:</strong> <span class="text-white" th:text="${intervencion.fecha}"></span></div>
                                     <div><strong class="text-primary">Descripción:</strong> <span class="text-white" th:text="${intervencion.descripcion}"></span></div>
                                     <div><strong class="text-primary">Estado:</strong> <span class="text-white" th:text="${intervencion.estado}"></span></div>
-                                    <div><strong class="text-primary">Realizado por:</strong> <span class="text-white" th:text="${intervencion.realizadoPor.nombre} + ' ' + ${intervencion.realizadoPor.apellido}"></span></div>
+                                    <!-- <div><strong class="text-primary">Realizado por:</strong> <span class="text-white" th:text="${intervencion.realizadoPor.nombre} + ' ' + ${intervencion.realizadoPor.apellido}"></span></div> -->
                                 </li>
                             </ul>
                         </div>
@@ -116,7 +116,7 @@
                                     <div><strong class="text-primary">Fecha:</strong> <span class="text-white" th:text="${intervencion.fecha}"></span></div>
                                     <div><strong class="text-primary">Descripción:</strong> <span class="text-white" th:text="${intervencion.descripcion}"></span></div>
                                     <div><strong class="text-primary">Estado:</strong> <span class="text-white" th:text="${intervencion.estado}"></span></div>
-                                    <div><strong class="text-primary">Realizado por:</strong> <span class="text-white" th:text="${intervencion.realizadoPor.nombre} + ' ' + ${intervencion.realizadoPor.apellido}"></span></div>
+                                    <!-- <div><strong class="text-primary">Realizado por:</strong> <span class="text-white" th:text="${intervencion.realizadoPor.nombre} + ' ' + ${intervencion.realizadoPor.apellido}"></span></div> -->
                                 </li>
                             </ul>
                         </div>
