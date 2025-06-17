@@ -16,6 +16,7 @@ import oo2.grupo19.SistemaTickets.entities.estados.enums.RoleType;
 @Setter
 @NoArgsConstructor
 @Builder
+@ToString
 public class Role {
     @Id
     @Setter(AccessLevel.NONE)

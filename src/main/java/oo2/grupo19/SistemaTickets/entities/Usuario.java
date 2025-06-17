@@ -28,7 +28,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -55,18 +54,14 @@ public class Usuario implements UserDetails {
     protected Contacto contacto;
 
     @Column(length = 20)
-    @NotBlank(message = "El nombre no debe estar vacio")
     protected String nombre;
 
     @Column(length = 20)
-    @NotBlank(message = "El apellido no debe estar vacio")
     protected String apellido;
 
     @Column(nullable = false)
-    @NotBlank(message = "La password no debe estar vacia")
     protected String password;
 
-    @Size(min = 7, max = 8, message = "El DNI debe tener entre 7 y 8 caracteres")
     @Column(nullable = false)
     private String dni;
 
