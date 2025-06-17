@@ -29,7 +29,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 @Controller
 @Log4j2
-@RequestMapping("/empleados")
+@RequestMapping("/employee")
 public class EmpleadoController {
     
     private final IEmpleadoService empleadoService;

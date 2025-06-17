@@ -16,8 +16,8 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item me-2">
                         <a class="btn btn-primary" th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{/admin/home}">Ver Tickets</a>
-                        <a class="btn btn-primary" th:if="${#authorization.expression('hasRole(''EMPLOYEE'')')}" th:href="@{/empleado/home}">Ver Tickets</a>
-                        <a class="btn btn-primary" th:if="${#authorization.expression('hasRole(''USER'')')}" th:href="@{/cliente/home}">Ver Tickets</a>
+                        <a class="btn btn-primary" th:if="${#authorization.expression('hasRole(''EMPLOYEE'')')}" th:href="@{/employee/home}">Ver Tickets</a>
+                        <a class="btn btn-primary" th:if="${#authorization.expression('hasRole(''USER'')')}" th:href="@{/customer/home}">Ver Tickets</a>
                     </li>
                     <li class="nav-item">
                         <form th:action="@{/auth/logout}" method="post" class="d-inline">
@@ -46,8 +46,8 @@
                                 <div class="col-md-4"><strong class="text-primary">Prioridad:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.prioridad}"></span></div>
                             </div>
                             <div class="row mb-2">
-                                <div class="col-md-4"><strong class="text-primary">Nombre:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.usuarioNombre}"></span></div>
-                                <div class="col-md-4"><strong class="text-primary">Apellido:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.usuarioApellido}"></span></div>
+                                <div class="col-md-4"><strong class="text-primary">Nombre:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.cliente.nombre}"></span></div>
+                                <div class="col-md-4"><strong class="text-primary">Apellido:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.cliente.apellido}"></span></div>
                                 <div class="col-md-4"><strong class="text-primary">Asunto:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.asunto}"></span></div>
                             </div>
                             <div class="mb-2"><strong class="text-primary">Detalle:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.detalle}"></span></div>
@@ -58,15 +58,15 @@
                         <div class="card-body">
                             <h5 class="card-title text-primary mb-3">Contacto del Cliente</h5>
                             <div class="row mb-2">
-                                <div class="col-md-4"><strong class="text-primary">Email:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.usuarioContactoDTO.email}"></span></div>
-                                <div class="col-md-4"><strong class="text-primary">Teléfono:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.usuarioContactoDTO.telefono}"></span></div>
-                                <div class="col-md-4"><strong class="text-primary">Dirección:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.usuarioContactoDTO.calle} + ' ' + ${ticketEmployeeDTO.usuarioContactoDTO.nroPuerta} + ', ' + ${ticketEmployeeDTO.usuarioContactoDTO.localidad}"></span></div>
+                                <div class="col-md-4"><strong class="text-primary">Email:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.cliente.contacto.email}"></span></div>
+                                <div class="col-md-4"><strong class="text-primary">Teléfono:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.cliente.contacto.telefono}"></span></div>
+                                <div class="col-md-4"><strong class="text-primary">Dirección:</strong> <span class="text-white" th:text="|${ticketEmployeeDTO.cliente.contacto.calle} ${ticketEmployeeDTO.usuarioContactoDTO.nroPuerta}, ${ticketEmployeeDTO.usuarioContactoDTO.localidad}|"></span></div>
                             </div>
                         </div>
                     </div>
                     <div class="mb-3">
                         <a class="btn btn-primary" th:href="@{/intervencion/create/{idTicket}(idTicket=${ticketEmployeeDTO.id})}">Crear Intervención</a>
-                        <a class="btn btn-primary" th:if="${ticketEmployeeDTO.empleadoPertenece}" th:href="@{/ticket/update-ticket-estado(ticketId=${idTicket})}">Cambiar Estado</a>
+                        <a class="btn btn-primary" th:if="${ticketEmployeeDTO.empleadoPertenece}" th:href="@{/ticket/update-ticket-estado(ticketId=${ticketEmployeeDTO.id})}">Cambiar Estado</a>
 
                     </div>
                 </div>

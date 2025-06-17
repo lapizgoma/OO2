@@ -9,15 +9,15 @@ public class ViewRouteHelper {
     public static final String LOGIN = "auth/login";
     public static final String REGISTER = "auth/register";
     
-    public static final String INDEX_USER = "cliente/home";
-    public static final String CONFIRMATION_QUESTION = "cliente/confirmationQuestion";
-    public static final String REMOVAL_SUCCESS = "cliente/accountRemovalSuccess";
+    public static final String INDEX_USER = "customer/home";
+    public static final String CONFIRMATION_QUESTION = "customer/confirmationQuestion";
+    public static final String REMOVAL_SUCCESS = "customer/accountRemovalSuccess";
 
-    public static final String INDEX_EMPLOYEE = "empleado/home";
-    public static final String EMPLEADO_REGISTER = "empleado/registerEmpleado";
-    public static final String LISTAR_EMPLEADOS = "empleado/listarEmpleados";
-    public static final String EMPLEADO_REGISTRADO = "empleado/registerSuccessfull";
-    public static final String EMPLEADO_BORRADO = "empleado/deletedSuccessfull";
+    public static final String INDEX_EMPLOYEE = "employee/home";
+    public static final String EMPLEADO_REGISTER = "employee/registerEmpleado";
+    public static final String LISTAR_EMPLEADOS = "employee/listarEmpleados";
+    public static final String EMPLEADO_REGISTRADO = "employee/registerSuccessfull";
+    public static final String EMPLEADO_BORRADO = "employee/deletedSuccessfull";
 
     public static final String FORM_PERSONA_JURIDICA = "personaJuridica/create";
     public static final String VIEW_PERSONA_JURIDICA = "personaJuridica/personaJuridica";

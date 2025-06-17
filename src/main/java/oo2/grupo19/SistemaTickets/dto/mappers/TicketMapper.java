@@ -23,9 +23,7 @@ public final class TicketMapper {
         dto.setDetalle(ticket.getDetalle());
         dto.setClienteEmail(ticket.getCreadoPor().getContacto().getEmail());
         // Hace falta este if??
-        if (ticket.getFechaHora() != null) {
-            dto.setFechaHoraCreado(ticket.getFechaHora().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
-        }
+        dto.setFechaHoraCreado(ticket.getFechaHora().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
         Set<IntervencionDTO> intervenciones = new HashSet<>();
         if (ticket.getLstIntervencion() != null) {
             for (Intervencion intervencion : ticket.getLstIntervencion()) {

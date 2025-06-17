@@ -1,6 +1,8 @@
 package oo2.grupo19.SistemaTickets.controllers;
 import java.util.Set;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +73,7 @@ public class TicketController {
         ticket.setClienteEmail(clienteService.findByEmail(email).getContacto().getEmail());
         ticket.setEstado(estado);
         ticket.setDetalle(contenido);
+        ticket.setFechaHoraCreado(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
         ticketService.save(ticket);
         logger.info("Ticket creado exitosamente por: {}", email);
         model.addAttribute("title","Ticket create");
@@ -79,17 +82,17 @@ public class TicketController {
     }
     
     @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE', 'ADMIN')")
-    @GetMapping("/{idTicket}")
-    public String verTicket(@PathVariable long idTicket, Authentication authentication, Model model) {
-
+    @GetMapping("/{id}")
+    public String verTicket(@PathVariable long id, Authentication authentication, Model model) {
+        log.info("ticketid:", id);
         if (authentication.getAuthorities ().stream ().anyMatch (a -> a.getAuthority ().equals ("ROLE_EMPLOYEE"))) 
         {
-            TicketEmployeeDTO ticket = ticketService.getTicketparaEmpleado(idTicket, authentication.getName ());
+            TicketEmployeeDTO ticket = ticketService.getTicketparaEmpleado(id);
             model.addAttribute("ticketEmployeeDTO", ticket);
         }
         else if (authentication.getAuthorities ().stream ().anyMatch (a -> a.getAuthority ().equals ("ROLE_CUSTOMER"))) 
         {
-            TicketDTO ticket = ticketService.getTicketParaCliente(idTicket, authentication.getName ());
+            TicketDTO ticket = ticketService.getTicketParaCliente(id, authentication.getName ());
             model.addAttribute("ticketClientDTO", ticket);
         }
 

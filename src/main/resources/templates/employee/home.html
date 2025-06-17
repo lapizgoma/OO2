@@ -37,7 +37,7 @@
         <div th:if="${tickets != null && !tickets.isEmpty()}">
             <div class="d-flex flex-wrap justify-content-center gap-4">
                 <div class="ticket-card-wrapper" th:each="ticket : ${tickets}">
-                    <a th:href="@{'/ticket/' + ${ticket.id}}" style="text-decoration:none; color:inherit;">
+                    <a th:href="@{/ticket/{ticketId}(ticketId=${ticket.id})}" style="text-decoration:none; color:inherit;">
                         <div class="ticket-card">
                             <div class="ticket-header">
                                 <h5 class="card-title mb-0">Ticket #<span th:text="${ticket.id}"></span> <span class="ms-2" th:text="${ticket.asunto}"></span></h5>
@@ -45,12 +45,12 @@
                             <div class="ticket-details">
                                  <div class="ticket-detail"><strong>Detalle:</strong> <span th:text="${ticket.detalle}"></span></div>
                                 <div class="ticket-detail"><strong>Estado:</strong> <span th:text="${ticket.estado.estado}"></span></div>
-                                <div class="ticket-detail"><strong>Fecha:</strong> <span th:text="${ticket.fechaHora}"></span></div>
+                                <div class="ticket-detail"><strong>Fecha:</strong> <span th:text="${ticket.fechaHoraCreado}"></span></div>
                                 <div class="ticket-detail-label mt-2">Última intervención:</div>
                                 <div class="ticket-detail-content" th:if="${ticket.ultimaIntervencion != null}"
                                      th:text="${ticket.ultimaIntervencion.descripcion}">
                                 </div>
-                                <div class="ticket-detail-content text-white-50" th:if="${ticket.lstIntervencion == null || ticket.lstIntervencion.isEmpty()}">Sin intervenciones</div>
+                                <div class="ticket-detail-content text-white-50" th:if="${ticket.intervenciones == null || ticket.intervenciones.isEmpty()}">Sin intervenciones</div>
                             </div>
                         </div>
                     </a>

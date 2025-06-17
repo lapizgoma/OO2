@@ -12,6 +12,9 @@ public interface ITicket extends JpaRepository<Ticket,Long> {
     
     List<Ticket> findByCreadoPor_Id(Long id);
 
+    @Query("select t from Ticket t where t.id = :id")
+    Optional<Ticket> traerPorId(@Param("id") Long id);
+
     @Query("select t from Ticket t left join fetch t.lstIntervencion where t.creadoPor.contacto.email = :email")
     List<Ticket> traerPorCliente(@Param("email") String email);
 

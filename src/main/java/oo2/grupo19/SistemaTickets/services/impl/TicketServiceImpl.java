@@ -178,10 +178,10 @@ public class TicketServiceImpl implements ITicketService{
     }
 
     @Transactional(readOnly = true)
-    public TicketEmployeeDTO getTicketparaEmpleado(Long ticketId, String empleadoEmail) {
+    public TicketEmployeeDTO getTicketparaEmpleado(Long ticketId) {
         try {
-            Ticket ticketEntity = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new NotFoundException("No pudimos encontrar el Ticket que buscás"));
+            Ticket ticketEntity = ticketRepository.traerPorId(ticketId)
+                .orElseThrow();
             return TicketEmployeeMapper.mapToTicketEmployeeDto(ticketEntity);
         } catch (Exception e) {
             throw new NotFoundException("Error al obtener el ticket para el empleado");
