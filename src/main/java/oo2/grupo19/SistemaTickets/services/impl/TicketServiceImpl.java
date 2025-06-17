@@ -191,9 +191,10 @@ public class TicketServiceImpl implements ITicketService{
         try {
             Ticket ticketEntity = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new NotFoundException("No pudimos encontrar el Ticket que buscás"));
+            log.info ("EMPLEADO PIDE TICKET ID: " + ticketId.toString ());
             return TicketEmployeeMapper.mapToTicketEmployeeDto(ticketEntity);
         } catch (Exception e) {
-            throw new NotFoundException("Error al obtener el ticket para el empleado");
+            throw new NotFoundException("Error al obtener el ticket para el empleado" + e.getMessage());
         }
     }
 

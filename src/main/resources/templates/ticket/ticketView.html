@@ -42,12 +42,12 @@
                             <h5 class="card-title text-primary mb-3">Información del Ticket</h5>
                             <div class="row mb-2">
                                 <div class="col-md-4"><strong class="text-primary">Id:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.id}"></span></div>
-                                <div class="col-md-4"><strong class="text-primary">Estado:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.estado}"></span></div>
+                                <div class="col-md-4"><strong class="text-primary">Estado:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.estado.estado}"></span></div>
                                 <div class="col-md-4"><strong class="text-primary">Prioridad:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.prioridad}"></span></div>
                             </div>
                             <div class="row mb-2">
-                                <div class="col-md-4"><strong class="text-primary">Nombre:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.usuarioNombre}"></span></div>
-                                <div class="col-md-4"><strong class="text-primary">Apellido:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.usuarioApellido}"></span></div>
+                                <div class="col-md-4"><strong class="text-primary">Nombre:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.cliente.nombre}"></span></div>
+                                <div class="col-md-4"><strong class="text-primary">Apellido:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.cliente.apellido}"></span></div>
                                 <div class="col-md-4"><strong class="text-primary">Asunto:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.asunto}"></span></div>
                             </div>
                             <div class="mb-2"><strong class="text-primary">Detalle:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.detalle}"></span></div>
@@ -58,17 +58,17 @@
                         <div class="card-body">
                             <h5 class="card-title text-primary mb-3">Contacto del Cliente</h5>
                             <div class="row mb-2">
-                                <div class="col-md-4"><strong class="text-primary">Email:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.usuarioContactoDTO.email}"></span></div>
-                                <div class="col-md-4"><strong class="text-primary">Teléfono:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.usuarioContactoDTO.telefono}"></span></div>
-                                <div class="col-md-4"><strong class="text-primary">Dirección:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.usuarioContactoDTO.calle} + ' ' + ${ticketEmployeeDTO.usuarioContactoDTO.nroPuerta} + ', ' + ${ticketEmployeeDTO.usuarioContactoDTO.localidad}"></span></div>
+                                <div class="col-md-4"><strong class="text-primary">Email:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.cliente.contacto.email}"></span></div>
+                                <div class="col-md-4"><strong class="text-primary">Teléfono:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.cliente.contacto.telefono}"></span></div>
+                                <div class="col-md-4"><strong class="text-primary">Dirección:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.cliente.contacto.calle} + ' ' + ${ticketEmployeeDTO.cliente.contacto.nroPuerta} + ', ' + ${ticketEmployeeDTO.cliente.contacto.localidad}"></span></div>
                             </div>
                         </div>
                     </div>
-                    <div class="mb-3">
+                    <!-- <div class="mb-3">
                         <a class="btn btn-primary" th:href="@{/intervencion/create/{idTicket}(idTicket=${ticketEmployeeDTO.id})}">Crear Intervención</a>
                         <a class="btn btn-primary" th:if="${ticketEmployeeDTO.empleadoPertenece}" th:href="@{/ticket/update-ticket-estado(ticketId=${idTicket})}">Cambiar Estado</a>
 
-                    </div>
+                    </div> -->
                 </div>
                 <!-- Intervenciones a la derecha -->
                 <div class="col-lg-4">
