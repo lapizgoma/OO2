@@ -48,8 +48,6 @@
                             <div class="row mb-2">
                                 <div class="col-md-4"><strong class="text-primary">Nombre:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.cliente.nombre}"></span></div>
                                 <div class="col-md-4"><strong class="text-primary">Apellido:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.cliente.apellido}"></span></div>
-                                <div class="col-md-4"><strong class="text-primary">Nombre:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.cliente.nombre}"></span></div>
-                                <div class="col-md-4"><strong class="text-primary">Apellido:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.cliente.apellido}"></span></div>
                                 <div class="col-md-4"><strong class="text-primary">Asunto:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.asunto}"></span></div>
                             </div>
                             <div class="mb-2"><strong class="text-primary">Detalle:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.detalle}"></span></div>
@@ -68,7 +66,7 @@
                     </div>
                     <div class="mb-3">
                         <a class="btn btn-primary" th:href="@{/intervencion/create/{idTicket}(idTicket=${ticketEmployeeDTO.id})}">Crear Intervención</a>
-                        <a class="btn btn-primary" th:if="${ticketEmployeeDTO.cliente != null}" th:href="@{/ticket/update-ticket-estado(ticketId=${idTicket})}">Cambiar Estado</a>
+                        <a class="btn btn-primary" th:if="${ticketEmployeeDTO.cliente != null}" th:href="@{/ticket/update-ticket(ticketId=${idTicket})}">Cambiar Estado</a>
 
                     </div>
                 </div>

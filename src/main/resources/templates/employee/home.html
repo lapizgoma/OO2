@@ -37,7 +37,7 @@
         <div th:if="${tickets != null && !tickets.isEmpty()}">
             <div class="d-flex flex-wrap justify-content-center gap-4">
                 <div class="ticket-card-wrapper" th:each="ticket : ${tickets}">
-                    <a th:href="@{/ticket/{ticketId}(ticketId=${ticket.id})}" style="text-decoration:none; color:inherit;">
+                    <a th:href="@{'/ticket/' + ${ticket.id}}" style="text-decoration:none; color:inherit;">
                         <div class="ticket-card">
                             <div class="ticket-header">
                                 <h5 class="card-title mb-0">Ticket #<span th:text="${ticket.id}"></span> <span class="ms-2" th:text="${ticket.asunto}"></span></h5>

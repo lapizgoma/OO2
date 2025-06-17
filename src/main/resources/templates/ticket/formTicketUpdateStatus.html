@@ -11,27 +11,27 @@
 
     <h1>Actualizar Estado del Ticket</h1>
 
-    <form th:action="@{/ticket/update-ticket-estado}" th:object="${ticket}" method="post">
-        <input type="hidden" th:field="*{id}" />
+    <form th:action="@{/ticket/update-ticket-status}" th:object="${ticket}" method="post">
+        <input type="hidden" name="ticketId" th:value="${ticket.id}" />
 
         <label for="asunto">Asunto</label>
         <input type="text" th:field="*{asunto}" id="asunto" readonly>
         <strong>Estado actual:</strong> <span th:text="${ticket.estado.estado}"></span>
         <label for="estado"> Cambiar estado</label>
-        <select th:field="*{estado.id}" id="estado">
+        <select name="estado.estado" id="estado">
             <!-- Tipos de estado(a cambiar) -->
-            <option value="1">Pendiente</option>
-            <option value="2">Atendido</option>
-            <option value="3">Cerrado</option>
+            <option value="Pendiente">Pendiente</option>
+            <option value="Atendido">Atendido</option>
+            <option value="Cerrado">Cerrado</option>
         </select>
 
         <button type="submit">Actualizar Ticket</button>
     </form>
-    <th:block th:if="${ticket.lstIntervencion != null}">
-    <div th:each="intervencion : ${ticket.lstIntervencion}">
+    <th:block th:if="${ticket.intervenciones != null}">
+    <div th:each="intervencion : ${ticket.intervenciones}">
         <p>
             <strong>Intervención:</strong> <span th:text="${intervencion.descripcion}"></span><br/>
-            <strong>Estado actual:</strong> <span th:text="${intervencion.estado.estado}"></span>
+            <strong>Estado actual:</strong> <span th:text="${intervencion.estado}"></span>
         </p>
 
         <form th:action="@{/intervencion/processing-ticket/update-intervencion}" method="post">
@@ -43,7 +43,7 @@
             <option th:each="estadoIntervencion : ${estadosIntervencion}"
                     th:value="${estadoIntervencion.id}"
                     th:text="${estadoIntervencion.estado}"
-                    th:selected="${estadoIntervencion.id == intervencion.estado.id}">
+                    th:selected="${estadoIntervencion.estado == intervencion.estado}">
                 opcion
             </option>
             </select>

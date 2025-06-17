@@ -3,6 +3,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -90,12 +93,12 @@ public class TicketController {
         // No se muestra el nombre del empleado que creó la intervencion. Buscar una solucion o hacer que no muestre nada.
         if (authentication.getAuthorities ().stream ().anyMatch (a -> a.getAuthority ().equals ("ROLE_EMPLOYEE"))) 
         {  
-            TicketEmployeeDTO ticket = ticketService.getTicketparaEmpleado(idTicket, authentication.getName ());
+            TicketEmployeeDTO ticket = ticketService.getTicketparaEmpleado(idTicket);
             model.addAttribute("ticketEmployeeDTO", ticket);
         }
         else if (authentication.getAuthorities ().stream ().anyMatch (a -> a.getAuthority ().equals ("ROLE_CUSTOMER"))) 
         {
-            TicketDTO ticket = ticketService.getTicketParaCliente(id, authentication.getName ());
+            TicketDTO ticket = ticketService.getTicketParaCliente(idTicket, authentication.getName ());
             model.addAttribute("ticketClientDTO", ticket);
         }
         return ViewRouteHelper.VIEW_TICKET;

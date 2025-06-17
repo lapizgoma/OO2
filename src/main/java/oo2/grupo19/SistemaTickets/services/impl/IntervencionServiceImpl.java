@@ -15,6 +15,7 @@ import oo2.grupo19.SistemaTickets.entities.Intervencion;
 import oo2.grupo19.SistemaTickets.entities.Ticket;
 import oo2.grupo19.SistemaTickets.entities.Usuario;
 import oo2.grupo19.SistemaTickets.entities.estados.EstadoIntervencion;
+import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.InvalidInputException;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
 import oo2.grupo19.SistemaTickets.repositories.IEmpleado;
 import oo2.grupo19.SistemaTickets.repositories.IIntervencion;
@@ -103,7 +104,10 @@ public class IntervencionServiceImpl implements IIntervencionService{
                 
             EstadoIntervencion estado = estadoIntervencionRepository.findByEstado(intervenciondto.getEstado())
                 .orElseThrow(() -> new NotFoundException("Estado no encontrado: " + intervenciondto.getEstado()));
-                
+            
+            if (intervenciondto.getDescripcion() == null || intervenciondto.getDescripcion().isEmpty()) {
+                throw new InvalidInputException("La descripción de la intervención no puede ser null o vacía");
+            }
             Intervencion intervencion = new Intervencion();
             intervencion.setDescripcion(intervenciondto.getDescripcion());
             intervencion.setFecha(LocalDateTime.now());

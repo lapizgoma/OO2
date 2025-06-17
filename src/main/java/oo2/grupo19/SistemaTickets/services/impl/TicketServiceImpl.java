@@ -90,9 +90,9 @@ public class TicketServiceImpl implements ITicketService{
     @Transactional(readOnly = true)
     public TicketEmployeeDTO findByIdAndEmpleado(Long idEmpleado, Long idTicket) {
         return TicketEmployeeMapper.mapToTicketEmployeeDto(
-            ticketRepository.traerPorEmpleadoYId(idTicket, idEmpleado)
+            ticketRepository.traerPorEmpleadoYId(idEmpleado, idTicket)
                 .orElseThrow(() -> new NotFoundException("No se ha encontrado el ticket con el id: " + idTicket + " o no tiene permiso"))
-        );
+        ); 
     }
 
 
