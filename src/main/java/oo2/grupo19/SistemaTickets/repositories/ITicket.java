@@ -38,4 +38,8 @@ public interface ITicket extends JpaRepository<Ticket,Long> {
     Ticket traerPorEmpleadoYId(@Param("idEmpleado") Long idEmpleado, @Param("idTicket") Long idTicket);*/
     @Query("select t from Ticket t join t.listEmpleado e where t.id = :idTicket and e.id = :idEmpleado")
     Optional<Ticket> traerPorEmpleadoYId(@Param("idEmpleado") Long idEmpleado, @Param("idTicket") Long idTicket);
+
+    @Query("SELECT t FROM Ticket t WHERE t.creadoPor.contacto.email = :email AND t.asunto = :asunto ORDER BY t.fechaHora DESC")
+    Optional<Ticket> findUltimoPorEmailYAsunto(@Param("email") String email, @Param("asunto") String asunto);
+
 }

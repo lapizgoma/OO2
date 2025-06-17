@@ -1,4 +1,6 @@
 package oo2.grupo19.SistemaTickets.controllers;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.time.LocalDate;
 
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import lombok.extern.log4j.Log4j2;
+import oo2.grupo19.SistemaTickets.dto.ClienteDTO;
 import oo2.grupo19.SistemaTickets.dto.EstadoTicketDTO;
 import oo2.grupo19.SistemaTickets.dto.PrioridadDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketDTO;
@@ -24,6 +27,7 @@ import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 import oo2.grupo19.SistemaTickets.security.SecurityService;
 import oo2.grupo19.SistemaTickets.services.ITicketService;
 import oo2.grupo19.SistemaTickets.services.IEstadoTicketService;
+import oo2.grupo19.SistemaTickets.services.EmailService;
 import oo2.grupo19.SistemaTickets.services.IClienteService;
 import oo2.grupo19.SistemaTickets.services.IEstadoIntervencionService;
 import oo2.grupo19.SistemaTickets.services.IPrioridadService;
@@ -38,15 +42,16 @@ public class TicketController {
     private final IEstadoIntervencionService estadoIntervencionService;
     private final SecurityService securityService;
     private final IPrioridadService prioridadService;
+    private final EmailService emailService;
 
-    public TicketController(ITicketService ticketService, IPrioridadService prioridadService, IEstadoIntervencionService estadoIntervencionService,
-                                IClienteService clienteService, SecurityService securityService, IEstadoTicketService estadoTicketService) {
+    public TicketController(ITicketService ticketService, IPrioridadService prioridadService, IEstadoIntervencionService    estadoIntervencionService,IClienteService clienteService, SecurityService securityService, IEstadoTicketService estadoTicketService, EmailService emailService) {
         this.ticketService = ticketService;
         this.estadoIntervencionService = estadoIntervencionService;
         this.clienteService = clienteService;
         this.securityService = securityService;
         this.estadoTicketService = estadoTicketService;
         this.prioridadService = prioridadService;
+        this.emailService = emailService;
     }
 
     private static final Logger logger = LoggerFactory.getLogger(TicketController.class);
@@ -73,12 +78,13 @@ public class TicketController {
         ticket.setDetalle(contenido);
         ticketService.save(ticket);
         logger.info("Ticket creado exitosamente por: {}", email);
+        sendEmailTicketCreate(ticketService.findUltimoPorEmailYAsunto(ticket.getClienteEmail(), ticket.getAsunto()));
         model.addAttribute("title","Ticket create");
         model.addAttribute("titulo-h1","El ticket ha sido creado con exito!! Puede volver al home");
         return ViewRouteHelper.TICKET_SUCCESS;
     }
     
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
     @GetMapping("/{idTicket}")
     public String verTicket(@PathVariable long idTicket, Authentication authentication, Model model) {
 
@@ -227,5 +233,15 @@ public class TicketController {
     @GetMapping("/form-filtrar-tickets")
         public String showFilterPage() {
     return "ticket/formTicketsFiltrar";  // La vista con los formularios de filtro 
+    }
+
+    private void sendEmailTicketCreate(TicketDTO ticket){
+        Map<String,Object> infoClient = new HashMap<>();
+        infoClient.put("nombre",clienteService.findByEmail(ticket.getClienteEmail()).getNombre());
+        infoClient.put("mensaje","Su ticket ha sido creado con exito, aguarde la respuesta de un empleado");
+        infoClient.put("asunto", ticket.getAsunto());
+        infoClient.put("fechaTicket", ticket.getFechaHoraCreado());
+        infoClient.put("id",ticket.getId());
+        emailService.enviarCorreoHtml(ticket.getClienteEmail(), "Su ticket fue registrado en el sistema", "email", infoClient);
     }
 }
