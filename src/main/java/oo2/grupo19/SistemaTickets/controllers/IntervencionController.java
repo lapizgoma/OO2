@@ -84,7 +84,7 @@ public class IntervencionController {
         infoClient.put("mensaje","Se creo una nueva intervención para su ticket");
         infoClient.put("descripcion", intervencion.getDescripcion());
         infoClient.put("id",ticketdto.getId());
-        emailService.enviarCorreoHtml(ticketdto.getClienteEmail(), "Su ticket fue registrado en el sistema", ViewRouteHelper.INTERVENCION_SUCCESS_MAIL, infoClient);
+        emailService.enviarCorreoHtml(ticketdto.getClienteEmail(), "Nueva intervencion", ViewRouteHelper.INTERVENCION_SUCCESS_MAIL, infoClient);
     }
 
 }
