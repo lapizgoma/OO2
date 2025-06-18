@@ -117,18 +117,7 @@ public class TicketController {
         
         return "redirect:/ticket/" + idTicket;
     }
-    /* 
-    @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
-    @GetMapping("/update-ticket")
-    public String showUpdateStatusForm(@RequestParam Long ticketId, Authentication auth, Model model){
-        Long empleadoId = securityService.getIdEmpleado(auth);
-        TicketEmployeeDTO ticket = ticketService.findByIdAndEmpleado(empleadoId, ticketId);
-        model.addAttribute("ticket", ticket);
-        model.addAttribute("estadosIntervencion", estadoIntervencionService.findAll());
-        model.addAttribute("estadoPrioridad",prioridadService.findAll());
-        model.addAttribute("title","Modificar prioridad");
-        return ViewRouteHelper.TICKET_UPDATE_STATUS; 
-    }*/
+    
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @PostMapping("/update-ticket-priority")
     public String postUpdateTicket(@RequestParam("ticketId") Long idTicket,
