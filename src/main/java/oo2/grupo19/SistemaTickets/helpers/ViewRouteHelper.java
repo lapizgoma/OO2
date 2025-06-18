@@ -27,8 +27,10 @@ public class ViewRouteHelper {
     public static final String FORM_TICKET = "ticket/formTicket";
     public static final String FORM_LISTAR_TICKET = "ticket/ver-tickets";
     public static final String VIEW_TICKET = "ticket/ticketView";
+    public static final String TICKET_LIST = "ticket/listTickets";
     public static final String TICKET_UPDATE_STATUS = "ticket/formTicketUpdateStatus";
     public static final String TICKET_SUCCESS_MAIL = "ticket/emailTicket";
+    public static final String TICKET_FORM_FILTRAR = "ticket/formTicketsFiltrar";
 
     public static final String FORM_CREATE_INTERVENCION = "ticket/intervencion/create";
     public static final String INTERVENCION_SUCCESS = "ticket/intervencion/intervencionSuccess";
@@ -36,4 +38,8 @@ public class ViewRouteHelper {
 
     public static final String ERROR_404 = "errors/404";
     public static final String ERROR_INDEX = "errors/error";
- }
+ 
+    public static final String TICKET_VIEW_ID(Long id){
+        return "redirect:/ticket/" + id;
+    }
+}
