@@ -19,7 +19,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.dto.ClienteDTO;
 import oo2.grupo19.SistemaTickets.dto.personaJuridica.PersonaJuridicaDTO;
-import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 
 import static oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;

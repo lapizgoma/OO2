@@ -15,9 +15,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item me-2">
-                        <a class="btn btn-primary" th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{/admin/home}">Ver Tickets</a>
-                        <a class="btn btn-primary" th:if="${#authorization.expression('hasRole(''EMPLOYEE'')')}" th:href="@{/employee/home}">Ver Tickets</a>
-                        <a class="btn btn-primary" th:if="${#authorization.expression('hasRole(''USER'')')}" th:href="@{/customer/home}">Ver Tickets</a>
+                        <a class="btn btn-primary" th:href="@{/home}">Ver Tickets</a>
                     </li>
                     <li class="nav-item">
                         <form th:action="@{/auth/logout}" method="post" class="d-inline">
@@ -43,7 +41,7 @@
                             <div class="row mb-2">
                                 <div class="col-md-4"><strong class="text-primary">Id:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.id}"></span></div>
                                 <div class="col-md-4"><strong class="text-primary">Estado:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.estado.estado}"></span></div>
-                                <div class="col-md-4"><strong class="text-primary">Prioridad:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.prioridad}"></span></div>
+                                <div class="col-md-4"><strong class="text-primary">Prioridad:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.prioridad.prioridad}"></span></div>
                             </div>
                             <div class="row mb-2">
                                 <div class="col-md-4"><strong class="text-primary">Nombre:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.cliente.nombre}"></span></div>
@@ -98,7 +96,7 @@
                             <h5 class="card-title text-primary mb-3">Información del Ticket</h5>
                             <div class="row mb-2">
                                 <div class="col-md-6"><strong class="text-primary">Fecha creado:</strong> <span class="text-white" th:text="${ticketClientDTO.fechaHoraCreado}"></span></div>
-                                <div class="col-md-6"><strong class="text-primary">Estado:</strong> <span class="text-white" th:text="${ticketClientDTO.estado}"></span></div>
+                                <div class="col-md-6"><strong class="text-primary">Estado:</strong> <span class="text-white" th:text="${ticketClientDTO.estado.estado}"></span></div>
                             </div>
                             <div class="row mb-2">
                                 <div class="col-md-12"><strong class="text-primary">Asunto:</strong> <span class="text-white" th:text="${ticketClientDTO.asunto}"></span></div>

@@ -3,9 +3,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,6 +15,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.dto.EstadoTicketDTO;
 import oo2.grupo19.SistemaTickets.dto.PrioridadDTO;
@@ -77,7 +76,6 @@ public class TicketController {
         ticket.setClienteEmail(clienteService.findByEmail(email).getContacto().getEmail());
         ticket.setEstado(estado);
         ticket.setDetalle(contenido);
-        ticket.setFechaHoraCreado(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
         ticketService.save(ticket);
         logger.info("Ticket creado exitosamente por: {}", email);
         sendEmailTicketCreate(ticketService.findUltimoPorEmailYAsunto(ticket.getClienteEmail(), ticket.getAsunto()));
@@ -93,7 +91,7 @@ public class TicketController {
         // No se muestra el nombre del empleado que creó la intervencion. Buscar una solucion o hacer que no muestre nada.
         if (authentication.getAuthorities ().stream ().anyMatch (a -> a.getAuthority ().equals ("ROLE_EMPLOYEE"))) 
         {  
-            TicketEmployeeDTO ticket = ticketService.getTicketparaEmpleado(idTicket);
+            TicketEmployeeDTO ticket = ticketService.getTicketparaEmpleado(idTicket, authentication.getName ());
             model.addAttribute("ticketEmployeeDTO", ticket);
         }
         else if (authentication.getAuthorities ().stream ().anyMatch (a -> a.getAuthority ().equals ("ROLE_CUSTOMER"))) 
@@ -129,27 +127,27 @@ public class TicketController {
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @PostMapping("/update-ticket-priority")
     public String postUpdateTicket(@RequestParam("ticketId") Long idTicket,
-                                   Model model,
+                                   RedirectAttributes redirectAttributes,
                                    Authentication auth,
                                    @RequestParam("prioridad.prioridad") String prioridad){
         Long empleadoId = securityService.getIdEmpleado(auth);
         PrioridadDTO prioridadticket = prioridadService.findByPrioridad(prioridad);
         ticketService.actualizarPrioridadTicket(empleadoId, idTicket, prioridadticket);
         logger.info("Ticket actualizado: {} con nueva prioridad: {}", idTicket, prioridad);
-        model.addAttribute("tituloh1","La prioridad ha sido actualizado con exito!");
-        return ViewRouteHelper.TICKET_SUCCESS;
+        redirectAttributes.addFlashAttribute("mensajeExito", "Estado actualizado con éxito!");
+        return "redirect:/" + ViewRouteHelper.INDEX_EMPLOYEE; 
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @PostMapping("/update-ticket-status")
     public String processUpdateStatus(@RequestParam("ticketId") Long idTicket, 
-                                        Authentication auth,Model model,
+                                        Authentication auth,RedirectAttributes redirectAttributes,
                                         @RequestParam("estado.estado") String estado) {
         Long empleadoId = securityService.getIdEmpleado(auth);
         EstadoTicketDTO estadoTicket = estadoTicketService.findByEstado(estado);
         ticketService.actualizarEstadoTicket(empleadoId, idTicket, estadoTicket);
-        model.addAttribute("mensaje", "Estado actualizado correctamente");
-        return ViewRouteHelper.TICKET_SUCCESS; 
+        redirectAttributes.addFlashAttribute("mensajeExito", "Estado actualizado con éxito!");
+        return "redirect:/" + ViewRouteHelper.INDEX_EMPLOYEE; 
     }
 
   @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")

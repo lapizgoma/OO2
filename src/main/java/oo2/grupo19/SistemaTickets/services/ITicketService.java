@@ -19,7 +19,7 @@ public interface ITicketService extends IService<TicketDTO> {
     Set<TicketEmployeeDTO> findTicketByFechaHora(LocalDate fecha);
     Set<TicketDTO> traerParaCliente(String email);
     TicketDTO getTicketParaCliente(Long ticketId, String clienteEmail);
-    TicketEmployeeDTO getTicketparaEmpleado(Long ticketId);
+    TicketEmployeeDTO getTicketparaEmpleado(Long ticketId, String empleadoEmail);
     TicketEmployeeDTO asignarTicket(Long ticketId, String empleadoEmail);
     TicketDTO findUltimoPorEmailYAsunto(String email,String asunto);
 }

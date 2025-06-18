@@ -90,9 +90,9 @@ public class TicketServiceImpl implements ITicketService{
     @Transactional(readOnly = true)
     public TicketEmployeeDTO findByIdAndEmpleado(Long idEmpleado, Long idTicket) {
         return TicketEmployeeMapper.mapToTicketEmployeeDto(
-            ticketRepository.traerPorEmpleadoYId(idEmpleado, idTicket)
+            ticketRepository.traerPorEmpleadoYId(idTicket, idEmpleado)
                 .orElseThrow(() -> new NotFoundException("No se ha encontrado el ticket con el id: " + idTicket + " o no tiene permiso"))
-        ); 
+        );
     }
 
 
@@ -187,7 +187,7 @@ public class TicketServiceImpl implements ITicketService{
     }
 
     @Transactional(readOnly = true)
-    public TicketEmployeeDTO getTicketparaEmpleado(Long ticketId) {
+    public TicketEmployeeDTO getTicketparaEmpleado(Long ticketId, String empleadoEmail) {
         try {
             Ticket ticketEntity = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new NotFoundException("No pudimos encontrar el Ticket que buscás"));
