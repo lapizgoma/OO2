@@ -84,24 +84,24 @@ public class TicketController {
         return ViewRouteHelper.TICKET_SUCCESS;
     }
     
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE','ADMIN')")
     @GetMapping("/{idTicket}")
     public String verTicket(@PathVariable long idTicket, Authentication authentication, Model model, @ModelAttribute(name = "mensaje", binding = false) String mensaje) {
         model.addAttribute("tienePendientes", !ticketService.todasLasIntervencionesFinalizadas(idTicket));
         // No se muestra el nombre del empleado que creó la intervencion. Buscar una solucion o hacer que no muestre nada.
-        if (authentication.getAuthorities ().stream ().anyMatch (a -> a.getAuthority ().equals ("ROLE_EMPLOYEE"))) 
-        {  
-            TicketEmployeeDTO ticket = ticketService.getTicketparaEmpleado(idTicket, authentication.getName ());
+
+        if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE") || a.getAuthority().equals("ROLE_ADMIN"))) 
+        {
+            TicketEmployeeDTO ticket = ticketService.getTicketparaEmpleado(idTicket, authentication.getName());
             model.addAttribute("ticketEmployeeDTO", ticket);
-        }
-        else if (authentication.getAuthorities ().stream ().anyMatch (a -> a.getAuthority ().equals ("ROLE_CUSTOMER"))) 
+        }else if (authentication.getAuthorities ().stream ().anyMatch (a -> a.getAuthority ().equals ("ROLE_CUSTOMER"))) 
         {
             TicketDTO ticket = ticketService.getTicketParaCliente(idTicket, authentication.getName ());
             model.addAttribute("ticketClientDTO", ticket);
         }
-        if (mensaje != null && !mensaje.isEmpty()) {
-        model.addAttribute("mensaje", mensaje);
-        }
+            if (mensaje != null && !mensaje.isEmpty()) {
+                model.addAttribute("mensaje", mensaje);
+            }   
         model.addAttribute("estadosTicket", estadoTicketService.findAll());
         model.addAttribute("estadosIntervencion", estadoIntervencionService.findAll());
         return ViewRouteHelper.VIEW_TICKET;

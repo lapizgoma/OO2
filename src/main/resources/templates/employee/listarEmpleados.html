@@ -58,7 +58,7 @@
       <!-- Título y botón "Agregar" en la misma fila -->
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="text-white">Lista de Empleados</h1>
-        <a th:href="@{/empleados/agregar}" class="btn btn-primary">Agregar</a>
+        <a th:href="@{/employee/agregar}" class="btn btn-primary">Agregar</a>
       </div>
 
       <div class="row row-cols-1 row-cols-md-2 g-4">
@@ -88,7 +88,7 @@
       </p>
     </div>
             <form
-              th:action="@{/empleados/{id}(id=${empleado.contacto.email})}"
+              th:action="@{/employee/{id}(id=${empleado.contacto.email})}"
               method="post"
               class="mt-2"
             >
