@@ -11,6 +11,7 @@ public interface ITicketService extends IService<TicketDTO> {
     TicketEmployeeDTO findByIdAndEmpleado(Long idEmpleado, Long idTicket);
     void actualizarEstadoTicket(Long idEmpleado, Long idTicket, EstadoTicketDTO nuevoEstado);
     void actualizarPrioridadTicket(Long idEmpleado, Long idTicket, PrioridadDTO prioridad);
+    boolean todasLasIntervencionesFinalizadas(Long idTicket);
     Set<TicketEmployeeDTO> findTicketByCliente(String email);
     Set<TicketEmployeeDTO> findTicketByAsunto(String asunto);
     Set<TicketEmployeeDTO> findTicketByPrioridad(PrioridadDTO prioridad);

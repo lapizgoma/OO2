@@ -35,13 +35,12 @@
         </p>
 
         <form th:action="@{/intervencion/processing-ticket/update-intervencion}" method="post">
-            <input type="hidden" name="id" th:value="${ticket.id}" />
-            <input type="hidden" name="intervencionId" th:value="${intervencion.id}" />
-
+            <input type="hidden" name="id" th:value="${intervencion.id}" />
+            <input type="hidden" name="descripcion" th:value="${intervencion.descripcion}" />
             <label for="estadoIntervencionSelect" >Cambiar estado:</label>
             <select name="estado">
             <option th:each="estadoIntervencion : ${estadosIntervencion}"
-                    th:value="${estadoIntervencion.id}"
+                    th:value="${estadoIntervencion.estado}"
                     th:text="${estadoIntervencion.estado}"
                     th:selected="${estadoIntervencion.estado == intervencion.estado}">
                 opcion
@@ -53,9 +52,5 @@
 
         <hr/>
     </div>
-    </th:block>
-    <p th:if="${mensaje}" th:text="${mensaje}" style="color: green;"></p>
-    <p><a th:href="@{/home}">Volver</a></p>
-    
 </body>
 </html>

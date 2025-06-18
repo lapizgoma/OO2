@@ -137,7 +137,6 @@ public class TicketController {
         redirectAttributes.addFlashAttribute("mensajeExito", "Estado actualizado con éxito!");
         return "redirect:/" + ViewRouteHelper.INDEX_EMPLOYEE; 
     }
-
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @PostMapping("/update-ticket-status")
     public String processUpdateStatus(@RequestParam("ticketId") Long idTicket, 
@@ -150,7 +149,7 @@ public class TicketController {
         return "redirect:/" + ViewRouteHelper.INDEX_EMPLOYEE; 
     }
 
-  @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @GetMapping("/list-ticket-por-cliente")
     public String ticketListByCliente(@RequestParam String email, Model model, Authentication authentication){
         // Revisar el service este pq nose si la query del repository es la mejor
