@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import oo2.grupo19.SistemaTickets.entities.PersonaJuridica;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,7 +18,8 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class PersonaJuridicaDTO
 {
-    public static final int CODIGO_ACCESO_LENGTH = 12;
+    // Así si se cambia en un lado, se cambia en todos.
+    public static final int CODIGO_ACCESO_LENGTH = PersonaJuridica.CODIGO_ACCESO_LENGTH;
 
     @NotBlank(message = "La razon social no debe estar vacia")
     private String razonSocial;

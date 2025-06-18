@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.dto.mappers.PersonaJuridicaMapper;
 import oo2.grupo19.SistemaTickets.dto.personaJuridica.PersonaJuridicaDTO;
@@ -82,14 +83,18 @@ public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService
         {
             String code = dto.getCodigoAcceso ();
 
-            if (code == null || code.length () != PersonaJuridica.CODIGO_ACCESO_LENGTH) 
+            if (code == null || code.length () != PersonaJuridicaDTO.CODIGO_ACCESO_LENGTH) 
             {
-                throw new InvalidInputException ("El código de acceso debe tener " + PersonaJuridica.CODIGO_ACCESO_LENGTH + " caracteres.");
+                throw new InvalidInputException ("El código de acceso debe tener " + PersonaJuridicaDTO.CODIGO_ACCESO_LENGTH + " caracteres.");
             }
 
             PersonaJuridica personaJuridicaEntity = repository.findByCuit (dto.getCuit ()).orElseThrow (() -> new NotFoundException ("No hay una Persona Jurídica bajo ese CUIT :/"));
 
             repository.save(PersonaJuridicaMapper.mapToPersonaJuridicaEntity (dto, personaJuridicaEntity));
+        }
+        catch (ConstraintViolationException e)
+        {
+            throw new InvalidInputException ("ERROR al guardar Persona Jurídica" + e.getMessage ());
         }
         catch (Exception e)
         {
@@ -106,12 +111,22 @@ public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService
             throw new AlreadyExistsException ("Persona Jurídica bajo ese CUIT ya se encuentra registrada.");
         }
 
-        String codigoAcceso = UUID.randomUUID ().toString ().replace ("-", "").substring (0, PersonaJuridica.CODIGO_ACCESO_LENGTH);
+        String codigoAcceso = UUID.randomUUID ().toString ().replace ("-", "").substring (0, PersonaJuridicaDTO.CODIGO_ACCESO_LENGTH);
 
         personaJuridicaDTO.setCodigoAcceso (codigoAcceso);
 
         PersonaJuridica personaJuridicaEntity = PersonaJuridicaMapper.mapToPersonaJuridicaEntity (personaJuridicaDTO, new PersonaJuridica ());
-        repository.save (personaJuridicaEntity);
+        
+        try 
+        {
+            repository.save (personaJuridicaEntity);
+        }
+        // En vez de checkear las restricciones de la Entity por duplicado,
+        // redireccionamos las Excepciones a nuestro Handler global.
+        catch (ConstraintViolationException e)
+        {
+            throw new InvalidInputException ("ERROR al crear Persona Jurídica" + e.getMessage ());
+        }
 
         return personaJuridicaDTO;
     }
@@ -120,14 +135,14 @@ public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService
     @Transactional(readOnly = true)
     public PersonaJuridicaDTO findByCode (String code) 
     {
-        if (code == null || code.length () != PersonaJuridica.CODIGO_ACCESO_LENGTH) 
+        if (code == null || code.length () != PersonaJuridicaDTO.CODIGO_ACCESO_LENGTH) 
         {
-            throw new InvalidInputException("El código de acceso debe tener " + PersonaJuridica.CODIGO_ACCESO_LENGTH + " caracteres.");
+            throw new InvalidInputException("El código de acceso debe tener " + PersonaJuridicaDTO.CODIGO_ACCESO_LENGTH + " caracteres.");
         }
 
         PersonaJuridica personaJuridicaEntity = repository.findByCodigoAcceso(code).orElseThrow(() -> new NotFoundException ("No hay una Persona Jurídica con ese código :/"));
         
         return PersonaJuridicaMapper.mapToPersonaJuridicaDto(personaJuridicaEntity);
     }
-    
+
 }
