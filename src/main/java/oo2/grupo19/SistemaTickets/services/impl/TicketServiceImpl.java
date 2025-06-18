@@ -10,16 +10,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.dto.EstadoTicketDTO;
-import oo2.grupo19.SistemaTickets.dto.IntervencionDTO;
 import oo2.grupo19.SistemaTickets.dto.PrioridadDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketEmployeeDTO;
-import oo2.grupo19.SistemaTickets.dto.mappers.IntervencionMapper;
 import oo2.grupo19.SistemaTickets.dto.mappers.TicketEmployeeMapper;
 import oo2.grupo19.SistemaTickets.dto.mappers.TicketMapper;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.entities.Empleado;
-import oo2.grupo19.SistemaTickets.entities.Intervencion;
 import oo2.grupo19.SistemaTickets.entities.Ticket;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
@@ -131,7 +128,7 @@ public class TicketServiceImpl implements ITicketService{
     @Transactional
     public boolean todasLasIntervencionesFinalizadas(Long idTicket){
         Ticket ticket = ticketRepository.findById(idTicket).orElseThrow(() -> new NotFoundException("No se ha encontrado el ticket con el id: " + idTicket));
-        return ticket.getLstIntervencion().stream().allMatch(i -> "Terminado".equalsIgnoreCase(i.getEstado().toString()));
+        return ticket.getLstIntervencion().stream().allMatch(i -> "Terminado".equalsIgnoreCase(i.getEstado().getEstado()));
             
     }
     

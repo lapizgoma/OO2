@@ -64,9 +64,32 @@
                     </div>
                     <div class="mb-3">
                         <a class="btn btn-primary" th:href="@{/intervencion/create/{idTicket}(idTicket=${ticketEmployeeDTO.id})}">Crear Intervención</a>
-                        <a class="btn btn-primary" th:if="${ticketEmployeeDTO.cliente != null}" th:href="@{/ticket/update-ticket(ticketId=${idTicket})}">Cambiar Estado</a>
-
                     </div>
+                     <!-- ===== FORMULARIO PARA CAMBIAR ESTADO DEL TICKET ===== -->
+                    <div class="card bg-dark border-primary shadow mb-4">
+                        <div class="card-body">
+                        <h5 class="card-title text-primary mb-3">Actualizar Estado del Ticket</h5>
+                        <form th:action="@{/ticket/update-ticket-status}" method="post" class="row g-3 align-items-center">
+                            <input type="hidden" name="ticketId" th:value="${ticketEmployeeDTO.id}" />
+                            <div class="col-auto">
+                                <label for="estadoTicketSelect" class="col-form-label text-primary">Estado</label>
+                            </div>
+                            <div class="col-auto">
+                                <select class="form-select" id="estadoTicketSelect" name="estado.estado" required>
+                                    <option th:each="estado : ${estadosTicket}"
+                                            th:value="${estado.estado}"
+                                            th:text="${estado.estado}"
+                                            th:selected="${estado.estado == ticketEmployeeDTO.estado.estado}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-success">Actualizar</button>
+                            </div>
+                        </form>
+                    </div>
+            </div>
+            <!-- ===== FIN FORMULARIO ESTADO DEL TICKET ===== -->
                 </div>
                 <!-- Intervenciones a la derecha -->
                 <div class="col-lg-4">
@@ -78,7 +101,18 @@
                                     <div><strong class="text-primary">Fecha:</strong> <span class="text-white" th:text="${intervencion.fecha}"></span></div>
                                     <div><strong class="text-primary">Descripción:</strong> <span class="text-white" th:text="${intervencion.descripcion}"></span></div>
                                     <div><strong class="text-primary">Estado:</strong> <span class="text-white" th:text="${intervencion.estado}"></span></div>
-                                    <!-- <div><strong class="text-primary">Realizado por:</strong> <span class="text-white" th:text="${intervencion.realizadoPor.nombre} + ' ' + ${intervencion.realizadoPor.apellido}"></span></div> -->
+                                      <!-- FORMULARIO para actualizar estado de intervención -->
+                                    <form th:action="@{/intervencion/processing-ticket/update-intervencion}" method="post" class="mt-2 d-flex align-items-center gap-2">
+                                        <input type="hidden" name="id" th:value="${intervencion.id}" />
+                                        <select class="form-select form-select-sm" name="estado" required>
+                                            <option th:each="estadoInt : ${estadosIntervencion}"
+                                                    th:value="${estadoInt.estado}"
+                                                    th:text="${estadoInt.estado}"
+                                                    th:selected="${estadoInt.estado == intervencion.estado}">
+                                            </option>
+                                        </select>
+                                        <button type="submit" class="btn btn-sm btn-success">Actualizar</button>
+                                    </form>
                                 </li>
                             </ul>
                         </div>
@@ -124,5 +158,51 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <input type="hidden" id="tienePendientes" th:value="${tienePendientes}" />
+    <input type="hidden" id="mensajeFlag" th:value="${mensaje != null and !#strings.isEmpty(mensaje)}" />
+    <div id="confirmModal" style="display:none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+    <div style="background: white; padding: 20px; border-radius: 6px; width: 320px; margin: 15% auto; text-align: center; font-family: 'Inter', sans-serif;">
+        <p>Todavía hay intervenciones sin terminar, ¿desea cerrar el ticket de todas maneras?</p>
+         <button id="confirmBtn" style="margin: 10px 15px; padding: 8px 20px; font-size: 1rem; cursor: pointer;">Aceptar</button>
+         <button id="cancelBtn" style="margin: 10px 15px; padding: 8px 20px; font-size: 1rem; cursor: pointer;">Cancelar</button>
+    </div>
+    </div>
+    <!-- Aquí va tu script para controlar el modal -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form[th\\:action="@{/ticket/update-ticket-status}"]') || 
+                    document.querySelector('form[action="/ticket/update-ticket-status"]');
+        const estadoSelect = document.getElementById('estadoTicketSelect');
+        const modal = document.getElementById('confirmModal');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+
+        if (!form || !estadoSelect || !modal || !confirmBtn || !cancelBtn) return;
+
+        form.addEventListener('submit', function(event) {
+            const selectedEstado = estadoSelect.value;
+            const tienePendientes = document.getElementById('tienePendientes').value === 'true';
+
+            if (selectedEstado.toLowerCase() === 'cerrado' && tienePendientes && !form.querySelector('input[name="forzarCierre"]')) {
+                event.preventDefault();
+                modal.style.display = 'block';
+            }
+        });
+
+        confirmBtn.addEventListener('click', function() {
+            const inputForzar = document.createElement('input');
+            inputForzar.type = 'hidden';
+            inputForzar.name = 'forzarCierre';
+            inputForzar.value = 'true';
+            form.appendChild(inputForzar);
+            modal.style.display = 'none';
+            form.submit();
+        });
+
+        cancelBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+    });
+    </script>
 </body>
 </html>

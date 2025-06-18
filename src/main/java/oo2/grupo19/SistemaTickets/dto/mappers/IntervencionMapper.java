@@ -26,7 +26,9 @@ public final class IntervencionMapper {
     public static Intervencion mapToIntervencionEntity(IntervencionDTO dto, Intervencion intervencion) {
         if (dto == null) return null;
         intervencion.setId(dto.getId());
+        if (dto.getDescripcion() != null) {
         intervencion.setDescripcion(dto.getDescripcion());
+        }
         return intervencion;
     }   
     

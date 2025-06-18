@@ -90,7 +90,6 @@ public class IntervencionServiceImpl implements IIntervencionService{
             intervencionNew.setEstado(estado);
             intervencionNew.setRealizadoPor(intervencionDB.getRealizadoPor());
             intervencionNew.setTicket(intervencionDB.getTicket());
-            intervencionNew.setDescripcion(intervencionDB.getDescripcion());
             intervencionRepository.save(intervencionNew);
         } else {
             // Creación de nueva intervención

@@ -86,8 +86,8 @@ public class TicketController {
     
     @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
     @GetMapping("/{idTicket}")
-    public String verTicket(@PathVariable long idTicket, Authentication authentication, Model model) {
-        
+    public String verTicket(@PathVariable long idTicket, Authentication authentication, Model model, @ModelAttribute(name = "mensaje", binding = false) String mensaje) {
+        model.addAttribute("tienePendientes", !ticketService.todasLasIntervencionesFinalizadas(idTicket));
         // No se muestra el nombre del empleado que creó la intervencion. Buscar una solucion o hacer que no muestre nada.
         if (authentication.getAuthorities ().stream ().anyMatch (a -> a.getAuthority ().equals ("ROLE_EMPLOYEE"))) 
         {  
@@ -99,6 +99,11 @@ public class TicketController {
             TicketDTO ticket = ticketService.getTicketParaCliente(idTicket, authentication.getName ());
             model.addAttribute("ticketClientDTO", ticket);
         }
+        if (mensaje != null && !mensaje.isEmpty()) {
+        model.addAttribute("mensaje", mensaje);
+        }
+        model.addAttribute("estadosTicket", estadoTicketService.findAll());
+        model.addAttribute("estadosIntervencion", estadoIntervencionService.findAll());
         return ViewRouteHelper.VIEW_TICKET;
     }
 
@@ -112,7 +117,7 @@ public class TicketController {
         
         return "redirect:/ticket/" + idTicket;
     }
-    
+    /* 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @GetMapping("/update-ticket")
     public String showUpdateStatusForm(@RequestParam Long ticketId, Authentication auth, Model model){
@@ -123,7 +128,7 @@ public class TicketController {
         model.addAttribute("estadoPrioridad",prioridadService.findAll());
         model.addAttribute("title","Modificar prioridad");
         return ViewRouteHelper.TICKET_UPDATE_STATUS; 
-    }
+    }*/
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @PostMapping("/update-ticket-priority")
     public String postUpdateTicket(@RequestParam("ticketId") Long idTicket,
@@ -141,12 +146,22 @@ public class TicketController {
     @PostMapping("/update-ticket-status")
     public String processUpdateStatus(@RequestParam("ticketId") Long idTicket, 
                                         Authentication auth,RedirectAttributes redirectAttributes,
-                                        @RequestParam("estado.estado") String estado) {
+                                        @RequestParam("estado.estado") String estado,
+                                        @RequestParam(name = "forzarCierre", required = false) Boolean cierre) {
+
         Long empleadoId = securityService.getIdEmpleado(auth);
+        boolean cierreForzado = (cierre != null && cierre);                                   
+        if ("CERRADO".equalsIgnoreCase(estado)) {
+        boolean todasFinalizadas = ticketService.todasLasIntervencionesFinalizadas(idTicket);
+        if (!todasFinalizadas &&  !cierreForzado) {
+            // No forzar cierre y hay intervenciones pendientes: se espera la confirmación en frontend (modal)
+            redirectAttributes.addFlashAttribute("mensaje", "Todavía hay intervenciones sin terminar, ¿desea cerrar el ticket de todas maneras?");
+            return "redirect:/ticket" + "/" + idTicket;  // vuelve a la vista para que el modal pueda activarse si querés (opcional)
+        }
+        }
         EstadoTicketDTO estadoTicket = estadoTicketService.findByEstado(estado);
         ticketService.actualizarEstadoTicket(empleadoId, idTicket, estadoTicket);
-        redirectAttributes.addFlashAttribute("mensajeExito", "Estado actualizado con éxito!");
-        return "redirect:/" + ViewRouteHelper.INDEX_EMPLOYEE; 
+        return "redirect:/ticket" + "/" + idTicket; 
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
