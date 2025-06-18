@@ -48,9 +48,14 @@ public class IntervencionController {
 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @PostMapping("/processing-ticket/update-intervencion")
-    public String processUpdateStatusIntervencion(@ModelAttribute IntervencionDTO intervenciondto) {
-        intervencionService.save(intervenciondto);
-        return ViewRouteHelper.VIEW_TICKET;
+    public String processUpdateStatusIntervencion(@ModelAttribute IntervencionDTO intervenciondto, RedirectAttributes redirectAttributes) {
+        TicketDTO ticket = ticketService.findById(intervencionService.findById(intervenciondto.getId()).getTicketId());
+        if(ticket.getEstado().getEstado().equals("Cerrado") && intervenciondto.getEstado().equals("Pendiente")) {
+            redirectAttributes.addFlashAttribute("mensajeError", "No se puede cambiar el estado de la intervención a Pendiente, el ticket ya está cerrado.");
+        }else{
+            intervencionService.save(intervenciondto);
+        }
+        return ViewRouteHelper.TICKET_VIEW_ID(intervencionService.findById(intervenciondto.getId()).getTicketId());
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")

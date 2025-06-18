@@ -115,7 +115,7 @@ public class TicketController {
         TicketEmployeeDTO ticket = ticketService.asignarTicket(idTicket, authentication.getName ());
         model.addAttribute("ticketEmployeeDTO", ticket);
         
-        return "redirect:/ticket/" + idTicket;
+        return ViewRouteHelper.TICKET_VIEW_ID(idTicket);
     }
     
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
@@ -131,6 +131,7 @@ public class TicketController {
         redirectAttributes.addFlashAttribute("mensajeExito", "Estado actualizado con éxito!");
         return "redirect:/" + ViewRouteHelper.INDEX_EMPLOYEE; 
     }
+
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @PostMapping("/update-ticket-status")
     public String processUpdateStatus(@RequestParam("ticketId") Long idTicket, 
@@ -140,17 +141,20 @@ public class TicketController {
 
         Long empleadoId = securityService.getIdEmpleado(auth);
         boolean cierreForzado = (cierre != null && cierre);                                   
-        if ("CERRADO".equalsIgnoreCase(estado)) {
         boolean todasFinalizadas = ticketService.todasLasIntervencionesFinalizadas(idTicket);
-        if (!todasFinalizadas &&  !cierreForzado) {
-            // No forzar cierre y hay intervenciones pendientes: se espera la confirmación en frontend (modal)
-            redirectAttributes.addFlashAttribute("mensaje", "Todavía hay intervenciones sin terminar, ¿desea cerrar el ticket de todas maneras?");
-            return "redirect:/ticket" + "/" + idTicket;  // vuelve a la vista para que el modal pueda activarse si querés (opcional)
+        String estadoTicketActual = ticketService.findById(idTicket).getEstado().getEstado();
+        if(estado.equalsIgnoreCase(estadoTicketActual)){
+            return ViewRouteHelper.TICKET_VIEW_ID(idTicket); // No se actualiza el estado si es el mismo
         }
+        if ("CERRADO".equalsIgnoreCase(estado) && (!todasFinalizadas && !cierreForzado)) {
+                // No forzar cierre y hay intervenciones pendientes: se espera la confirmación en frontend (modal)
+                log.info("Intento de cierre de ticket {} por empleado {}, pero hay intervenciones pendientes.", idTicket, auth.getName());
+                redirectAttributes.addFlashAttribute("mensaje", "Todavía hay intervenciones sin terminar, ¿desea cerrar el ticket de todas maneras?");
+                return ViewRouteHelper.TICKET_VIEW_ID(idTicket); 
         }
         EstadoTicketDTO estadoTicket = estadoTicketService.findByEstado(estado);
         ticketService.actualizarEstadoTicket(empleadoId, idTicket, estadoTicket);
-        return "redirect:/ticket" + "/" + idTicket; 
+        return ViewRouteHelper.TICKET_VIEW_ID(idTicket); 
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
@@ -164,7 +168,7 @@ public class TicketController {
         } else if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
             return ViewRouteHelper.INDEX_EMPLOYEE;
         }
-        return "ticket/listTickets";
+        return ViewRouteHelper.TICKET_LIST;
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
@@ -177,7 +181,7 @@ public class TicketController {
         } else if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
             return ViewRouteHelper.INDEX_EMPLOYEE;
         }
-        return "ticket/listTickets";
+        return ViewRouteHelper.TICKET_LIST;
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
@@ -190,7 +194,7 @@ public class TicketController {
         } else if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
             return ViewRouteHelper.INDEX_EMPLOYEE;
         }
-        return "ticket/listTickets";
+        return ViewRouteHelper.TICKET_LIST;
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
@@ -204,7 +208,7 @@ public class TicketController {
         } else if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
             return ViewRouteHelper.INDEX_EMPLOYEE;
         }
-        return "ticket/listTickets";
+        return ViewRouteHelper.TICKET_LIST;
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
@@ -218,7 +222,7 @@ public class TicketController {
         } else if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
             return ViewRouteHelper.INDEX_EMPLOYEE;
         }
-        return "ticket/listTickets";
+        return ViewRouteHelper.TICKET_LIST;
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
@@ -236,8 +240,8 @@ public class TicketController {
 
     @GetMapping("/form-filtrar-tickets")
         public String showFilterPage() {
-    return "ticket/formTicketsFiltrar";  // La vista con los formularios de filtro 
-    }
+            return ViewRouteHelper.TICKET_FORM_FILTRAR;  // La vista con los formularios de filtro 
+        }
 
     private void sendEmailTicketCreate(TicketDTO ticket){
         Map<String,Object> infoClient = new HashMap<>();
