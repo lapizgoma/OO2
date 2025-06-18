@@ -19,6 +19,7 @@ public final class PersonaJuridicaMapper
         PersonaJuridicaDTO dto = new PersonaJuridicaDTO();
         dto.setRazonSocial(personaJuridica.getRazonSocial());
         dto.setCuit(personaJuridica.getCuit());
+        dto.setCodigoAcceso(personaJuridica.getCodigoAcceso());
 
         return dto;
     }
