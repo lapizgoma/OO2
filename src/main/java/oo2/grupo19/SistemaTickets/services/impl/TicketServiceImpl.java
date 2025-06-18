@@ -148,7 +148,9 @@ public class TicketServiceImpl implements ITicketService{
     @Override
     @Transactional
     public Set<TicketEmployeeDTO> findTicketByEmpleado(String email) {
-        return TicketEmployeeMapper.mapToTicketEmployeeDtoSet(ticketRepository.traerPorCliente(email));
+        log.info("email: " + email);
+        log.info("Empleado buscado: " + ticketRepository.traerPorEmpleado(email));
+        return TicketEmployeeMapper.mapToTicketEmployeeDtoSet(ticketRepository.traerPorEmpleado(email));
     }
 
     @Override

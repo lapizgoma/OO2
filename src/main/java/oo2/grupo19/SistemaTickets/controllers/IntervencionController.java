@@ -51,7 +51,7 @@ public class IntervencionController {
     public String processUpdateStatusIntervencion(@ModelAttribute IntervencionDTO intervenciondto, RedirectAttributes redirectAttributes) {
         TicketDTO ticket = ticketService.findById(intervencionService.findById(intervenciondto.getId()).getTicketId());
         if(ticket.getEstado().getEstado().equals("Cerrado") && intervenciondto.getEstado().equals("Pendiente")) {
-            redirectAttributes.addFlashAttribute("mensajeError", "No se puede cambiar el estado de la intervención a Pendiente, el ticket ya está cerrado.");
+            redirectAttributes.addFlashAttribute("mensajeAlerta", "No se puede cambiar el estado de la intervención a Pendiente, el ticket ya está cerrado.");
         }else{
             intervencionService.save(intervenciondto);
         }

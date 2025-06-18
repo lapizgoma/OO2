@@ -27,4 +27,14 @@ public class TicketEmployeeDTO {
 	private EstadoTicketDTO estado;
 	private PrioridadDTO prioridad;
 	private ClienteDTO cliente;
+
+	public IntervencionDTO getUltimaIntervencion() {
+		if (intervenciones == null || intervenciones.isEmpty()) {
+			return null;
+		}
+
+		return intervenciones.stream()
+				.max(Comparator.comparing(IntervencionDTO::getId)) // o el campo que uses
+				.orElse(null);
+	}
 }

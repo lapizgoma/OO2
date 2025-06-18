@@ -87,12 +87,12 @@ public class HomeController <T> {
 
     private void simplifyGlobalHome(String email, Model model){
         Set<TicketDTO> tickets = ticketService.traerParaCliente(email);
-        model.addAttribute("tickets", tickets);
+        model.addAttribute("ticket", tickets);
     }
 
     private void simplifyGlobalHome(Model model){
         Set<TicketDTO> tickets = ticketService.findAll();
-        model.addAttribute("tickets", tickets);
+        model.addAttribute("ticket", tickets);
     }
 
 }
