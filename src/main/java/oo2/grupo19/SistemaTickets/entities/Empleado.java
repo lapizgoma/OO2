@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
@@ -33,6 +34,7 @@ public class Empleado extends Usuario {
 
   @ManyToMany(mappedBy = "listEmpleado")
   @OrderBy("id ASC")
+  @ToString.Exclude
   private Set<Ticket> tickets = new HashSet<>();
 
   public void darDeBaja() {
