@@ -26,13 +26,14 @@
             </div>
         </div>
     </nav>
+    <div th:if="${mensajeAlerta}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${mensajeAlerta}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
     <div class="container py-4">
         <h1 class="mb-4 text-center">Ticket</h1>
         <hr class="border-primary" />
-    <div th:if="${mensajeError}" class="alert alert-success alert-dismissible fade show" role="alert">
-        <span th:text="${mensajeError}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
+
         <!-- Vista para ticketEmployeeDTO -->
         <div th:if="${ticketEmployeeDTO != null}" class="mb-5">
             <div class="row g-4">
@@ -93,6 +94,32 @@
                     </div>
             </div>
             <!-- ===== FIN FORMULARIO ESTADO DEL TICKET ===== -->
+              <!-- ===== FORMULARIO PARA LA PRIORIDAD DEL TICKET ===== -->
+                    <div class="card bg-dark border-primary shadow mb-4">
+                        <div class="card-body">
+                        <h5 class="card-title text-primary mb-3">Actualizar Prioridad del Ticket</h5>
+                        <form th:action="@{/ticket/update-ticket-priority}" method="post" class="row g-3 align-items-center">
+                            <input type="hidden" name="ticketId" th:value="${ticketEmployeeDTO.id}" />
+                            <input type="hidden" name="estado.estado" th:value="${ticketEmployeeDTO.estado.estado}" />
+                            <div class="col-auto">
+                                <label for="prioridadTicketSelect" class="col-form-label text-primary">Estado</label>
+                            </div>
+                            <div class="col-auto">
+                                <select class="form-select" id="prioridadTicketSelect" name="prioridad.prioridad" required>
+                                    <option th:each="prioridad : ${prioridadTicket}"
+                                            th:value="${prioridad.prioridad}"
+                                            th:text="${prioridad.prioridad}"
+                                            th:selected="${prioridad.prioridad == ticketEmployeeDTO.prioridad.prioridad}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-success">Actualizar</button>
+                            </div>
+                        </form>
+                    </div>
+            </div>
+            <!-- ===== FIN FORMULARIO PRIORIDAD DEL TICKET ===== -->
                 </div>
                 <!-- Intervenciones a la derecha -->
                 <div class="col-lg-4">

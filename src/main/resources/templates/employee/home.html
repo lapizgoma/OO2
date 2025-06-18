@@ -34,9 +34,9 @@
     </div>
     <div class="container mt-5">
         <h1 class="mb-4 text-center">Historial de Tickets</h1>
-        <div th:if="${tickets != null && !tickets.isEmpty()}">
+        <div th:if="${ticket != null && !ticket.isEmpty()}">
             <div class="d-flex flex-wrap justify-content-center gap-4">
-                <div class="ticket-card-wrapper" th:each="ticket : ${tickets}">
+                <div class="ticket-card-wrapper" th:each="ticket : ${ticket}">
                     <a th:href="@{'/ticket/' + ${ticket.id}}" style="text-decoration:none; color:inherit;">
                         <div class="ticket-card">
                             <div class="ticket-header">

@@ -31,10 +31,10 @@
         <!-- Filtrar por Estado -->
         <form th:action="@{/ticket/list-ticket-por-estado}" method="get">
             <label>Estado:</label>
-            <select name="estadoTicketId">
-                <option value="1">Pendiente</option>
-                <option value="2">Atendido</option>
-                <option value="3">Cerrado</option>
+            <select name="estado">
+                <option value="pendiente">Pendiente</option>
+                <option value="atendido">Atendido</option>
+                <option value="cerrado">Cerrado</option>
             </select>
             <button type="submit">Filtrar</button>
         </form>
@@ -63,10 +63,10 @@
         <!-- Filtrar por Prioridad -->
         <form th:action="@{/ticket/list-ticket-por-prioridad}" method="get">
             <label>Prioridad:</label>
-            <select name="prioridadId">
-                <option value="1">Baja</option>
-                <option value="2">Media</option>
-                <option value="3">Alta</option>
+            <select name="prioridad">
+                <option value="baja">Baja</option>
+                <option value="media">Media</option>
+                <option value="alta">Alta</option>
             </select>
             <button type="submit">Filtrar</button>
         </form>
@@ -77,8 +77,7 @@
             <input type="date" name="fecha" required>
             <button type="submit">Filtrar</button>
         </form>
-        <a class="btn btn-primary" th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{/home}">Volver</a>
-        <a class="btn btn-primary" th:if="${#authorization.expression('hasRole(''EMPLOYEE'')')}" th:href="@{/home}">Vovler</a>
+        <a class="btn btn-primary" th:href="@{/home}">Volver</a>
     </div>
     
 </body>
