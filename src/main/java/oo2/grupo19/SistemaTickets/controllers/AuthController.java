@@ -63,7 +63,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String registrarUsuario(@Valid @ModelAttribute(value = "cliente") ClienteDTO cliente,
+    public String registrarUsuario(@Valid @ModelAttribute ClienteDTO cliente,
             BindingResult result,
             @RequestParam(required = false) String activo,
             Authentication currentAuth,

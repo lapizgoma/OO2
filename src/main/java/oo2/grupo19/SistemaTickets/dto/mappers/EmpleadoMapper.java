@@ -3,9 +3,9 @@ package oo2.grupo19.SistemaTickets.dto.mappers;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import oo2.grupo19.SistemaTickets.dto.EmpleadoDTO;
 import oo2.grupo19.SistemaTickets.dto.EmpleadoDeIntervencionDTO;
+import oo2.grupo19.SistemaTickets.entities.Contacto;
 import oo2.grupo19.SistemaTickets.entities.Empleado;
 
 public final class EmpleadoMapper {
@@ -39,6 +39,7 @@ public final class EmpleadoMapper {
         empleado.setPassword(dto.getPassword());
         empleado.setNroLegajo(dto.getNroLegajo());
         empleado.setDni(dto.getDni());
+        empleado.setContacto(ContactoMapper.mapToContactoEntity(dto.getContacto(), new Contacto()));
         return empleado;
     }
 

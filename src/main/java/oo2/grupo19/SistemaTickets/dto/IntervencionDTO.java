@@ -18,6 +18,7 @@ public class IntervencionDTO {
     private String descripcion;
     private String fecha;
     private String estado;
+    private String realizadoPor;
     private String empleadoEmail;
     private Long ticketId;
 }

@@ -5,9 +5,10 @@ import java.util.Set;
 import java.util.HashSet;
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
@@ -35,6 +36,7 @@ public class Empleado extends Usuario {
   @ManyToMany(mappedBy = "listEmpleado")
   @OrderBy("id ASC")
   @ToString.Exclude
+  @JsonIgnore
   private Set<Ticket> tickets = new HashSet<>();
 
   public void darDeBaja() {

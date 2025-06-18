@@ -40,7 +40,7 @@
           />
           <div class="text-danger small mt-1"
                th:if="${#fields.hasErrors('nombre')}"
-               th:errors="*{nombre}"></div>
+               th:text="${#fields.errors('nombre')}"></div>
         </div>
 
         <!-- Apellido -->
@@ -56,7 +56,7 @@
           />
           <div class="text-danger small mt-1"
                th:if="${#fields.hasErrors('apellido')}"
-               th:errors="*{apellido}"></div>
+               th:text="${#fields.errors('apellido')}"></div>
         </div>
 
         <!-- Email -->
@@ -72,7 +72,7 @@
           />
           <div class="text-danger small mt-1"
                th:if="${#fields.hasErrors('contacto.email')}"
-               th:errors="*{contacto.email}"></div>
+               th:text="${#fields.errors('contacto.email')}"></div>
         </div>
 
         <!-- Password -->
@@ -88,7 +88,7 @@
           />
           <div class="text-danger small mt-1"
                th:if="${#fields.hasErrors('password')}"
-               th:errors="*{password}"></div>
+               th:text="${#fields.errors('password')}"></div>
         </div>
 
         <!-- DNI -->
@@ -104,25 +104,24 @@
           />
           <div class="text-danger small mt-1"
                th:if="${#fields.hasErrors('dni')}"
-               th:errors="*{dni}"></div>
+               th:text="${#fields.errors('dni')}"></div>
         </div>
 
         <!-- Rol -->
         <div class="mb-3">
           <label for="rolId" class="form-label text-white">Rol</label>
           <select
-            th:field="*{role}"
-            id="rolId"
-            class="form-select bg-dark text-white"
-          >
-            <option th:each="rolOption : ${rolRepository}"
-                    th:value="${rolOption.id}"
-                    th:text="${rolOption.type}">
-            </option>
+              th:field="*{role}"
+              id="rolId"
+              class="form-select bg-dark text-white">
+              <option th:each="rolOption : ${rolRepository}"
+                      th:value="${rolOption.type.toString()}"
+                      th:text="${rolOption.type}">
+              </option>
           </select>
           <div class="text-danger small mt-1"
-               th:if="${#fields.hasErrors('role')}"
-               th:errors="*{role}"></div>
+            th:if="${#fields.hasErrors('role')}"
+            th:text="${#fields.errors('role')}">
         </div>
 
         <hr class="border-secondary"/>
@@ -142,7 +141,7 @@
           />
           <div class="text-danger small mt-1"
                th:if="${#fields.hasErrors('contacto.calle')}"
-               th:errors="*{contacto.calle}"></div>
+               th:text="${#fields.errors('contacto.calle')}"></div>
         </div>
 
         <!-- Número de puerta -->
@@ -158,7 +157,7 @@
           />
           <div class="text-danger small mt-1"
                th:if="${#fields.hasErrors('contacto.nroPuerta')}"
-               th:errors="*{contacto.nroPuerta}"></div>
+               th:text="${#fields.errors('contacto.nroPuerta')}"></div>
         </div>
 
         <!-- Localidad -->
@@ -174,7 +173,7 @@
           />
           <div class="text-danger small mt-1"
                th:if="${#fields.hasErrors('contacto.localidad')}"
-               th:errors="*{contacto.localidad}"></div>
+               th:text="${#fields.errors('contacto.localidad')}"></div>
         </div>
 
         <!-- Teléfono -->
@@ -190,7 +189,7 @@
           />
           <div class="text-danger small mt-1"
                th:if="${#fields.hasErrors('contacto.telefono')}"
-               th:errors="*{contacto.telefono}"></div>
+               th:text="${#fields.errors('contacto.telefono')}"></div>
         </div>
 
         <!-- Acciones -->

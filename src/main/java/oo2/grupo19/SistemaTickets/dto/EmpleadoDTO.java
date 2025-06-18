@@ -41,12 +41,5 @@ public class EmpleadoDTO {
 	@NotBlank(message = "El rol es obligatorio")
 	private String role;
 
-	@NotBlank(message = "El número de legajo es obligatorio")
 	private String nroLegajo;
-	
-	public EmpleadoDTO(String nombre, String password) {
-		this.nombre = nombre;
-		this.password = password;
-	}
-
 }

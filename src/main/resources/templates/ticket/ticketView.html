@@ -131,6 +131,7 @@
                                     <div><strong class="text-primary">Fecha:</strong> <span class="text-white" th:text="${intervencion.fecha}"></span></div>
                                     <div><strong class="text-primary">Descripción:</strong> <span class="text-white" th:text="${intervencion.descripcion}"></span></div>
                                     <div><strong class="text-primary">Estado:</strong> <span class="text-white" th:text="${intervencion.estado}"></span></div>
+                                    <div><strong class="text-primary">Realizado por:</strong> <span class="text-white" th:text="${intervencion.realizadoPor}"></span></div>
                                       <!-- FORMULARIO para actualizar estado de intervención -->
                                     <form th:action="@{/intervencion/processing-ticket/update-intervencion}" method="post" class="mt-2 d-flex align-items-center gap-2">
                                         <input type="hidden" name="id" th:value="${intervencion.id}" />
@@ -178,7 +179,7 @@
                                     <div><strong class="text-primary">Fecha:</strong> <span class="text-white" th:text="${intervencion.fecha}"></span></div>
                                     <div><strong class="text-primary">Descripción:</strong> <span class="text-white" th:text="${intervencion.descripcion}"></span></div>
                                     <div><strong class="text-primary">Estado:</strong> <span class="text-white" th:text="${intervencion.estado}"></span></div>
-                                    <!-- <div><strong class="text-primary">Realizado por:</strong> <span class="text-white" th:text="${intervencion.realizadoPor.nombre} + ' ' + ${intervencion.realizadoPor.apellido}"></span></div> -->
+                                    <div><strong class="text-primary">Realizado por:</strong> <span class="text-white" th:text="${intervencion.realizadoPor}"></span></div>
                                 </li>
                             </ul>
                         </div>

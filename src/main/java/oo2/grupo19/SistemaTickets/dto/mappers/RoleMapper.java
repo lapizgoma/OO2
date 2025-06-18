@@ -35,13 +35,13 @@ public final class RoleMapper {
         return role;
     }
 
-    public static Set<RoleDTO> mapToRoleDtoList(Set<Role> entities) {
+    public static Set<RoleDTO> mapToRoleDtoSet(Set<Role> entities) {
         return entities == null ? Set.of() : entities.stream()
                 .map(RoleMapper::mapRoleToDto)
                 .collect(Collectors.toSet());
     }
 
-    public static Set<Role> mapToRoleEntityList(Set<RoleDTO> dtos) {
+    public static Set<Role> mapToRoleEntitySet(Set<RoleDTO> dtos) {
         return dtos == null ? Set.of() : dtos.stream()
                 .map(RoleMapper::mapDtoToRole)
                 .collect(Collectors.toSet());

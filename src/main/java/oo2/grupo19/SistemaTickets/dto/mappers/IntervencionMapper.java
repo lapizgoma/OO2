@@ -17,6 +17,7 @@ public final class IntervencionMapper {
         dto.setId(intervencion.getId());
         dto.setDescripcion(intervencion.getDescripcion());
         dto.setEmpleadoEmail(intervencion.getRealizadoPor().getContacto().getEmail());
+        dto.setRealizadoPor(intervencion.getRealizadoPor().getNombre() + " - " + intervencion.getRealizadoPor().getApellido());
         dto.setFecha(intervencion.getFecha().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
         dto.setEstado(intervencion.getEstado().getEstado());
         dto.setTicketId(intervencion.getTicket().getId());

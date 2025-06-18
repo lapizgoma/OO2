@@ -1,6 +1,9 @@
 package oo2.grupo19.SistemaTickets.controllers;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
+import oo2.grupo19.SistemaTickets.dto.ContactoDTO;
 import oo2.grupo19.SistemaTickets.dto.EmpleadoDTO;
 import oo2.grupo19.SistemaTickets.entities.estados.enums.RoleType;
 import org.springframework.security.core.Authentication;
@@ -58,7 +61,8 @@ public class EmpleadoController {
     @GetMapping("/agregar")
     public String obtenerVistaEmpleado(Model model, Authentication auth) {
         model.addAttribute("rolRepository", roleRepository.findByTypeNot(RoleType.CUSTOMER));
-        model.addAttribute("empleado", new EmpleadoDTO());
+        EmpleadoDTO empleado = new EmpleadoDTO();
+        model.addAttribute("empleado", empleado);
         logger.info("Vista de registro de empleado accedida por: {}", auth.getName());
         return ViewRouteHelper.EMPLEADO_REGISTER;
     }
@@ -66,19 +70,26 @@ public class EmpleadoController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/agregar")
     public String postMethodName(@Valid @ModelAttribute EmpleadoDTO empleado,
-                                 BindingResult result,
-                                @RequestParam("roles") Long rolId,
-                                Authentication auth,
-                                Model model) {
-        if(result.hasErrors()){
-            logger.warn("Errores de validación en registro de empleado: {}", result.getAllErrors());
-            model.addAttribute("rolRepository", roleRepository.findAll());
-            return ViewRouteHelper.EMPLEADO_REGISTER;
-        }
-        empleadoService.save(empleado);
-        logger.info("Empleado registrado exitosamente (ID): {} por {}", empleado.getContacto().getEmail(), auth.getName());
-        return ViewRouteHelper.EMPLEADO_REGISTRADO;
+                            BindingResult result,
+                            Authentication auth,
+                            Model model) {
+    
+    // Asegurar que contacto esté inicializado ANTES de verificar errores
+    if (empleado.getContacto() == null) {
+        empleado.setContacto(new ContactoDTO());
     }
+        
+    if(result.hasErrors()){
+        model.addAttribute("rolRepository", roleRepository.findByTypeNot(RoleType.CUSTOMER));
+        logger.warn("Errores de validación en registro de empleado: {}", result.getAllErrors());
+        validator(model, result);
+        return ViewRouteHelper.EMPLEADO_REGISTER;
+    }
+
+    empleadoService.save(empleado);
+    logger.info("Empleado registrado exitosamente (ID): {} por {}", empleado.getContacto().getEmail(), auth.getName());
+    return ViewRouteHelper.EMPLEADO_REGISTRADO;
+}
     
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{empleadoId}")
@@ -86,5 +97,16 @@ public class EmpleadoController {
         empleadoService.delete(empleadoEmail);
         logger.info("Empleado dado de baja: {} por {}", empleadoEmail, auth.getName());
         return ViewRouteHelper.EMPLEADO_BORRADO;
+    }
+
+    private void validator(Model model,BindingResult result){
+        Map<String,String> errors = new HashMap<>();
+        if(result.hasErrors()){
+            result.getFieldErrors().forEach(err ->{
+                errors.put(err.getField(),err.getDefaultMessage());
+            });
+            model.addAttribute("errors",errors);
+        }
+
     }
 }

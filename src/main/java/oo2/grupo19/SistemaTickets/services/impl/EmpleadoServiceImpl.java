@@ -9,29 +9,35 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.dto.EmpleadoDTO;
 import oo2.grupo19.SistemaTickets.dto.mappers.EmpleadoMapper;
 import oo2.grupo19.SistemaTickets.entities.Contacto;
 import oo2.grupo19.SistemaTickets.entities.Empleado;
+import oo2.grupo19.SistemaTickets.entities.estados.enums.RoleType;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
 import oo2.grupo19.SistemaTickets.repositories.IContacto;
 import oo2.grupo19.SistemaTickets.repositories.IEmpleado;
 import oo2.grupo19.SistemaTickets.repositories.ITicket;
+import oo2.grupo19.SistemaTickets.repositories.estados.IRole;
 
 
 @Service
+@Log4j2
 public class EmpleadoServiceImpl implements IEmpleadoService {
     
     private final IEmpleado empleadoRepository;
     private final ITicket ticketRepository;
     private final PasswordEncoder passwordEncoder;
     private final IContacto contactoRepository;
+    private final IRole roleRepository;
 
-    public EmpleadoServiceImpl(IEmpleado empleadoRepository, ITicket ticketRepository, PasswordEncoder passwordEncoder, IContacto contactoRepository) {
+    public EmpleadoServiceImpl(IEmpleado empleadoRepository, ITicket ticketRepository, PasswordEncoder passwordEncoder, IContacto contactoRepository, IRole roleRepository) {
         this.empleadoRepository = empleadoRepository;
         this.ticketRepository = ticketRepository;
         this.passwordEncoder = passwordEncoder;
         this.contactoRepository = contactoRepository;
+        this.roleRepository = roleRepository;
     }
 
     @Override
@@ -78,6 +84,9 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
             } else {
                 ultimoLegajo = Long.parseLong(empleadoRepository.findAll().getLast().getNroLegajo()) + 1;
             }
+            RoleType roleType = RoleType.valueOf(empleadodto.getRole());
+            log.info("RoleType: " + roleType.toString());
+            empleado.agregarRoles(roleRepository.findByType(roleType).orElseThrow());
             empleado.setNroLegajo(Long.toString(ultimoLegajo));
             empleado.setTickets(new HashSet<>(ticketRepository.findAll()));
         }

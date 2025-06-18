@@ -22,7 +22,7 @@ public class ContactoDTO {
     private String email;
     
     @NotBlank(message = "El teléfono es obligatorio")
-    @Pattern(regexp = "\\d{10}", message = "El teléfono debe tener 10 dígitos")
+    @Pattern(regexp = "\\d{11}", message = "El teléfono debe tener 11 dígitos")
     private String telefono;
     
     @NotBlank(message = "La calle es obligatoria")
