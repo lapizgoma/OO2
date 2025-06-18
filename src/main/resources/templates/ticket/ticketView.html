@@ -29,7 +29,10 @@
     <div class="container py-4">
         <h1 class="mb-4 text-center">Ticket</h1>
         <hr class="border-primary" />
-
+    <div th:if="${mensajeError}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${mensajeError}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
         <!-- Vista para ticketEmployeeDTO -->
         <div th:if="${ticketEmployeeDTO != null}" class="mb-5">
             <div class="row g-4">
@@ -161,7 +164,7 @@
     <input type="hidden" id="tienePendientes" th:value="${tienePendientes}" />
     <input type="hidden" id="mensajeFlag" th:value="${mensaje != null and !#strings.isEmpty(mensaje)}" />
     <div id="confirmModal" style="display:none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
-    <div style="background: white; padding: 20px; border-radius: 6px; width: 320px; margin: 15% auto; text-align: center; font-family: 'Inter', sans-serif;">
+    <div style="background: black; padding: 20px; border-radius: 6px; width: 320px; margin: 15% auto; text-align: center; font-family: 'Inter', sans-serif;">
         <p>Todavía hay intervenciones sin terminar, ¿desea cerrar el ticket de todas maneras?</p>
          <button id="confirmBtn" style="margin: 10px 15px; padding: 8px 20px; font-size: 1rem; cursor: pointer;">Aceptar</button>
          <button id="cancelBtn" style="margin: 10px 15px; padding: 8px 20px; font-size: 1rem; cursor: pointer;">Cancelar</button>
