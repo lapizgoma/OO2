@@ -47,16 +47,22 @@ public class ClienteController {
 
     @PostMapping("/editar")
     @PreAuthorize("hasRole('CUSTOMER')")
-    public String editarPerfil(@ModelAttribute ClienteDTO cliente,@RequestParam(required = false) String codigoAcceso, RedirectAttributes redirectAttributes) {
-        if(codigoAcceso != null && !codigoAcceso.isEmpty()) {
-            log.info("Codigo de acceso proporcionado: {}", codigoAcceso);
-            PersonaJuridicaDTO personaJuridicaDTO = personaJuridicaService.findByCode(codigoAcceso);
-            personaJuridicaDTO.setCodigoAcceso(codigoAcceso);
-            cliente.setOrganizacion(personaJuridicaDTO);
+    public String editarPerfil(@ModelAttribute ClienteDTO cliente,
+                            @RequestParam(required = false) String codigoAcceso,
+                            RedirectAttributes redirectAttributes) {
+        try {
+            PersonaJuridicaDTO personaJuridicaDTO = null;
+            if (codigoAcceso != null && !codigoAcceso.isBlank()) {
+                personaJuridicaDTO = personaJuridicaService.findByCode(codigoAcceso);
+                personaJuridicaDTO.setCodigoAcceso(codigoAcceso);
+                cliente.setOrganizacion(personaJuridicaDTO);
+            }
+            clienteService.save(cliente);
+            redirectAttributes.addFlashAttribute("mensajeExito", "El perfil se ha actualizado correctamente.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("codigoError", e.getMessage());
+            return "redirect:/cuenta/perfil";
         }
-        log.info("Actualizando perfil del cliente: {}", cliente);
-        clienteService.save(cliente);
-        redirectAttributes.addFlashAttribute("mensajeExito", "El perfil se ha actualizado correctamente.");
         return "redirect:/" + ViewRouteHelper.INDEX_USER;
     }
 

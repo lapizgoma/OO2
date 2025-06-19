@@ -39,6 +39,5 @@ public class ClienteDTO {
     @NotNull(message = "La información de contacto es obligatoria")
     private ContactoDTO contacto;
     
-    @Valid
     private PersonaJuridicaDTO organizacion;
 }

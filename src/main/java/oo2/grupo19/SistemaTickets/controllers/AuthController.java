@@ -38,9 +38,9 @@ public class AuthController {
             HttpSession session) {
         session.invalidate();
         if (error != null) {
+            model.addAttribute("error", "Credenciales inválidas. Por favor, intente nuevamente.");
             logger.warn("Intento de login fallido: {}", error);
         }
-        model.addAttribute("error", error);
         return ViewRouteHelper.LOGIN;
     }
 

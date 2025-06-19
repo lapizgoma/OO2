@@ -16,6 +16,7 @@ import oo2.grupo19.SistemaTickets.dto.mappers.PersonaJuridicaMapper;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.entities.Contacto;
 import oo2.grupo19.SistemaTickets.entities.PersonaJuridica;
+import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.*;
 import oo2.grupo19.SistemaTickets.repositories.ICliente;
 import oo2.grupo19.SistemaTickets.repositories.IContacto;
@@ -86,15 +87,19 @@ public class ClienteServiceImpl implements IClienteService {
     
     private Cliente actualizarClienteSiEstaPresente(ClienteDTO clientedto) {
         Cliente clienteNew = transformarDatosCliente(clientedto);
-        Contacto contactoNew = transformarDatosContacto(clientedto,clienteNew.getContacto().getId());
+        Contacto contactoNew = transformarDatosContacto(clientedto, clienteNew.getContacto().getId());
         clienteNew.setContacto(contactoNew);
         contactoNew.setUsuario(clienteNew);
-        log.info("Tiene organizacion? : " + clienteNew.tieneOrganizacion() + " Codigo de acceso: " + clientedto.getOrganizacion().getCodigoAcceso());
+
+        String codigoAcceso = (clientedto.getOrganizacion() != null) ? clientedto.getOrganizacion().getCodigoAcceso() : null;
+        log.info("Tiene organizacion? : " + clienteNew.tieneOrganizacion() + " Codigo de acceso: " + codigoAcceso);
+
         PersonaJuridica organizacionDB = null;
         if (clienteNew.tieneOrganizacion()) {
             organizacionDB = personaJuridicaRepository.findById(clienteNew.getOrganizacion().getId()).get();
-        }else if (!clientedto.getOrganizacion().getCodigoAcceso().isEmpty()){
-            organizacionDB = personaJuridicaRepository.findByCodigoAcceso(clientedto.getOrganizacion().getCodigoAcceso()).get();
+        } else if (codigoAcceso != null && !codigoAcceso.isEmpty()) {
+            organizacionDB = personaJuridicaRepository.findByCodigoAcceso(codigoAcceso)
+                .orElseThrow(() -> new StatusCustomExceptions.NotFoundException("No existe el codigo de acceso"));
         }
         setearOrganizacion(clientedto, clienteNew, organizacionDB);
         log.info("Nueva entidad cliente: " + clienteNew.toString());
@@ -128,8 +133,10 @@ public class ClienteServiceImpl implements IClienteService {
     private void setearOrganizacion(ClienteDTO clientedto, Cliente clienteNew, PersonaJuridica organizacionDB) {
         PersonaJuridica organizacionNew = PersonaJuridicaMapper.
                                             mapToPersonaJuridicaEntity(clientedto.getOrganizacion(),
-                                            (clientedto.getOrganizacion() != null) ? organizacionDB : new PersonaJuridica());
-        organizacionNew.setId(organizacionDB.getId());
-        clienteNew.setOrganizacion(organizacionNew);
+                                            (clientedto.getOrganizacion() != null) ? organizacionDB : null);
+        if(organizacionNew != null){
+            organizacionNew.setId(organizacionDB.getId());
+            clienteNew.setOrganizacion(organizacionNew);
+        }
     }
 }

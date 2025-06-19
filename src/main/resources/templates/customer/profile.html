@@ -54,11 +54,13 @@
 
         <div th:if="${cliente.organizacion == null}">
             <label for="codigoAcceso">Código de acceso:</label>
-            <input type="text" id="codigoAcceso" name="codigoAcceso"
-                   th:value="${codigoAcceso}" />
+                <input type="text" id="codigoAcceso" name="codigoAcceso"
+                th:value="${codigoAcceso}" />
+            <div th:if="${codigoError}" class="text-danger small mt-1" th:text="${codigoError}"></div>
         </div>
         
         <a th:href="@{/cuenta/eliminar}" class="btn btn-danger" role="button">Eliminar Cuenta</a>
+        <a th:href="@{/home}" class="btn btn-secondary" role="button">Volver</a>
         <button type="submit">Guardar Cambios</button>
     </form>
 </body>
