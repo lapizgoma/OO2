@@ -25,7 +25,7 @@
     <div class="card p-4" style="width:100%; max-width:500px; background-color:#2D2D2D; border-color:#4A90E2;">
       <h2 class="card-title text-center text-white mb-4">Registrarse</h2>
 
-      <form th:action="@{/auth/register}" th:object="${cliente}" method="post" novalidate>
+      <form th:action="@{/auth/register}" th:object="${cliente}" method="post">
         <!-- Nombre -->
         <div class="mb-3">
           <label for="nombre" class="form-label text-white">Nombre</label>
@@ -35,7 +35,6 @@
             id="nombre"
             class="form-control bg-dark text-white"
             placeholder="Ingrese su nombre"
-            required
           />
           <div class="text-danger small mt-1"
                th:if="${#fields.hasErrors('nombre')}"
@@ -51,7 +50,6 @@
             id="apellido"
             class="form-control bg-dark text-white"
             placeholder="Ingrese su apellido"
-            required
           />
           <div class="text-danger small mt-1"
                th:if="${#fields.hasErrors('apellido')}"
@@ -67,7 +65,6 @@
             id="email"
             class="form-control bg-dark text-white"
             placeholder="usuario@ejemplo.com"
-            required
           />
           <div class="text-danger small mt-1"
                th:if="${#fields.hasErrors('contacto.email')}"
@@ -83,7 +80,6 @@
             id="password"
             class="form-control bg-dark text-white"
             placeholder="••••••••"
-            required
           />
           <div class="text-danger small mt-1"
                th:if="${#fields.hasErrors('password')}"
@@ -99,7 +95,6 @@
             id="dni"
             class="form-control bg-dark text-white"
             placeholder="Ingrese su DNI"
-            required
           />
           <div class="text-danger small mt-1"
                th:if="${#fields.hasErrors('dni')}"
@@ -116,7 +111,6 @@
             id="calle"
             class="form-control bg-dark text-white"
             placeholder="Nombre de la calle"
-            required
           />
           <div class="text-danger small mt-1"
                th:if="${#fields.hasErrors('contacto.calle')}"
@@ -130,7 +124,6 @@
             id="nro_puerta"
             class="form-control bg-dark text-white"
             placeholder="e.g. 123"
-            required
           />
           <div class="text-danger small mt-1"
                th:if="${#fields.hasErrors('contacto.nroPuerta')}"
@@ -144,7 +137,6 @@
             id="localidad"
             class="form-control bg-dark text-white"
             placeholder="Ciudad / Barrio"
-            required
           />
           <div class="text-danger small mt-1"
                th:if="${#fields.hasErrors('contacto.localidad')}"
@@ -158,7 +150,6 @@
             id="telefono"
             class="form-control bg-dark text-white"
             placeholder="e.g. 1123456789"
-            required
           />
           <div class="text-danger small mt-1"
                th:if="${#fields.hasErrors('contacto.telefono')}"

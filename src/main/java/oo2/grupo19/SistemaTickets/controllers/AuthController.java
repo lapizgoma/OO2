@@ -13,10 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpSession;
 import oo2.grupo19.SistemaTickets.dto.ClienteDTO;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
-
-
-import java.util.HashMap;
-import java.util.Map;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.AlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,41 +59,30 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String registrarUsuario(@Valid @ModelAttribute ClienteDTO cliente,
-            BindingResult result,
-            @RequestParam(required = false) String activo,
-            Authentication currentAuth,
-            Model model) {
-        if(result.hasErrors()){
+    public String registrarUsuario(@Valid @ModelAttribute("cliente") ClienteDTO cliente,
+                                BindingResult result,
+                                @RequestParam(required = false) String activo,
+                                Authentication currentAuth,
+                                Model model) {
+        if (result.hasErrors()) {
             logger.warn("Errores de validación en registro de usuario: {}", result.getAllErrors());
-            validator(model,result);
-            return ViewRouteHelper.REGISTER;
+            return ViewRouteHelper.REGISTER; // Devolvés a la vista y Thymeleaf lo renderiza automáticamente
         }
-        logger.info("Usuario registrado exitosamente: {}", cliente.getContacto().getEmail());
+
         try {
             clienteService.save(cliente);
             logger.info("Usuario registrado exitosamente: {}", cliente.getContacto().getEmail());
         } catch (Exception e) {
             logger.error("Error inesperado al registrar usuario", e);
-            throw new RuntimeException("Error inesperado al registrar usuario: " + e.getMessage());
+            return ViewRouteHelper.REGISTER;
         }
-        //Alerta de registro exitoso y despues mandar al login
+
         return ViewRouteHelper.LOGIN;
     }
 
+
     private boolean isUserAuthenticated(Authentication auth){
         return auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser");
-    }
-
-    private void validator(Model model,BindingResult result){
-        Map<String,String> errors = new HashMap<>();
-        if(result.hasErrors()){
-            result.getFieldErrors().forEach(err ->{
-                errors.put(err.getField(),err.getDefaultMessage());
-            });
-            model.addAttribute("errors",errors);
-        }
-
     }
 
 }

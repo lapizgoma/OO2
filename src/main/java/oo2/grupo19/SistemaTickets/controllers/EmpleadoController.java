@@ -65,27 +65,26 @@ public class EmpleadoController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/agregar")
-    public String postMethodName(@Valid @ModelAttribute EmpleadoDTO empleado,
-                            BindingResult result,
-                            Authentication auth,
-                            Model model) {
-    
-    // Asegurar que contacto esté inicializado ANTES de verificar errores
-    if (empleado.getContacto() == null) {
-        empleado.setContacto(new ContactoDTO());
-    }
-        
-    if(result.hasErrors()){
-        model.addAttribute("rolRepository", roleRepository.findByTypeNot(RoleType.CUSTOMER));
-        logger.warn("Errores de validación en registro de empleado: {}", result.getAllErrors());
-        validator(model, result);
-        return ViewRouteHelper.EMPLEADO_REGISTER;
+    public String registrarEmpleado(@Valid @ModelAttribute("empleado") EmpleadoDTO empleado,
+                                    BindingResult result,
+                                    Authentication auth,
+                                    Model model) {
+        if (empleado.getContacto() == null) {
+            empleado.setContacto(new ContactoDTO());
+        }
+
+        if (result.hasErrors()) {
+            model.addAttribute("rolRepository", roleRepository.findByTypeNot(RoleType.CUSTOMER));
+            logger.warn("Errores de validación en registro de empleado: {}", result.getAllErrors());
+            return ViewRouteHelper.EMPLEADO_REGISTER;
+        }
+
+        empleadoService.save(empleado);
+        logger.info("Empleado registrado exitosamente (ID): {} por {}", empleado.getContacto().getEmail(), auth.getName());
+        return ViewRouteHelper.EMPLEADO_REGISTRADO;
     }
 
-    empleadoService.save(empleado);
-    logger.info("Empleado registrado exitosamente (ID): {} por {}", empleado.getContacto().getEmail(), auth.getName());
-    return ViewRouteHelper.EMPLEADO_REGISTRADO;
-}
+
     
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{empleadoId}")
@@ -93,16 +92,5 @@ public class EmpleadoController {
         empleadoService.delete(empleadoEmail);
         logger.info("Empleado dado de baja: {} por {}", empleadoEmail, auth.getName());
         return ViewRouteHelper.EMPLEADO_BORRADO;
-    }
-
-    private void validator(Model model,BindingResult result){
-        Map<String,String> errors = new HashMap<>();
-        if(result.hasErrors()){
-            result.getFieldErrors().forEach(err ->{
-                errors.put(err.getField(),err.getDefaultMessage());
-            });
-            model.addAttribute("errors",errors);
-        }
-
     }
 }

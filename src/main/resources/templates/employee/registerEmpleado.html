@@ -30,166 +30,76 @@
         <!-- Nombre -->
         <div class="mb-3">
           <label for="nombre" class="form-label text-white">Nombre</label>
-          <input
-            type="text"
-            th:field="*{nombre}"
-            id="nombre"
-            class="form-control bg-dark text-white"
-            placeholder="Ingrese el nombre"
-            required
-          />
-          <div class="text-danger small mt-1"
-               th:if="${#fields.hasErrors('nombre')}"
-               th:text="${#fields.errors('nombre')}"></div>
+          <input type="text" th:field="*{nombre}" id="nombre" class="form-control bg-dark text-white" placeholder="Ingrese el nombre" />
+          <div class="text-danger small mt-1" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
         </div>
 
         <!-- Apellido -->
         <div class="mb-3">
           <label for="apellido" class="form-label text-white">Apellido</label>
-          <input
-            type="text"
-            th:field="*{apellido}"
-            id="apellido"
-            class="form-control bg-dark text-white"
-            placeholder="Ingrese el apellido"
-            required
-          />
-          <div class="text-danger small mt-1"
-               th:if="${#fields.hasErrors('apellido')}"
-               th:text="${#fields.errors('apellido')}"></div>
+          <input type="text" th:field="*{apellido}" id="apellido" class="form-control bg-dark text-white" placeholder="Ingrese el apellido" />
+          <div class="text-danger small mt-1" th:if="${#fields.hasErrors('apellido')}" th:errors="*{apellido}"></div>
         </div>
 
         <!-- Email -->
         <div class="mb-3">
           <label for="email" class="form-label text-white">Email</label>
-          <input
-            type="email"
-            th:field="*{contacto.email}"
-            id="email"
-            class="form-control bg-dark text-white"
-            placeholder="usuario@ejemplo.com"
-            required
-          />
-          <div class="text-danger small mt-1"
-               th:if="${#fields.hasErrors('contacto.email')}"
-               th:text="${#fields.errors('contacto.email')}"></div>
+          <input type="email" th:field="*{contacto.email}" id="email" class="form-control bg-dark text-white" placeholder="usuario@ejemplo.com" />
+          <div class="text-danger small mt-1" th:if="${#fields.hasErrors('contacto.email')}" th:errors="*{contacto.email}"></div>
         </div>
 
         <!-- Password -->
         <div class="mb-3">
           <label for="password" class="form-label text-white">Password</label>
-          <input
-            type="password"
-            th:field="*{password}"
-            id="password"
-            class="form-control bg-dark text-white"
-            placeholder="••••••••"
-            required
-          />
-          <div class="text-danger small mt-1"
-               th:if="${#fields.hasErrors('password')}"
-               th:text="${#fields.errors('password')}"></div>
+          <input type="password" th:field="*{password}" id="password" class="form-control bg-dark text-white" placeholder="••••••••" />
+          <div class="text-danger small mt-1" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
         </div>
 
         <!-- DNI -->
         <div class="mb-3">
           <label for="dni" class="form-label text-white">DNI</label>
-          <input
-            type="text"
-            th:field="*{dni}"
-            id="dni"
-            class="form-control bg-dark text-white"
-            placeholder="Ingrese DNI"
-            required
-          />
-          <div class="text-danger small mt-1"
-               th:if="${#fields.hasErrors('dni')}"
-               th:text="${#fields.errors('dni')}"></div>
+          <input type="text" th:field="*{dni}" id="dni" class="form-control bg-dark text-white" placeholder="Ingrese DNI" />
+          <div class="text-danger small mt-1" th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}"></div>
         </div>
 
         <!-- Rol -->
         <div class="mb-3">
           <label for="rolId" class="form-label text-white">Rol</label>
-          <select
-              th:field="*{role}"
-              id="rolId"
-              class="form-select bg-dark text-white">
-              <option th:each="rolOption : ${rolRepository}"
-                      th:value="${rolOption.type.toString()}"
-                      th:text="${rolOption.type}">
-              </option>
+          <select th:field="*{role}" id="rolId" class="form-select bg-dark text-white">
+            <option th:each="rolOption : ${rolRepository}" th:value="${rolOption.type}" th:text="${rolOption.type}"></option>
           </select>
-          <div class="text-danger small mt-1"
-            th:if="${#fields.hasErrors('role')}"
-            th:text="${#fields.errors('role')}">
+          <div class="text-danger small mt-1" th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></div>
         </div>
 
-        <hr class="border-secondary"/>
-
+        <hr class="border-secondary" />
         <h5 class="text-white-50 mt-3 mb-2">Contacto</h5>
 
         <!-- Calle -->
         <div class="mb-3">
           <label for="calle" class="form-label text-white">Calle</label>
-          <input
-            type="text"
-            th:field="*{contacto.calle}"
-            id="calle"
-            class="form-control bg-dark text-white"
-            placeholder="Nombre de la calle"
-            required
-          />
-          <div class="text-danger small mt-1"
-               th:if="${#fields.hasErrors('contacto.calle')}"
-               th:text="${#fields.errors('contacto.calle')}"></div>
+          <input type="text" th:field="*{contacto.calle}" id="calle" class="form-control bg-dark text-white" placeholder="Nombre de la calle" />
+          <div class="text-danger small mt-1" th:if="${#fields.hasErrors('contacto.calle')}" th:errors="*{contacto.calle}"></div>
         </div>
 
         <!-- Número de puerta -->
         <div class="mb-3">
           <label for="nroPuerta" class="form-label text-white">Número de puerta</label>
-          <input
-            type="text"
-            th:field="*{contacto.nroPuerta}"
-            id="nroPuerta"
-            class="form-control bg-dark text-white"
-            placeholder="e.g. 123"
-            required
-          />
-          <div class="text-danger small mt-1"
-               th:if="${#fields.hasErrors('contacto.nroPuerta')}"
-               th:text="${#fields.errors('contacto.nroPuerta')}"></div>
+          <input type="text" th:field="*{contacto.nroPuerta}" id="nroPuerta" class="form-control bg-dark text-white" placeholder="e.g. 123" />
+          <div class="text-danger small mt-1" th:if="${#fields.hasErrors('contacto.nroPuerta')}" th:errors="*{contacto.nroPuerta}"></div>
         </div>
 
         <!-- Localidad -->
         <div class="mb-3">
           <label for="localidad" class="form-label text-white">Localidad</label>
-          <input
-            type="text"
-            th:field="*{contacto.localidad}"
-            id="localidad"
-            class="form-control bg-dark text-white"
-            placeholder="Ciudad / Barrio"
-            required
-          />
-          <div class="text-danger small mt-1"
-               th:if="${#fields.hasErrors('contacto.localidad')}"
-               th:text="${#fields.errors('contacto.localidad')}"></div>
+          <input type="text" th:field="*{contacto.localidad}" id="localidad" class="form-control bg-dark text-white" placeholder="Ciudad / Barrio" />
+          <div class="text-danger small mt-1" th:if="${#fields.hasErrors('contacto.localidad')}" th:errors="*{contacto.localidad}"></div>
         </div>
 
         <!-- Teléfono -->
         <div class="mb-3">
           <label for="telefono" class="form-label text-white">Teléfono</label>
-          <input
-            type="tel"
-            th:field="*{contacto.telefono}"
-            id="telefono"
-            class="form-control bg-dark text-white"
-            placeholder="e.g. 1123456789"
-            required
-          />
-          <div class="text-danger small mt-1"
-               th:if="${#fields.hasErrors('contacto.telefono')}"
-               th:text="${#fields.errors('contacto.telefono')}"></div>
+          <input type="tel" th:field="*{contacto.telefono}" id="telefono" class="form-control bg-dark text-white" placeholder="e.g. 1123456789" />
+          <div class="text-danger small mt-1" th:if="${#fields.hasErrors('contacto.telefono')}" th:errors="*{contacto.telefono}"></div>
         </div>
 
         <!-- Acciones -->
