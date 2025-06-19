@@ -49,6 +49,10 @@ public class HomeController <T> {
         return ViewRouteHelper.INDEX;
     }
 
+    @GetMapping("/")
+    public String redirectToHome() {
+        return "redirect:/home";
+    }
     @GetMapping("/home")
     public String home(Authentication auth) {
         if(auth != null && auth.isAuthenticated()){
