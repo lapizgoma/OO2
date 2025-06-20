@@ -17,7 +17,7 @@ import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.entities.Contacto;
 import oo2.grupo19.SistemaTickets.entities.PersonaJuridica;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions;
-import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.*;
+import static oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.*;
 import oo2.grupo19.SistemaTickets.repositories.ICliente;
 import oo2.grupo19.SistemaTickets.repositories.IContacto;
 import oo2.grupo19.SistemaTickets.repositories.IPersonaJuridica;
@@ -126,8 +126,10 @@ public class ClienteServiceImpl implements IClienteService {
         cliente.agregarRoles(roleRepository.findById(1L).orElseThrow(() -> new NotFoundException("Rol no encontrado")));
         cliente.setPassword(passwordHash);
         cliente.setContacto(ContactoMapper.mapToContactoEntity(clientedto.getContacto(), new Contacto()));
-        PersonaJuridica personaJuridica = personaJuridicaRepository.findByCodigoAcceso(clientedto.getOrganizacion().getCodigoAcceso()).orElseGet(null);
-        cliente.setOrganizacion(personaJuridica);
+        if(!clientedto.getOrganizacion().getCodigoAcceso().isEmpty()){
+            PersonaJuridica personaJuridica = personaJuridicaRepository.findByCodigoAcceso(clientedto.getOrganizacion().getCodigoAcceso()).orElseThrow( () -> new NotFoundException("No existe el codigo proporcionado")) ;
+            cliente.setOrganizacion(personaJuridica);
+        }
         return cliente;
     }
 

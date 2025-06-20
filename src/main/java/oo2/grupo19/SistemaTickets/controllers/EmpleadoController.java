@@ -85,7 +85,7 @@ public class EmpleadoController {
     
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{empleadoId}")
-    public String darBajaEmpleado(@PathVariable String empleadoEmail, Authentication auth) {
+    public String darBajaEmpleado(@PathVariable(name = "empleadoId") String empleadoEmail, Authentication auth) {
         empleadoService.delete(empleadoEmail);
         logger.info("Empleado dado de baja: {} por {}", empleadoEmail, auth.getName());
         return ViewRouteHelper.EMPLEADO_BORRADO;

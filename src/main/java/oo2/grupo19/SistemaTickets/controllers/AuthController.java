@@ -65,6 +65,9 @@ public class AuthController {
                                 @RequestParam(required = false) String activo,
                                 Authentication currentAuth,
                                 Model model) {
+
+            logger.info("Es vacio? " + cliente.getOrganizacion().getCodigoAcceso().isEmpty());
+            logger.info("Es nulo? " + Boolean.toString(cliente.getOrganizacion().getCodigoAcceso() == null));
         if (result.hasErrors()) {
             logger.warn("Errores de validación en registro de usuario: {}", result.getAllErrors());
             return ViewRouteHelper.REGISTER; // Devolvés a la vista y Thymeleaf lo renderiza automáticamente
@@ -75,6 +78,7 @@ public class AuthController {
             logger.info("Usuario registrado exitosamente: {}", cliente.getContacto().getEmail());
         } catch (Exception e) {
             logger.error("Error inesperado al registrar usuario", e);
+            model.addAttribute("codigoError", e.getMessage());
             return ViewRouteHelper.REGISTER;
         }
 

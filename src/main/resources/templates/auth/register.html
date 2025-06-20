@@ -171,7 +171,7 @@
             th:checked="${activo}"
             onclick="toggleCodigoAcceso()"
           />
-          <label class="form-check-label" for="esJuridica">Es persona jurídica</label>
+          <label class="form-check-label" for="esJuridica">Tengo codigo de empresa</label>
         </div>
 
         <!-- Código de acceso (solo visible si es persona jurídica) -->
@@ -186,7 +186,9 @@
           />
           <div class="text-danger small mt-1"
               th:if="${#fields.hasErrors('organizacion.codigoAcceso')}"
-              th:errors="*{organizacion.codigoAcceso}"></div>
+              th:errors="*{organizacion.codigoAcceso}">
+            </div>
+              <div th:if="${codigoError}" class="text-danger small mt-1" th:text="${codigoError}"></div>
         </div>
 
         <!-- Botones -->
@@ -196,16 +198,16 @@
     </div>
   </div>
 
-    <script>
-  function toggleCodigoAcceso() {
-    const check = document.getElementById('esJuridica');
-    const div = document.getElementById('codigoAccesoDiv');
-    div.style.display = check.checked ? 'block' : 'none';
-  }
-  // Mostrar el campo si ya estaba tildado al volver con errores
-  window.onload = function() {
-    toggleCodigoAcceso();
-  }
+  <script>
+    function toggleCodigoAcceso() {
+      const check = document.getElementById('esJuridica');
+      const div = document.getElementById('codigoAccesoDiv');
+      div.style.display = check.checked ? 'block' : 'none';
+    }
+    // Mostrar el campo si ya estaba tildado al volver con errores
+    window.onload = function() {
+      toggleCodigoAcceso();
+    }
 </script>
   <!-- Bootstrap JS -->
   <script
