@@ -19,6 +19,7 @@ import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.entities.Empleado;
 import oo2.grupo19.SistemaTickets.entities.Ticket;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions;
+import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotAuthorizedException;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
 import oo2.grupo19.SistemaTickets.repositories.ICliente;
 import oo2.grupo19.SistemaTickets.repositories.IEmpleado;
@@ -202,8 +203,15 @@ public class TicketServiceImpl implements ITicketService{
         try {
             Ticket ticketEntity = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new NotFoundException("No pudimos encontrar el Ticket que buscás"));
+            Empleado empleadoEntity = empleadoRepository.findByContactoEmail(empleadoEmail)
+            .orElseThrow(() -> new NotAuthorizedException("No tenés permiso para estar acá :/"));
+
             log.info ("EMPLEADO PIDE TICKET ID: " + ticketId.toString ());
-            return TicketEmployeeMapper.mapToTicketEmployeeDto(ticketEntity);
+
+            TicketEmployeeDTO dto = TicketEmployeeMapper.mapToTicketEmployeeDto(ticketEntity);
+            dto.setEstaAsignado(ticketEntity.usuarioPertenece(empleadoEntity));
+
+            return dto;
         } catch (Exception e) {
             throw new NotFoundException("Error al obtener el ticket para el empleado" + e.getMessage());
         }

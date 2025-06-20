@@ -27,6 +27,10 @@ public class TicketEmployeeDTO {
 	private EstadoTicketDTO estado;
 	private PrioridadDTO prioridad;
 	private ClienteDTO cliente;
+	/*
+	 * Esta flag no se tiene que setear en el Mapper, el Service debe hacerlo por su lado.
+	 */
+	private Boolean estaAsignado;
 
 	public IntervencionDTO getUltimaIntervencion() {
 		if (intervenciones == null || intervenciones.isEmpty()) {
