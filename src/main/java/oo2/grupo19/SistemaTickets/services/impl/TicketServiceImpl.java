@@ -2,6 +2,7 @@ package oo2.grupo19.SistemaTickets.services.impl;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.context.annotation.Primary;
@@ -27,7 +28,6 @@ import oo2.grupo19.SistemaTickets.repositories.ITicket;
 import oo2.grupo19.SistemaTickets.repositories.estados.IEstadoTicket;
 import oo2.grupo19.SistemaTickets.repositories.estados.IPrioridad;
 import oo2.grupo19.SistemaTickets.services.ITicketService;
-
 
 @Service
 @Log4j2
@@ -64,12 +64,6 @@ public class TicketServiceImpl implements ITicketService{
     @Transactional(readOnly = true)
     public Set<TicketDTO> findAll() {
         return TicketMapper.mapToTicketDtoSet(ticketRepository.findAll());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Set<TicketEmployeeDTO> findAllTicketsForEmployee() {
-        return TicketEmployeeMapper.mapToTicketEmployeeDtoSet(ticketRepository.findAll());
     }
 
     @Override
@@ -139,6 +133,11 @@ public class TicketServiceImpl implements ITicketService{
             
     }
     
+    @Override
+    @Transactional(readOnly = true)
+    public Set<TicketEmployeeDTO> findAllTicketsForEmployee() {
+        return TicketEmployeeMapper.mapToTicketEmployeeDtoSet(ticketRepository.findAll());
+    }
 
     @Override
     @Transactional
@@ -169,8 +168,11 @@ public class TicketServiceImpl implements ITicketService{
     @Override
     @Transactional
     public Set<TicketEmployeeDTO> findTicketByPrioridad(PrioridadDTO prioridad) {
-        return TicketEmployeeMapper.mapToTicketEmployeeDtoSet(ticketRepository.traerPorPrioridad(prioridad.getPrioridad()));
-        
+        List<Ticket> tickets = ticketRepository.traerPorPrioridad(prioridad.getPrioridad());
+        if(tickets.isEmpty()){
+            throw new NotFoundException("La prioridad está vacía en uno de los tickets");
+        }
+        return TicketEmployeeMapper.mapToTicketEmployeeDtoSet(tickets);
     }
 
     @Override
