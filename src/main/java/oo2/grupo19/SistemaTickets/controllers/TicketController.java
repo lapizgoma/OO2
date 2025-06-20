@@ -56,6 +56,11 @@ public class TicketController {
 
     private static final Logger logger = LoggerFactory.getLogger(TicketController.class);
 
+    @GetMapping("/form-filtrar-tickets")
+    public String showFilterPage() {
+        return ViewRouteHelper.TICKET_FORM_FILTRAR;  // La vista con los formularios de filtro 
+    }
+
     @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/create")
     public String createTicket(Model model) {
@@ -217,14 +222,17 @@ public class TicketController {
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @GetMapping("/list-ticket-por-prioridad")
     public String ticketListByPrioridad(@RequestParam String prioridad, RedirectAttributes redirectAttributes, Authentication authentication){
+        PrioridadDTO prioridadTicket = null;
         try{
-            PrioridadDTO prioridadTicket = prioridadService.findByPrioridad(prioridad);
+            prioridadTicket = prioridadService.findByPrioridad(prioridad);
             Set<TicketEmployeeDTO> tickets = ticketService.findTicketByPrioridad(prioridadTicket);
             redirectAttributes.addFlashAttribute("ticket", tickets);
+            log.info("Ticket prioridad: " + prioridadTicket);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("codigoError", e.getMessage());
-            return "redirect:/form-filtrar-tickets";  
-        }return ViewRouteHelper.INDEX_REDIRECT;
+            return "redirect:/ticket/form-filtrar-tickets"; 
+        }
+        return ViewRouteHelper.INDEX_REDIRECT;
     }
     
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
@@ -238,11 +246,6 @@ public class TicketController {
             return "redirect:/form-filtrar-tickets";  
         }return ViewRouteHelper.INDEX_REDIRECT;
     }
-    
-    @GetMapping("/form-filtrar-tickets")
-    public String showFilterPage() {
-        return ViewRouteHelper.TICKET_FORM_FILTRAR;  // La vista con los formularios de filtro 
-        }
 
     private void sendEmailTicketCreate(TicketDTO ticket){
         Map<String,Object> infoClient = new HashMap<>();
