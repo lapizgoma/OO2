@@ -67,7 +67,15 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <a class="btn btn-primary" th:href="@{/intervencion/create/{idTicket}(idTicket=${ticketEmployeeDTO.id})}">Crear Intervención</a>
+                        <div th:if="${ticketEmployeeDTO.estaAsignado}">
+                            <a class="btn btn-primary" th:href="@{/intervencion/create/{idTicket}(idTicket=${ticketEmployeeDTO.id})}">Crear Intervención</a>
+                        </div>
+                    
+                        <div th:unless="${ticketEmployeeDTO.estaAsignado}">
+                            <form th:action="@{/ticket/asignar/{idTicket}(idTicket=${ticketEmployeeDTO.id})}" method="post">
+                                <button type="submit" class="btn btn-success">Tomar Ticket</button>
+                            </form>
+                        </div>
                     </div>
                      <!-- ===== FORMULARIO PARA CAMBIAR ESTADO DEL TICKET ===== -->
                     <div class="card bg-dark border-primary shadow mb-4">

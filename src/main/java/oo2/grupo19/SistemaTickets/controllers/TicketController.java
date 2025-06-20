@@ -109,8 +109,7 @@ public class TicketController {
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
-    // TODO: cambiar a POST cuando esté la vista de tickets
-    @GetMapping("/asignar/{idTicket}")
+    @PostMapping("/asignar/{idTicket}")
     public String postMethodName(@PathVariable long idTicket, Authentication authentication, Model model) {
         
         TicketEmployeeDTO ticket = ticketService.asignarTicket(idTicket, authentication.getName ());
