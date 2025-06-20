@@ -142,27 +142,41 @@ public class TicketServiceImpl implements ITicketService{
     @Override
     @Transactional
     public Set<TicketEmployeeDTO> findTicketByCliente(String email) {
-        return TicketEmployeeMapper.mapToTicketEmployeeDtoSet(ticketRepository.traerPorCliente(email));
+        List<Ticket> tickets = ticketRepository.traerPorCliente(email);
+        if(tickets.isEmpty()){
+            throw new NotFoundException("No se ha encontrado ningún ticket para el cliente: " + email);
+        }
+        return TicketEmployeeMapper.mapToTicketEmployeeDtoSet(tickets);
     }
 
     @Override
     @Transactional
     public Set<TicketEmployeeDTO> findTicketByAsunto(String asunto) {
-        return TicketEmployeeMapper.mapToTicketEmployeeDtoSet(ticketRepository.traerPorAsunto(asunto));
+         List<Ticket> tickets = ticketRepository.traerPorAsunto(asunto);
+        if(tickets.isEmpty()){
+            throw new NotFoundException("No se ha encontrado ningún ticket con el asunto: " + asunto);
+        }
+        return TicketEmployeeMapper.mapToTicketEmployeeDtoSet(tickets);
     }
 
     @Override
     @Transactional
     public Set<TicketEmployeeDTO> findTicketByEmpleado(String email) {
-        log.info("email: " + email);
-        log.info("Empleado buscado: " + ticketRepository.traerPorEmpleado(email));
-        return TicketEmployeeMapper.mapToTicketEmployeeDtoSet(ticketRepository.traerPorEmpleado(email));
+         List<Ticket> tickets = ticketRepository.traerPorEmpleado(email);
+        if(tickets.isEmpty()){
+            throw new NotFoundException("No se ha encontrado ningún ticket para el empleado: " + email);
+        }
+        return TicketEmployeeMapper.mapToTicketEmployeeDtoSet(tickets);
     }
 
     @Override
     @Transactional
     public Set<TicketEmployeeDTO> findTicketByEstado(EstadoTicketDTO estado) {
-        return TicketEmployeeMapper.mapToTicketEmployeeDtoSet(ticketRepository.traerPorEstado(estado.getEstado()));
+        List<Ticket> tickets = ticketRepository.traerPorEstado(estado.getEstado());
+        if(tickets.isEmpty()){
+            throw new NotFoundException("No se ha encontrado ningún ticket con el estado: " + estado.getEstado());
+        }
+        return TicketEmployeeMapper.mapToTicketEmployeeDtoSet(tickets);
     }
 
     @Override
@@ -170,7 +184,7 @@ public class TicketServiceImpl implements ITicketService{
     public Set<TicketEmployeeDTO> findTicketByPrioridad(PrioridadDTO prioridad) {
         List<Ticket> tickets = ticketRepository.traerPorPrioridad(prioridad.getPrioridad());
         if(tickets.isEmpty()){
-            throw new NotFoundException("La prioridad está vacía en uno de los tickets");
+            throw new NotFoundException("No se ha encontrado ningún ticket con la prioridad: " + prioridad.getPrioridad());
         }
         return TicketEmployeeMapper.mapToTicketEmployeeDtoSet(tickets);
     }
@@ -180,7 +194,11 @@ public class TicketServiceImpl implements ITicketService{
     public Set<TicketEmployeeDTO> findTicketByFechaHora(LocalDate fecha) {
         LocalDateTime inicio = fecha.atStartOfDay();
         LocalDateTime fin = inicio.plusDays(1);
-        return TicketEmployeeMapper.mapToTicketEmployeeDtoSet(ticketRepository.traerPorRangoFecha(inicio, fin));
+         List<Ticket> tickets = ticketRepository.traerPorRangoFecha(inicio, fin);
+        if(tickets.isEmpty()){
+            throw new NotFoundException("No se ha encontrado ningún ticket para la fecha: " + fecha);
+        }
+        return TicketEmployeeMapper.mapToTicketEmployeeDtoSet(tickets);
     }
 
     @Transactional(readOnly = true)

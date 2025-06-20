@@ -176,7 +176,7 @@ public class TicketController {
             redirectAttributes.addFlashAttribute("ticket", tickets);
         }catch (Exception e) {
             redirectAttributes.addFlashAttribute("codigoError", e.getMessage());
-            return "redirect:/form-filtrar-tickets";  
+            return "redirect:/ticket/form-filtrar-tickets";  
         }
         return ViewRouteHelper.INDEX_REDIRECT;
     }
@@ -189,7 +189,7 @@ public class TicketController {
         redirectAttributes.addFlashAttribute("ticket", tickets);
         }catch (Exception e) {
             redirectAttributes.addFlashAttribute("codigoError", e.getMessage());
-            return "redirect:/form-filtrar-tickets";  
+            return "redirect:/ticket/form-filtrar-tickets";  
         }
         return ViewRouteHelper.INDEX_REDIRECT;
     }
@@ -202,7 +202,7 @@ public class TicketController {
             redirectAttributes.addFlashAttribute("ticket", tickets);
         }catch (Exception e) {
             redirectAttributes.addFlashAttribute("codigoError", e.getMessage());
-            return "redirect:/form-filtrar-tickets";  
+            return "redirect:/ticket/form-filtrar-tickets";  
         }return ViewRouteHelper.INDEX_REDIRECT;
     }
     
@@ -215,7 +215,7 @@ public class TicketController {
             redirectAttributes.addFlashAttribute("ticket", tickets);
         }catch (Exception e) {
             redirectAttributes.addFlashAttribute("codigoError", e.getMessage());
-            return "redirect:/form-filtrar-tickets";  
+            return "redirect:/ticket/form-filtrar-tickets";  
         }return ViewRouteHelper.INDEX_REDIRECT;
     }
     
@@ -243,7 +243,7 @@ public class TicketController {
             redirectAttributes.addFlashAttribute("ticket", tickets);
         }catch (Exception e) {
             redirectAttributes.addFlashAttribute("codigoError", e.getMessage());
-            return "redirect:/form-filtrar-tickets";  
+            return "redirect:/ticket/form-filtrar-tickets";  
         }return ViewRouteHelper.INDEX_REDIRECT;
     }
 
