@@ -57,7 +57,7 @@ La aplicación necesita las siguientes variables de entorno configuradas:
 
 ## Configuración del proyecto
 
-Antes de configurar las variables de entorno, asegúrate de que tu proyecto tenga la estructura correcta y las dependencias necesarias en el `pom.xml` o `build.gradle`.
+Antes de configurar las variables de entorno, asegúrate de que tu proyecto tenga la estructura correcta y las dependencias necesarias en el `pom.xml`.
 
 ## Método 1: Visual Studio Code
 
