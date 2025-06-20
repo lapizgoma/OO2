@@ -68,6 +68,12 @@ public class TicketServiceImpl implements ITicketService{
 
     @Override
     @Transactional(readOnly = true)
+    public Set<TicketEmployeeDTO> findAllTicketsForEmployee() {
+        return TicketEmployeeMapper.mapToTicketEmployeeDtoSet(ticketRepository.findAll());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public TicketDTO findById(Long id) {
         return TicketMapper.mapToTicketDto(
             ticketRepository.findById(id)
@@ -164,6 +170,7 @@ public class TicketServiceImpl implements ITicketService{
     @Transactional
     public Set<TicketEmployeeDTO> findTicketByPrioridad(PrioridadDTO prioridad) {
         return TicketEmployeeMapper.mapToTicketEmployeeDtoSet(ticketRepository.traerPorPrioridad(prioridad.getPrioridad()));
+        
     }
 
     @Override

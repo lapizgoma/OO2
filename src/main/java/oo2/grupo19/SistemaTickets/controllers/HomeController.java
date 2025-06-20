@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.ui.Model;
 import lombok.extern.log4j.Log4j2;
 import oo2.grupo19.SistemaTickets.dto.TicketDTO;
+import oo2.grupo19.SistemaTickets.dto.TicketEmployeeDTO;
 import oo2.grupo19.SistemaTickets.dto.UsuarioDTO;
 import oo2.grupo19.SistemaTickets.helpers.ViewRouteHelper;
 import oo2.grupo19.SistemaTickets.services.ITicketService;
@@ -19,6 +20,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @Log4j2
@@ -54,10 +56,11 @@ public class HomeController <T> {
         return "redirect:/home";
     }
     @GetMapping("/home")
-    public String home(Authentication auth) {
+    public String home(Authentication auth,RedirectAttributes redirect, Model model) {
         if(auth != null && auth.isAuthenticated()){
             String rol = typeUserAuthenticated(auth);
             log.info("Role Home 1: " + rol);
+            redirect.addFlashAttribute("ticket",model.getAttribute("ticket"));
             String rolClean = rol.replace("ROLE_", "").toLowerCase();
             return "redirect:/" + rolClean + "/home";
         }
@@ -66,7 +69,7 @@ public class HomeController <T> {
 
     @PreAuthorize("hasAnyRole('CUSTOMER','EMPLOYEE','ADMIN')")
     @GetMapping("/{rol}/home")
-    public String homeGlobal(@PathVariable String rol, Authentication authentication, Model model){
+    public String homeGlobal(@PathVariable String rol, Authentication authentication, Model model,  RedirectAttributes redirectAttributes){
         String email = authentication.getName();
 
         log.info(rol);
@@ -95,8 +98,10 @@ public class HomeController <T> {
     }
 
     private void simplifyGlobalHome(Model model){
-        Set<TicketDTO> tickets = ticketService.findAll();
+        Set<TicketEmployeeDTO> tickets = (Set<TicketEmployeeDTO>) model.asMap().get("ticket");
+        if (tickets == null || tickets.isEmpty()) {
+            tickets = ticketService.findAllTicketsForEmployee();
+        }
         model.addAttribute("ticket", tickets);
     }
-
 }

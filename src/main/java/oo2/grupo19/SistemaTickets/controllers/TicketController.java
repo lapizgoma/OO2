@@ -165,54 +165,58 @@ public class TicketController {
 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @GetMapping("/list-ticket-por-cliente")
-    public String ticketListByCliente(@RequestParam String email, Model model, Authentication authentication){
+    public String ticketListByCliente(@RequestParam String email, RedirectAttributes redirectAttributes, Authentication authentication){
         // Revisar el service este pq nose si la query del repository es la mejor
         Set<TicketEmployeeDTO> tickets = ticketService.findTicketByCliente(email);
-        model.addAttribute("ticket", tickets);
+        redirectAttributes.addFlashAttribute("ticket", tickets);
         return ViewRouteHelper.INDEX_REDIRECT;
     }
     
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @GetMapping("/list-ticket-por-asunto")
-    public String ticketListByAsunto(@RequestParam String asunto, Model model, Authentication authentication){
+    public String ticketListByAsunto(@RequestParam String asunto, RedirectAttributes redirectAttributes, Authentication authentication){
         Set<TicketEmployeeDTO> tickets = ticketService.findTicketByAsunto(asunto);
-        model.addAttribute("ticket", tickets);
+        redirectAttributes.addFlashAttribute("ticket", tickets);
         return ViewRouteHelper.INDEX_REDIRECT;
     }
     
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @GetMapping("/list-ticket-por-empleado")
-    public String ticketListByEmpleado(@RequestParam String email, Model model, Authentication authentication){
+    public String ticketListByEmpleado(@RequestParam String email, RedirectAttributes redirectAttributes, Authentication authentication){
         Set<TicketEmployeeDTO> tickets = ticketService.findTicketByEmpleado(email);
         log.info("Email del empleado: " + email);
         log.info("TicketS: " + tickets.isEmpty());
-        model.addAttribute("ticket", tickets);
+        redirectAttributes.addFlashAttribute("ticket", tickets);
         return ViewRouteHelper.INDEX_REDIRECT;
     }
     
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @GetMapping("/list-ticket-por-estado")
-    public String ticketListByEstado(@RequestParam String estado, Model model, Authentication authentication){
+    public String ticketListByEstado(@RequestParam String estado, RedirectAttributes redirectAttributes, Authentication authentication){
         EstadoTicketDTO estadoticket = estadoTicketService.findByEstado(estado);
         Set<TicketEmployeeDTO> tickets = ticketService.findTicketByEstado(estadoticket);
-        model.addAttribute("ticket", tickets);
+        redirectAttributes.addFlashAttribute("ticket", tickets);
         return ViewRouteHelper.INDEX_REDIRECT;
     }
     
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @GetMapping("/list-ticket-por-prioridad")
-    public String ticketListByPrioridad(@RequestParam String prioridad, Model model, Authentication authentication){
-        PrioridadDTO prioridadTicket = prioridadService.findByPrioridad(prioridad);
-        Set<TicketEmployeeDTO> tickets = ticketService.findTicketByPrioridad(prioridadTicket);
-        model.addAttribute("ticket", tickets);
-        return ViewRouteHelper.INDEX_REDIRECT;
+    public String ticketListByPrioridad(@RequestParam String prioridad, RedirectAttributes redirectAttributes, Authentication authentication){
+        try{
+            PrioridadDTO prioridadTicket = prioridadService.findByPrioridad(prioridad);
+            Set<TicketEmployeeDTO> tickets = ticketService.findTicketByPrioridad(prioridadTicket);
+            redirectAttributes.addFlashAttribute("ticket", tickets);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("codigoError", e.getMessage());
+            return "redirect:/form-filtrar-tickets";  
+        }return ViewRouteHelper.INDEX_REDIRECT;
     }
     
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @GetMapping("/list-ticket-por-fecha")
-    public String ticketListByFecha(@RequestParam LocalDate fecha, Model model, Authentication authentication){
+    public String ticketListByFecha(@RequestParam LocalDate fecha, RedirectAttributes redirectAttributes, Authentication authentication){
         Set<TicketEmployeeDTO> tickets = ticketService.findTicketByFechaHora(fecha);
-        model.addAttribute("ticket", tickets);
+        redirectAttributes.addFlashAttribute("ticket", tickets);
         return ViewRouteHelper.INDEX_REDIRECT;
     }
     

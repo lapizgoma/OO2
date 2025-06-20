@@ -61,6 +61,7 @@
         </form>
 
         <!-- Filtrar por Prioridad -->
+        <div th:if="${codigoError}" class="text-danger small mt-1" th:text="${codigoError}"></div>
         <form th:action="@{/ticket/list-ticket-por-prioridad}" method="get">
             <label>Prioridad:</label>
             <select name="prioridad">
