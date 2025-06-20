@@ -5,63 +5,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Perfil</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <!-- Google Fonts: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- CSS personalizado -->
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
-<body>
-    <!-- El formulario sigue usando th:object para cliente -->
-    <form th:action="@{/cuenta/editar}" th:object="${cliente}" method="post">
-        <h1>Editar Perfil</h1>
-        
-        <input type="hidden" id="password" th:field="*{password}">
-        <input type="hidden" id="dni" th:field="*{dni}">
-        <div>
-            <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre" th:field="*{nombre}">
-        </div>
+<body class="bg-dark text-white">
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="card p-4" style="width:100%; max-width:500px; background-color:#2D2D2D; border-color:#4A90E2;">
+            <h2 class="card-title text-center text-white mb-4">Editar Perfil</h2>
+            <form th:action="@{/cuenta/editar}" th:object="${cliente}" method="post" novalidate>
+                <input type="hidden" id="password" th:field="*{password}">
+                <input type="hidden" id="dni" th:field="*{dni}">
 
-        <div>
-            <label for="apellido">Apellido:</label>
-            <input type="text" id="apellido" th:field="*{apellido}">
-        </div>
+                <!-- Nombre -->
+                <div class="mb-3">
+                    <label for="nombre" class="form-label text-white">Nombre</label>
+                    <input type="text" id="nombre" th:field="*{nombre}" class="form-control bg-dark text-white" placeholder="Ingrese su nombre">
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
+                </div>
 
-        <div>
-            <label for="email">Email:</label>
-            <input type="email" id="email" th:field="*{contacto.email}">
-        </div>
+                <!-- Apellido -->
+                <div class="mb-3">
+                    <label for="apellido" class="form-label text-white">Apellido</label>
+                    <input type="text" id="apellido" th:field="*{apellido}" class="form-control bg-dark text-white" placeholder="Ingrese su apellido">
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('apellido')}" th:errors="*{apellido}"></div>
+                </div>
 
-        <div>
-            <label for="telefono">Teléfono:</label>
-            <input type="text" id="telefono" th:field="*{contacto.telefono}">
-        </div>
+                <!-- Email -->
+                <div class="mb-3">
+                    <label for="email" class="form-label text-white">Email</label>
+                    <input type="email" id="email" th:field="*{contacto.email}" class="form-control bg-dark text-white" placeholder="usuario@ejemplo.com">
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('contacto.email')}" th:errors="*{contacto.email}"></div>
+                </div>
 
-        <div>
-            <label for="calle">Calle:</label>
-            <input type="text" id="calle" th:field="*{contacto.calle}">
-        </div>
+                <!-- Teléfono -->
+                <div class="mb-3">
+                    <label for="telefono" class="form-label text-white">Teléfono</label>
+                    <input type="text" id="telefono" th:field="*{contacto.telefono}" class="form-control bg-dark text-white" placeholder="e.g. 1123456789">
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('contacto.telefono')}" th:errors="*{contacto.telefono}"></div>
+                </div>
 
-        <div>
-            <label for="nroPuerta">Número de Puerta:</label>
-            <input type="text" id="nroPuerta" th:field="*{contacto.nroPuerta}">
-        </div>
+                <!-- Calle -->
+                <div class="mb-3">
+                    <label for="calle" class="form-label text-white">Calle</label>
+                    <input type="text" id="calle" th:field="*{contacto.calle}" class="form-control bg-dark text-white" placeholder="Nombre de la calle">
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('contacto.calle')}" th:errors="*{contacto.calle}"></div>
+                </div>
 
-        <div>
-            <label for="localidad">Localidad:</label>
-            <input type="text" id="localidad" th:field="*{contacto.localidad}">
-        </div>
+                <!-- Número de Puerta -->
+                <div class="mb-3">
+                    <label for="nroPuerta" class="form-label text-white">Número de Puerta</label>
+                    <input type="text" id="nroPuerta" th:field="*{contacto.nroPuerta}" class="form-control bg-dark text-white" placeholder="e.g. 123">
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('contacto.nroPuerta')}" th:errors="*{contacto.nroPuerta}"></div>
+                </div>
 
-        <div th:if="${cliente.organizacion == null}">
-            <label for="codigoAcceso">Código de acceso:</label>
-                <input type="text" id="codigoAcceso" name="codigoAcceso"
-                th:value="${codigoAcceso}" />
-            <div th:if="${codigoError}" class="text-danger small mt-1" th:text="${codigoError}"></div>
+                <!-- Localidad -->
+                <div class="mb-3">
+                    <label for="localidad" class="form-label text-white">Localidad</label>
+                    <input type="text" id="localidad" th:field="*{contacto.localidad}" class="form-control bg-dark text-white" placeholder="Ciudad / Barrio">
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('contacto.localidad')}" th:errors="*{contacto.localidad}"></div>
+                </div>
+
+                <!-- Código de acceso (solo si no tiene organización) -->
+                <div class="mb-3" th:if="${cliente.organizacion == null}">
+                    <label for="codigoAcceso" class="form-label text-white">Código de acceso</label>
+                    <input type="text" id="codigoAcceso" name="codigoAcceso" th:value="${codigoAcceso}" class="form-control bg-dark text-white" placeholder="Ingrese el código de acceso" />
+                    <div th:if="${codigoError}" class="text-danger small mt-1" th:text="${codigoError}"></div>
+                </div>
+
+                <!-- Mensaje de éxito -->
+                <div th:if="${mensajeExito}" class="alert alert-success small py-2" th:text="${mensajeExito}"></div>
+
+                <!-- Acciones -->
+                <div class="d-flex flex-column gap-2 mt-3">
+                    <button type="submit" class="btn btn-primary w-100">Guardar Cambios</button>
+                    <a th:href="@{/cuenta/eliminar}" class="btn btn-danger w-100" role="button">Eliminar Cuenta</a>
+                    <a th:href="@{/home}" class="btn btn-secondary w-100" role="button">Volver</a>
+                </div>
+            </form>
         </div>
-        
-        <a th:href="@{/cuenta/eliminar}" class="btn btn-danger" role="button">Eliminar Cuenta</a>
-        <a th:href="@{/home}" class="btn btn-secondary" role="button">Volver</a>
-        <button type="submit">Guardar Cambios</button>
-    </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

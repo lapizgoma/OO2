@@ -126,7 +126,8 @@ public class ClienteServiceImpl implements IClienteService {
         cliente.agregarRoles(roleRepository.findById(1L).orElseThrow(() -> new NotFoundException("Rol no encontrado")));
         cliente.setPassword(passwordHash);
         cliente.setContacto(ContactoMapper.mapToContactoEntity(clientedto.getContacto(), new Contacto()));
-        cliente.setOrganizacion(PersonaJuridicaMapper.mapToPersonaJuridicaEntity(clientedto.getOrganizacion(), new PersonaJuridica()));
+        PersonaJuridica personaJuridica = personaJuridicaRepository.findByCodigoAcceso(clientedto.getOrganizacion().getCodigoAcceso()).orElseGet(null);
+        cliente.setOrganizacion(personaJuridica);
         return cliente;
     }
 

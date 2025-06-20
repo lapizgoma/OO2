@@ -79,7 +79,7 @@ public class IntervencionController {
             intervencionService.save(intervencion);
             sendEmailIntervencionCreate(intervencion);
             redirectAttributes.addFlashAttribute("mensajeExito", "Intervención creada con éxito!");
-            return "redirect:/employee/home";
+            return ViewRouteHelper.INDEX_REDIRECT;
     }
     
     private void sendEmailIntervencionCreate(IntervencionDTO intervencion) {

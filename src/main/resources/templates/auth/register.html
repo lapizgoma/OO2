@@ -26,7 +26,7 @@
       <h2 class="card-title text-center text-white mb-4">Registrarse</h2>
 
       <form th:action="@{/auth/register}" th:object="${cliente}" method="post">
-        <!-- Nombre -->
+                <!-- Nombre -->
         <div class="mb-3">
           <label for="nombre" class="form-label text-white">Nombre</label>
           <input
@@ -37,8 +37,8 @@
             placeholder="Ingrese su nombre"
           />
           <div class="text-danger small mt-1"
-               th:if="${#fields.hasErrors('nombre')}"
-               th:text="${#fields.errors('nombre')}"></div>
+              th:if="${#fields.hasErrors('nombre')}"
+              th:errors="*{nombre}"></div>
         </div>
 
         <!-- Apellido -->
@@ -52,8 +52,8 @@
             placeholder="Ingrese su apellido"
           />
           <div class="text-danger small mt-1"
-               th:if="${#fields.hasErrors('apellido')}"
-               th:text="${#fields.errors('apellido')}"></div>
+              th:if="${#fields.hasErrors('apellido')}"
+              th:errors="*{apellido}"></div>
         </div>
 
         <!-- Email -->
@@ -67,8 +67,8 @@
             placeholder="usuario@ejemplo.com"
           />
           <div class="text-danger small mt-1"
-               th:if="${#fields.hasErrors('contacto.email')}"
-               th:text="${#fields.errors('contacto.email')}"></div>
+              th:if="${#fields.hasErrors('contacto.email')}"
+              th:errors="*{contacto.email}"></div>
         </div>
 
         <!-- Password -->
@@ -82,8 +82,8 @@
             placeholder="••••••••"
           />
           <div class="text-danger small mt-1"
-               th:if="${#fields.hasErrors('password')}"
-               th:text="${#fields.errors('password')}"></div>
+              th:if="${#fields.hasErrors('password')}"
+              th:errors="*{password}"></div>
         </div>
 
         <!-- DNI -->
@@ -97,12 +97,11 @@
             placeholder="Ingrese su DNI"
           />
           <div class="text-danger small mt-1"
-               th:if="${#fields.hasErrors('dni')}"
-               th:text="${#fields.errors('dni')}"></div>
+              th:if="${#fields.hasErrors('dni')}"
+              th:errors="*{dni}"></div>
         </div>
 
-        <!-- Contacto -->
-        <h5 class="text-white-50 mt-4 mb-2">Contacto</h5>
+        <!-- Contacto: Calle -->
         <div class="mb-3">
           <label for="calle" class="form-label text-white">Calle</label>
           <input
@@ -113,9 +112,11 @@
             placeholder="Nombre de la calle"
           />
           <div class="text-danger small mt-1"
-               th:if="${#fields.hasErrors('contacto.calle')}"
-               th:text="${#fields.errors('contacto.calle')}"></div>
+              th:if="${#fields.hasErrors('contacto.calle')}"
+              th:errors="*{contacto.calle}"></div>
         </div>
+
+        <!-- Contacto: Número de puerta -->
         <div class="mb-3">
           <label for="nro_puerta" class="form-label text-white">Número de puerta</label>
           <input
@@ -126,9 +127,11 @@
             placeholder="e.g. 123"
           />
           <div class="text-danger small mt-1"
-               th:if="${#fields.hasErrors('contacto.nroPuerta')}"
-               th:text="${#fields.errors('contacto.nroPuerta')}"></div>
+              th:if="${#fields.hasErrors('contacto.nroPuerta')}"
+              th:errors="*{contacto.nroPuerta}"></div>
         </div>
+
+        <!-- Contacto: Localidad -->
         <div class="mb-3">
           <label for="localidad" class="form-label text-white">Localidad</label>
           <input
@@ -139,9 +142,11 @@
             placeholder="Ciudad / Barrio"
           />
           <div class="text-danger small mt-1"
-               th:if="${#fields.hasErrors('contacto.localidad')}"
-               th:text="${#fields.errors('contacto.localidad')}"></div>
+              th:if="${#fields.hasErrors('contacto.localidad')}"
+              th:errors="*{contacto.localidad}"></div>
         </div>
+
+        <!-- Contacto: Teléfono -->
         <div class="mb-3">
           <label for="telefono" class="form-label text-white">Teléfono</label>
           <input
@@ -152,8 +157,8 @@
             placeholder="e.g. 1123456789"
           />
           <div class="text-danger small mt-1"
-               th:if="${#fields.hasErrors('contacto.telefono')}"
-               th:text="${#fields.errors('contacto.telefono')}"></div>
+              th:if="${#fields.hasErrors('contacto.telefono')}"
+              th:errors="*{contacto.telefono}"></div>
         </div>
 
         <!-- Persona Jurídica -->
@@ -163,42 +168,25 @@
             type="checkbox"
             name="activo"
             id="esJuridica"
+            th:checked="${activo}"
+            onclick="toggleCodigoAcceso()"
           />
           <label class="form-check-label" for="esJuridica">Es persona jurídica</label>
         </div>
 
-        <div th:if="*{organizacion != null}">
-          <h5 class="text-white-50 mt-3 mb-2">Organización</h5>
-          <div class="mb-3">
-            <label for="razon_social" class="form-label text-white">Razón social</label>
-            <input
-              type="text"
-              th:field="*{organizacion.razonSocial}"
-              id="razon_social"
-              class="form-control bg-dark text-white"
-              placeholder="Nombre de la empresa"
-            />
-          </div>
-          <div class="mb-3">
-            <label for="cuit" class="form-label text-white">CUIT</label>
-            <input
-              type="text"
-              th:field="*{organizacion.cuit}"
-              id="cuit"
-              class="form-control bg-dark text-white"
-              placeholder="00-00000000-0"
-            />
-          </div>
-          <div class="mb-3">
-            <label for="cuit" class="form-label text-white">Codigo de acceso</label>
-            <input
-                    type="text"
-                    th:field="*{organizacion.codigoAcceso}"
-                    id="codigoAcceso"
-                    class="form-control bg-dark text-white"
-                    placeholder="00-00000000-0"
-            />
-          </div>
+        <!-- Código de acceso (solo visible si es persona jurídica) -->
+        <div class="mb-3" id="codigoAccesoDiv" style="display:none;">
+          <label for="codigoAcceso" class="form-label text-white">Código de acceso</label>
+          <input
+            type="text"
+            th:field="*{organizacion.codigoAcceso}"
+            id="codigoAcceso"
+            class="form-control bg-dark text-white"
+            placeholder="00-00000000-0"
+          />
+          <div class="text-danger small mt-1"
+              th:if="${#fields.hasErrors('organizacion.codigoAcceso')}"
+              th:errors="*{organizacion.codigoAcceso}"></div>
         </div>
 
         <!-- Botones -->
@@ -208,6 +196,17 @@
     </div>
   </div>
 
+    <script>
+  function toggleCodigoAcceso() {
+    const check = document.getElementById('esJuridica');
+    const div = document.getElementById('codigoAccesoDiv');
+    div.style.display = check.checked ? 'block' : 'none';
+  }
+  // Mostrar el campo si ya estaba tildado al volver con errores
+  window.onload = function() {
+    toggleCodigoAcceso();
+  }
+</script>
   <!-- Bootstrap JS -->
   <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

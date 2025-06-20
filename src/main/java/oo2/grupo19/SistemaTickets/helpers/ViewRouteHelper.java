@@ -3,6 +3,7 @@ package oo2.grupo19.SistemaTickets.helpers;
 public class ViewRouteHelper {
 
     public static final String INDEX = "home";
+    public static final String INDEX_REDIRECT = "redirect:/home";
 
     public static final String INDEX_ADMIN = "admin/home";
     
@@ -27,7 +28,6 @@ public class ViewRouteHelper {
     public static final String FORM_TICKET = "ticket/formTicket";
     public static final String FORM_LISTAR_TICKET = "ticket/ver-tickets";
     public static final String VIEW_TICKET = "ticket/ticketView";
-    public static final String TICKET_LIST = "ticket/listTickets";
     public static final String TICKET_UPDATE_STATUS = "ticket/formTicketUpdateStatus";
     public static final String TICKET_SUCCESS_MAIL = "ticket/emailTicket";
     public static final String TICKET_FORM_FILTRAR = "ticket/formTicketsFiltrar";
@@ -38,7 +38,8 @@ public class ViewRouteHelper {
 
     public static final String ERROR_404 = "errors/404";
     public static final String ERROR_INDEX = "errors/error";
- 
+    
+
     public static final String TICKET_VIEW_ID(Long id){
         return "redirect:/ticket/" + id;
     }

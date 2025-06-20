@@ -170,27 +170,17 @@ public class TicketController {
         // Revisar el service este pq nose si la query del repository es la mejor
         Set<TicketEmployeeDTO> tickets = ticketService.findTicketByCliente(email);
         model.addAttribute("ticket", tickets);
-        if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            return ViewRouteHelper.INDEX_ADMIN;
-        } else if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
-            return ViewRouteHelper.INDEX_EMPLOYEE;
-        }
-        return ViewRouteHelper.TICKET_LIST;
+        return ViewRouteHelper.INDEX_REDIRECT;
     }
-
+    
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @GetMapping("/list-ticket-por-asunto")
     public String ticketListByAsunto(@RequestParam String asunto, Model model, Authentication authentication){
         Set<TicketEmployeeDTO> tickets = ticketService.findTicketByAsunto(asunto);
         model.addAttribute("ticket", tickets);
-        if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            return ViewRouteHelper.INDEX_ADMIN;
-        } else if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
-            return ViewRouteHelper.INDEX_EMPLOYEE;
-        }
-        return ViewRouteHelper.TICKET_LIST;
+        return ViewRouteHelper.INDEX_REDIRECT;
     }
-
+    
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @GetMapping("/list-ticket-por-empleado")
     public String ticketListByEmpleado(@RequestParam String email, Model model, Authentication authentication){
@@ -198,58 +188,38 @@ public class TicketController {
         log.info("Email del empleado: " + email);
         log.info("TicketS: " + tickets.isEmpty());
         model.addAttribute("ticket", tickets);
-        if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            return ViewRouteHelper.INDEX_ADMIN;
-        } else if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
-            return ViewRouteHelper.INDEX_EMPLOYEE;
-        }
-        return ViewRouteHelper.TICKET_LIST;
+        return ViewRouteHelper.INDEX_REDIRECT;
     }
-
+    
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @GetMapping("/list-ticket-por-estado")
     public String ticketListByEstado(@RequestParam String estado, Model model, Authentication authentication){
         EstadoTicketDTO estadoticket = estadoTicketService.findByEstado(estado);
         Set<TicketEmployeeDTO> tickets = ticketService.findTicketByEstado(estadoticket);
         model.addAttribute("ticket", tickets);
-        if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            return ViewRouteHelper.INDEX_ADMIN;
-        } else if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
-            return ViewRouteHelper.INDEX_EMPLOYEE;
-        }
-        return ViewRouteHelper.TICKET_LIST;
+        return ViewRouteHelper.INDEX_REDIRECT;
     }
-
+    
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @GetMapping("/list-ticket-por-prioridad")
     public String ticketListByPrioridad(@RequestParam String prioridad, Model model, Authentication authentication){
         PrioridadDTO prioridadTicket = prioridadService.findByPrioridad(prioridad);
         Set<TicketEmployeeDTO> tickets = ticketService.findTicketByPrioridad(prioridadTicket);
         model.addAttribute("ticket", tickets);
-        if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            return ViewRouteHelper.INDEX_ADMIN;
-        } else if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
-            return ViewRouteHelper.INDEX_EMPLOYEE;
-        }
-        return ViewRouteHelper.TICKET_LIST;
+        return ViewRouteHelper.INDEX_REDIRECT;
     }
-
+    
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     @GetMapping("/list-ticket-por-fecha")
     public String ticketListByFecha(@RequestParam LocalDate fecha, Model model, Authentication authentication){
         Set<TicketEmployeeDTO> tickets = ticketService.findTicketByFechaHora(fecha);
         model.addAttribute("ticket", tickets);
-        if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            return ViewRouteHelper.INDEX_ADMIN;
-        } else if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
-            return ViewRouteHelper.INDEX_EMPLOYEE;
-        }
-        return "ticket/listTickets";
+        return ViewRouteHelper.INDEX_REDIRECT;
     }
-
+    
     @GetMapping("/form-filtrar-tickets")
-        public String showFilterPage() {
-            return ViewRouteHelper.TICKET_FORM_FILTRAR;  // La vista con los formularios de filtro 
+    public String showFilterPage() {
+        return ViewRouteHelper.TICKET_FORM_FILTRAR;  // La vista con los formularios de filtro 
         }
 
     private void sendEmailTicketCreate(TicketDTO ticket){

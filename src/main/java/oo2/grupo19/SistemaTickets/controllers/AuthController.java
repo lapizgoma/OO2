@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 public class AuthController {
 
     private final IClienteService clienteService;
+
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     public AuthController(IClienteService clienteService) {
