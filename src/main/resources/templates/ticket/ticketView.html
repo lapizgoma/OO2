@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Ticket - Soporte</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="bg-dark text-white">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <span class="navbar-brand">Bienvenido, <span th:text="${#authentication.principal.nombre}">Usuario</span>!</span>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item me-2">
+                        <a class="btn btn-primary" th:href="@{/home}">Ver Tickets</a>
+                    </li>
+                    <li class="nav-item">
+                        <form th:action="@{/auth/logout}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-logout">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div th:if="${mensajeAlerta}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${mensajeAlerta}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div class="container py-4">
+        <h1 class="mb-4 text-center">Ticket</h1>
+        <hr class="border-primary" />
+
+        <!-- Vista para ticketEmployeeDTO -->
+        <div th:if="${ticketEmployeeDTO != null}" class="mb-5">
+            <div class="row g-4">
+                <!-- Info principal a la izquierda -->
+                <div class="col-lg-8">
+                    <div class="card bg-dark border-primary shadow mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary mb-3">Información del Ticket</h5>
+                            <div class="row mb-2">
+                                <div class="col-md-4"><strong class="text-primary">Id:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.id}"></span></div>
+                                <div class="col-md-4"><strong class="text-primary">Estado:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.estado.estado}"></span></div>
+                                <div class="col-md-4"><strong class="text-primary">Prioridad:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.prioridad.prioridad}"></span></div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-4"><strong class="text-primary">Nombre:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.cliente.nombre}"></span></div>
+                                <div class="col-md-4"><strong class="text-primary">Apellido:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.cliente.apellido}"></span></div>
+                                <div class="col-md-4"><strong class="text-primary">Asunto:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.asunto}"></span></div>
+                            </div>
+                            <div class="mb-2"><strong class="text-primary">Detalle:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.detalle}"></span></div>
+                            <div class="mb-2"><strong class="text-primary">Fecha creado:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.fechaHoraCreado}"></span></div>
+                        </div>
+                    </div>
+                    <div class="card bg-dark border-primary shadow mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary mb-3">Contacto del Cliente</h5>
+                            <div class="row mb-2">
+                                <div class="col-md-4"><strong class="text-primary">Email:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.cliente.contacto.email}"></span></div>
+                                <div class="col-md-4"><strong class="text-primary">Teléfono:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.cliente.contacto.telefono}"></span></div>
+                                <div class="col-md-4"><strong class="text-primary">Dirección:</strong> <span class="text-white" th:text="${ticketEmployeeDTO.cliente.contacto.calle} + ' ' + ${ticketEmployeeDTO.cliente.contacto.nroPuerta} + ', ' + ${ticketEmployeeDTO.cliente.contacto.localidad}"></span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div th:if="${ticketEmployeeDTO.estaAsignado}">
+                            <a class="btn btn-primary" th:href="@{/intervencion/create/{idTicket}(idTicket=${ticketEmployeeDTO.id})}">Crear Intervención</a>
+                        </div>
+                    
+                        <div th:unless="${ticketEmployeeDTO.estaAsignado}">
+                            <form th:action="@{/ticket/asignar/{idTicket}(idTicket=${ticketEmployeeDTO.id})}" method="post">
+                                <button type="submit" class="btn btn-success">Tomar Ticket</button>
+                            </form>
+                        </div>
+                    </div>
+                     <!-- ===== FORMULARIO PARA CAMBIAR ESTADO DEL TICKET ===== -->
+                    <div class="card bg-dark border-primary shadow mb-4">
+                        <div class="card-body">
+                        <h5 class="card-title text-primary mb-3">Actualizar Estado del Ticket</h5>
+                        <form th:action="@{/ticket/update-ticket-status}" method="post" class="row g-3 align-items-center">
+                            <input type="hidden" name="ticketId" th:value="${ticketEmployeeDTO.id}" />
+                            <div class="col-auto">
+                                <label for="estadoTicketSelect" class="col-form-label text-primary">Estado</label>
+                            </div>
+                            <div class="col-auto">
+                                <select class="form-select" id="estadoTicketSelect" name="estado.estado" required>
+                                    <option th:each="estado : ${estadosTicket}"
+                                            th:value="${estado.estado}"
+                                            th:text="${estado.estado}"
+                                            th:selected="${estado.estado == ticketEmployeeDTO.estado.estado}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-success">Actualizar</button>
+                            </div>
+                        </form>
+                    </div>
+            </div>
+            <!-- ===== FIN FORMULARIO ESTADO DEL TICKET ===== -->
+              <!-- ===== FORMULARIO PARA LA PRIORIDAD DEL TICKET ===== -->
+                    <div class="card bg-dark border-primary shadow mb-4">
+                        <div class="card-body">
+                        <h5 class="card-title text-primary mb-3">Actualizar Prioridad del Ticket</h5>
+                        <form th:action="@{/ticket/update-ticket-priority}" method="post" class="row g-3 align-items-center">
+                            <input type="hidden" name="ticketId" th:value="${ticketEmployeeDTO.id}" />
+                            <input type="hidden" name="estado.estado" th:value="${ticketEmployeeDTO.estado.estado}" />
+                            <div class="col-auto">
+                                <label for="prioridadTicketSelect" class="col-form-label text-primary">Estado</label>
+                            </div>
+                            <div class="col-auto">
+                                <select class="form-select" id="prioridadTicketSelect" name="prioridad.prioridad" required>
+                                    <option th:each="prioridad : ${prioridadTicket}"
+                                            th:value="${prioridad.prioridad}"
+                                            th:text="${prioridad.prioridad}"
+                                            th:selected="${prioridad.prioridad == ticketEmployeeDTO.prioridad.prioridad}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-success">Actualizar</button>
+                            </div>
+                        </form>
+                    </div>
+            </div>
+            <!-- ===== FIN FORMULARIO PRIORIDAD DEL TICKET ===== -->
+                </div>
+                <!-- Intervenciones a la derecha -->
+                <div class="col-lg-4">
+                    <div class="card bg-dark border-primary shadow h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary mb-3">Intervenciones</h5>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item bg-dark text-white border-0 border-bottom border-secondary" th:each="intervencion : ${ticketEmployeeDTO.intervenciones}">
+                                    <div><strong class="text-primary">Fecha:</strong> <span class="text-white" th:text="${intervencion.fecha}"></span></div>
+                                    <div><strong class="text-primary">Descripción:</strong> <span class="text-white" th:text="${intervencion.descripcion}"></span></div>
+                                    <div><strong class="text-primary">Estado:</strong> <span class="text-white" th:text="${intervencion.estado}"></span></div>
+                                    <div><strong class="text-primary">Realizado por:</strong> <span class="text-white" th:text="${intervencion.realizadoPor}"></span></div>
+                                      <!-- FORMULARIO para actualizar estado de intervención -->
+                                    <form th:action="@{/intervencion/processing-ticket/update-intervencion}" method="post" class="mt-2 d-flex align-items-center gap-2">
+                                        <input type="hidden" name="id" th:value="${intervencion.id}" />
+                                        <select class="form-select form-select-sm" name="estado" required>
+                                            <option th:each="estadoInt : ${estadosIntervencion}"
+                                                    th:value="${estadoInt.estado}"
+                                                    th:text="${estadoInt.estado}"
+                                                    th:selected="${estadoInt.estado == intervencion.estado}">
+                                            </option>
+                                        </select>
+                                        <button type="submit" class="btn btn-sm btn-success">Actualizar</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vista para ticketClientDTO -->
+        <div th:if="${ticketClientDTO != null}">
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div class="card bg-dark border-primary shadow mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary mb-3">Información del Ticket</h5>
+                            <div class="row mb-2">
+                                <div class="col-md-6"><strong class="text-primary">Fecha creado:</strong> <span class="text-white" th:text="${ticketClientDTO.fechaHoraCreado}"></span></div>
+                                <div class="col-md-6"><strong class="text-primary">Estado:</strong> <span class="text-white" th:text="${ticketClientDTO.estado.estado}"></span></div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-12"><strong class="text-primary">Asunto:</strong> <span class="text-white" th:text="${ticketClientDTO.asunto}"></span></div>
+                            </div>
+                            <div class="mb-2"><strong class="text-primary">Detalle:</strong> <span class="text-white" th:text="${ticketClientDTO.detalle}"></span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card bg-dark border-primary shadow h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary mb-3">Intervenciones</h5>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item bg-dark text-white border-0 border-bottom border-secondary" th:each="intervencion : ${ticketClientDTO.intervenciones}">
+                                    <div><strong class="text-primary">Fecha:</strong> <span class="text-white" th:text="${intervencion.fecha}"></span></div>
+                                    <div><strong class="text-primary">Descripción:</strong> <span class="text-white" th:text="${intervencion.descripcion}"></span></div>
+                                    <div><strong class="text-primary">Estado:</strong> <span class="text-white" th:text="${intervencion.estado}"></span></div>
+                                    <div><strong class="text-primary">Realizado por:</strong> <span class="text-white" th:text="${intervencion.realizadoPor}"></span></div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <input type="hidden" id="tienePendientes" th:value="${tienePendientes}" />
+    <input type="hidden" id="mensajeFlag" th:value="${mensaje != null and !#strings.isEmpty(mensaje)}" />
+    <div id="confirmModal" style="display:none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+    <div style="background: black; padding: 20px; border-radius: 6px; width: 320px; margin: 15% auto; text-align: center; font-family: 'Inter', sans-serif;">
+        <p>Todavía hay intervenciones sin terminar, ¿desea cerrar el ticket de todas maneras?</p>
+         <button id="confirmBtn" style="margin: 10px 15px; padding: 8px 20px; font-size: 1rem; cursor: pointer;">Aceptar</button>
+         <button id="cancelBtn" style="margin: 10px 15px; padding: 8px 20px; font-size: 1rem; cursor: pointer;">Cancelar</button>
+    </div>
+    </div>
+    <!-- Aquí va tu script para controlar el modal -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form[th\\:action="@{/ticket/update-ticket-status}"]') || 
+                    document.querySelector('form[action="/ticket/update-ticket-status"]');
+        const estadoSelect = document.getElementById('estadoTicketSelect');
+        const modal = document.getElementById('confirmModal');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+
+        if (!form || !estadoSelect || !modal || !confirmBtn || !cancelBtn) return;
+
+        form.addEventListener('submit', function(event) {
+            const selectedEstado = estadoSelect.value;
+            const tienePendientes = document.getElementById('tienePendientes').value === 'true';
+
+            if (selectedEstado.toLowerCase() === 'cerrado' && tienePendientes && !form.querySelector('input[name="forzarCierre"]')) {
+                event.preventDefault();
+                modal.style.display = 'block';
+            }
+        });
+
+        confirmBtn.addEventListener('click', function() {
+            const inputForzar = document.createElement('input');
+            inputForzar.type = 'hidden';
+            inputForzar.name = 'forzarCierre';
+            inputForzar.value = 'true';
+            form.appendChild(inputForzar);
+            modal.style.display = 'none';
+            form.submit();
+        });
+
+        cancelBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+    });
+    </script>
+</body>
+</html>

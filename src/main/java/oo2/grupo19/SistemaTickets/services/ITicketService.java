@@ -1,0 +1,28 @@
+package oo2.grupo19.SistemaTickets.services;
+
+import java.time.LocalDate;
+import java.util.Set;
+import oo2.grupo19.SistemaTickets.dto.EstadoTicketDTO;
+import oo2.grupo19.SistemaTickets.dto.PrioridadDTO;
+import oo2.grupo19.SistemaTickets.dto.TicketDTO;
+import oo2.grupo19.SistemaTickets.dto.TicketEmployeeDTO;
+
+public interface ITicketService extends IService<TicketDTO> {
+    TicketEmployeeDTO findByIdAndEmpleado(Long idEmpleado, Long idTicket);
+    void actualizarEstadoTicket(Long idEmpleado, Long idTicket, EstadoTicketDTO nuevoEstado);
+    void actualizarPrioridadTicket(Long idEmpleado, Long idTicket, PrioridadDTO prioridad);
+    boolean todasLasIntervencionesFinalizadas(Long idTicket);
+    Set<TicketEmployeeDTO> findTicketByCliente(String email);
+    Set<TicketEmployeeDTO> findTicketByAsunto(String asunto);
+    Set<TicketEmployeeDTO> findTicketByPrioridad(PrioridadDTO prioridad);
+    Set<TicketEmployeeDTO> findTicketByEmpleado(String email);
+    Set<TicketEmployeeDTO> findTicketByEstado(EstadoTicketDTO estado);
+    Set<TicketEmployeeDTO> findTicketByFechaHora(LocalDate fecha);
+    Set<TicketEmployeeDTO> findAllTicketsForEmployee();
+    Set<TicketDTO> traerParaCliente(String email);
+    TicketDTO getTicketParaCliente(Long ticketId, String clienteEmail);
+    TicketEmployeeDTO getTicketparaEmpleado(Long ticketId, String empleadoEmail);
+    TicketEmployeeDTO asignarTicket(Long ticketId, String empleadoEmail);
+    TicketDTO findUltimoPorEmailYAsunto(String email,String asunto);
+
+}

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Filtrar Tickets</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <span class="navbar-brand">Bienvenido, <span th:text="${#authentication.principal.nombre}">Usuario</span>!</span>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <form th:action="@{/auth/logout}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-logout">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center">Filtrar Tickets</h1>
+        <div th:if="${codigoError}" class="text-danger small mt-1" th:text="${codigoError}"></div>
+        <!-- Filtrar por Estado -->
+        <form th:action="@{/ticket/list-ticket-por-estado}" method="get">
+            <label>Estado:</label>
+            <select name="estado">
+                <option value="pendiente">Pendiente</option>
+                <option value="atendido">Atendido</option>
+                <option value="cerrado">Cerrado</option>
+            </select>
+            <button type="submit">Filtrar</button>
+        </form>
+
+        <!-- Filtrar por Cliente -->
+        <form th:action="@{/ticket/list-ticket-por-cliente}" method="get">
+            <label>Email Cliente:</label>
+            <input type="email" name="email" required>
+            <button type="submit">Filtrar</button>
+        </form>
+
+        <!-- Filtrar por Empleado -->
+        <form th:action="@{/ticket/list-ticket-por-empleado}" method="get">
+            <label>Email Empleado:</label>
+            <input type="email" name="email" required>
+            <button type="submit">Filtrar</button>
+        </form>
+
+        <!-- Filtrar por Asunto -->
+        <form th:action="@{/ticket/list-ticket-por-asunto}" method="get">
+            <label>Asunto:</label>
+            <input type="text" name="asunto" required>
+            <button type="submit">Filtrar</button>
+        </form>
+
+        <!-- Filtrar por Prioridad -->
+        <form th:action="@{/ticket/list-ticket-por-prioridad}" method="get">
+            <label>Prioridad:</label>
+            <select name="prioridad">
+                <option value="baja">Baja</option>
+                <option value="media">Media</option>
+                <option value="alta">Alta</option>
+            </select>
+            <button type="submit">Filtrar</button>
+        </form>
+
+        <!-- Filtrar por Fecha -->
+        <form th:action="@{/ticket/list-ticket-por-fecha}" method="get">
+            <label>Fecha:</label>
+            <input type="date" name="fecha" required>
+            <button type="submit">Filtrar</button>
+        </form>
+        <a class="btn btn-primary" th:href="@{/home}">Volver</a>
+    </div>
+    
+</body>
+</html>

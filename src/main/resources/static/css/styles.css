@@ -1,0 +1,165 @@
+/* Aplicar fuente Inter */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #1A1A1A; /* Fondo gris oscuro */
+  color: #E5E7EB; /* Blanco roto para texto */
+}
+
+/* Ajustar navbar */
+.navbar-dark {
+  background-color: #343A40 !important; /* Gris medio para la navbar */
+}
+
+.navbar-brand {
+  font-weight: 700;
+  color: #E5E7EB !important;
+}
+
+/* Estilo general para los enlaces de la navbar, sin afectar botones */
+.navbar-nav .nav-link:not(.btn) {
+  color: #E5E7EB !important;
+}
+
+/* Estilos para botones (sin cambios relevantes aquí, se mantienen como estaban) */
+.btn-login, .btn-primary {
+  background-color: #4A90E2 !important;
+  border-color: #4A90E2 !important;
+  color: #1A1A1A !important;
+}
+
+.btn-login:hover, .btn-primary:hover {
+  background-color: #357ABD !important;
+  border-color: #357ABD !important;
+}
+
+.btn-register {
+  background-color: #E5E7EB !important;
+  border-color: #E5E7EB !important;
+  color: #1A1A1A !important;
+}
+
+.btn-register:hover {
+  background-color: #CBD5E1 !important;
+  border-color: #CBD5E1 !important;
+}
+
+.btn-logout {
+  background-color: #e57373 !important;
+  border-color: #e57373 !important;
+  color: #fff !important;
+}
+
+.btn-logout:hover {
+  background-color: #c62828 !important;
+  border-color: #c62828 !important;
+  color: #fff !important;
+}
+
+.btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  text-decoration: none;
+}
+
+/* Estilos para las tarjetas de tickets */
+.ticket-card-wrapper {
+  flex: 0 0 320px;
+  margin-bottom: 20px; /* Espaciado independiente */
+}
+
+.ticket-card {
+  background-color: #23272b;
+  border: 1px solid #4A90E2;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  position: relative;
+  min-height: 50px;
+  max-width: 300px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ticket-card:hover {
+  transform: translateY(-2px); /* Sutil elevación */
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.ticket-header {
+  padding: 15px;
+  background-color: #1e1e1e; /* Fondo oscuro para el encabezado */
+  border-bottom: 1px solid #4A90E2;
+}
+
+.ticket-header .card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #E5E7EB;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.ticket-details {
+  padding: 0 15px;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  background-color: #23272b; /* Mantener consistencia visual al mostrar */
+  transition: max-height 0.5s ease, padding 0.3s ease, opacity 0.3s ease;
+}
+
+
+.ticket-card:hover .ticket-details {
+  max-height: 500px; /* Altura suficientemente generosa para contenido */
+  padding: 15px;
+  opacity: 1;
+}
+
+.ticket-detail {
+  color: #E5E7EB;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+}
+
+.ticket-detail-label {
+  font-size: 0.95rem;
+  color: #4A90E2;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.ticket-detail-content {
+  color: #E5E7EB;
+  font-size: 0.95rem;
+}
+
+.text-white-50 {
+  color: #A0AEC0 !important; /* Gris claro para texto secundario */
+}
+
+.text-primary {
+  color: #4A90E2 !important; /* Azul suave para títulos */
+}
+
+.mt-5 {
+  margin-top: 3rem !important;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .navbar-nav .nav-link {
+    padding: 10px 0;
+  }
+  .navbar-nav .d-flex {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .ticket-card-wrapper {
+    flex: 0 0 100%;
+  }
+}

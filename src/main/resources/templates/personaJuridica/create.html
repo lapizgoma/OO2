@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Persona Jurídica</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body class="bg-dark text-white">
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="card p-4" style="width:100%; max-width:500px; background-color:#2D2D2D; border-color:#4A90E2;">
+            <h2 class="card-title text-center text-white mb-4">Agregar Persona Jurídica</h2>
+            <form th:object="${personaJuridicaDTO}" th:action="@{/grupo/crear}" method="post" novalidate>
+                <!-- Razón Social -->
+                <div class="mb-3">
+                    <label for="razonSocial" class="form-label text-white">Razón Social</label>
+                    <input type="text" th:field="*{razonSocial}" id="razonSocial" class="form-control bg-dark text-white" placeholder="Ingrese la razón social" required />
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('razonSocial')}" th:errors="*{razonSocial}"></div>
+                </div>
+                <!-- CUIT -->
+                <div class="mb-3">
+                    <label for="cuit" class="form-label text-white">CUIT</label>
+                    <input type="text" th:field="*{cuit}" id="cuit" class="form-control bg-dark text-white" placeholder="Ingrese el CUIT" required />
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('cuit')}" th:errors="*{cuit}"></div>
+                </div>
+                <!-- Botones -->
+                <button type="submit" class="btn btn-primary w-100 mb-2">Añadir</button>
+                <a th:href="@{/home}" class="btn btn-secondary w-100">Volver</a>
+            </form>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
