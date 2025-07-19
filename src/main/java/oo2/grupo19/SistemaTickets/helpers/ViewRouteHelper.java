@@ -20,6 +20,7 @@ public class ViewRouteHelper {
     public static final String LISTAR_EMPLEADOS = "employee/listarEmpleados";
     public static final String EMPLEADO_REGISTRADO = "employee/registerSuccessfull";
     public static final String EMPLEADO_BORRADO = "employee/deletedSuccessfull";
+    public static final String RECARGAR_ROLES = "redirect:/employee/recargar";
 
     public static final String FORM_PERSONA_JURIDICA = "personaJuridica/create";
     public static final String VIEW_PERSONA_JURIDICA = "personaJuridica/personaJuridica";
