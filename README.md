@@ -33,8 +33,8 @@ server.servlet.session.timeout=30m
 server.servlet.session.persistent=false
 spring.mail.host=smtp.gmail.com
 spring.mail.port=587
-spring.mail.username=${USER_EMAIL}
-spring.mail.password=${USER_PASSWORD}
+spring.mail.username=sistematicketv1@gmail.com
+spring.mail.password=bdmh umvj sxnb lcby
 spring.mail.properties.mail.smtp.auth=true
 spring.mail.properties.mail.smtp.starttls.enable=true
 spring.mail.properties.mail.smtp.connectiontimeout=5000
@@ -52,8 +52,12 @@ La aplicación necesita las siguientes variables de entorno configuradas:
 | `DB_USERNAME` | Usuario de la base de datos | `root` |
 | `DB_PASSWORD` | Contraseña de la base de datos | `tu_contraseña` |
 | `DB_DRIVER` | Driver de la base de datos | `com.mysql.cj.jdbc.Driver` |
-| `USER_EMAIL` | Email para envío de tickets | `tu_email@ejemplo.com` |
-| `USER_PASSWORD` | Contraseña del email | `tu_contraseña_email` |
+
+---
+## Credenciales para el envio de emails
+### Email: sistematicketv1@gmail.com
+### Password: bdmh umvj sxnb lcby
+---
 
 ## Configuración del proyecto
 
@@ -79,9 +83,7 @@ Antes de configurar las variables de entorno, asegúrate de que tu proyecto teng
         "DB_URL": "jdbc:mysql://localhost:3306/tu_base_de_datos",
         "DB_USERNAME": "tu_usuario",
         "DB_PASSWORD": "tu_contraseña",
-        "DB_DRIVER": "com.mysql.cj.jdbc.Driver",
-        "USER_EMAIL": "email_ticket",
-        "USER_PASSWORD": "email_password"
+        "DB_DRIVER": "com.mysql.cj.jdbc.Driver"
       }
     }
   ]
@@ -104,8 +106,6 @@ Antes de configurar las variables de entorno, asegúrate de que tu proyecto teng
 | `DB_USERNAME` | `tu_usuario` |
 | `DB_PASSWORD` | `tu_contraseña` |
 | `DB_DRIVER` | `com.mysql.cj.jdbc.Driver` |
-| `USER_EMAIL` | `email_ticket` |
-| `USER_PASSWORD` | `email_password` |
 
 6. Haz clic en **Apply** y luego en **Run**
 
@@ -128,8 +128,6 @@ DB_URL=jdbc:mysql://localhost:3306/tu_base_de_datos
 DB_USERNAME=tu_usuario
 DB_PASSWORD=tu_contraseña
 DB_DRIVER=com.mysql.cj.jdbc.Driver
-USER_EMAIL=email_ticket
-USER_PASSWORD=email_password
 ```
 
 6. Haz clic en **OK** para guardar la configuración
@@ -146,24 +144,3 @@ Si prefieres usar Maven:
 5. Selecciona **Environment variables**
 6. Aparecerá el campo **Environment variables**, haz clic en el icono de carpeta
 7. Agrega las variables necesarias y haz clic en **OK**
-
-## Verificación de la Configuración
-
-Para verificar que las variables de entorno están correctamente configuradas:
-
-1. Agrega logs temporales en tu clase principal:
-
-```java
-@SpringBootApplication
-public class TuClasePrincipal {
-    public static void main(String[] args) {
-        System.out.println("DB_URL: " + System.getenv("DB_URL"));
-        System.out.println("DB_USERNAME: " + System.getenv("DB_USERNAME"));
-        // NO imprimas contraseñas en logs de producción
-        
-        SpringApplication.run(TuClasePrincipal.class, args);
-    }
-}
-```
-
-2. Ejecuta la aplicación y verifica que los valores se impriman correctamente
