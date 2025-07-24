@@ -37,8 +37,8 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
             <li class="nav-item me-2">
-                        <a class="btn btn-primary" th:href="@{/home}">Ver Tickets</a>
-                    </li>
+              <a class="btn btn-primary" th:href="@{/home}">Ver Tickets</a>
+            </li>
             <li class="nav-item">
               <form th:action="@{/auth/logout}" method="post" class="d-inline">
                 <button
@@ -72,21 +72,26 @@
             </h5>
             <p class="text-white-50 mb-1">DNI: [[${empleado.dni}]]</p>
             <p class="text-white-50 mb-1">Legajo: [[${empleado.nroLegajo}]]</p>
-            <a class="btn btn-link p-0 text-decoration-none" data-bs-toggle="collapse" role="button" aria-expanded="false" th:aria-controls="'detalleEmpleado'">
-      Más...
-    </a>
+            <a class="btn btn-link p-0 text-decoration-none" 
+               data-bs-toggle="collapse" 
+               th:data-bs-target="'#detalleEmpleado' + ${empleado.nroLegajo}" 
+               th:aria-controls="'detalleEmpleado' + ${empleado.nroLegajo}" 
+               role="button" 
+               aria-expanded="false">
+              Más...
+            </a>
 
-    <div class="collapse mt-3">
-      <hr />
-      <p class="card-text mb-1"><strong>Email:</strong> <span th:text="${empleado.contacto.email}"></span></p>
-      <p class="card-text mb-1"><strong>Teléfono:</strong> <span th:text="${empleado.contacto.telefono}"></span></p>
-      <p class="card-text mb-1">
-        <strong>Dirección:</strong>
-        <span th:text="${empleado.contacto.localidad}"></span>
-        <span th:text="${empleado.contacto.calle}"></span>
-        <span th:text="${empleado.contacto.nroPuerta}"></span>
-      </p>
-    </div>
+            <div th:id="'detalleEmpleado' + ${empleado.nroLegajo}" class="collapse mt-3">
+              <hr />
+              <p class="card-text mb-1"><strong>Email:</strong> <span th:text="${empleado.contacto.email}"></span></p>
+              <p class="card-text mb-1"><strong>Teléfono:</strong> <span th:text="${empleado.contacto.telefono}"></span></p>
+              <p class="card-text mb-1">
+                <strong>Dirección:</strong>
+                <span th:text="${empleado.contacto.localidad}"></span>
+                <span th:text="${empleado.contacto.calle}"></span>
+                <span th:text="${empleado.contacto.nroPuerta}"></span>
+              </p>
+            </div>
             <form
               th:action="@{/employee/{id}(id=${empleado.contacto.email})}"
               method="post"

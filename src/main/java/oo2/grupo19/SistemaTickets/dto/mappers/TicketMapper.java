@@ -45,7 +45,28 @@ public final class TicketMapper {
         return ticket;
     }
 
+    public static TicketDTO ticketRecordToTicketDto(oo2.grupo19.SistemaTickets.controllers.apirest.dto.TicketDTO ticketDtoRecord){
+        TicketDTO ticketDTO = new TicketDTO();
+        ticketDTO.setAsunto(ticketDtoRecord.asunto());
+        ticketDTO.setClienteEmail(ticketDtoRecord.clienteEmail());
+        ticketDTO.setDetalle(ticketDtoRecord.detalle());
+        return ticketDTO;
+    }
+
+    public static oo2.grupo19.SistemaTickets.controllers.apirest.dto.TicketDTO ticketDtoToTicketDtoRecord(TicketDTO ticketDTO){
+        return new oo2.grupo19.SistemaTickets.controllers.apirest.dto.TicketDTO(
+            ticketDTO.getAsunto(),
+            ticketDTO.getDetalle(),
+            ticketDTO.getClienteEmail()
+        );
+    }
+
     public static Set<TicketDTO> mapToTicketDtoSet(List<Ticket> tickets) {
         return tickets == null ? Set.of() : tickets.stream().map(TicketMapper::mapToTicketDto).collect(Collectors.toSet());
     }
+
+    public static Set<oo2.grupo19.SistemaTickets.controllers.apirest.dto.TicketDTO> mapToTicketDtoRecordToTicketDtoSet(Set<TicketDTO> tickets) {
+        return tickets == null ? Set.of() : tickets.stream().map(TicketMapper::ticketDtoToTicketDtoRecord).collect(Collectors.toSet());
+    }
+
 }

@@ -22,7 +22,6 @@ import lombok.ToString;
 public class TicketDTO {
 	@Schema(hidden = true)
 	private Long id;
-    @NotBlank(message = "no debe estar vacío")
     private String detalle;
     @NotBlank(message = "no debe estar vacío")
     private String asunto;

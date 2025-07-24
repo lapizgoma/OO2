@@ -33,6 +33,21 @@ public final class ClienteMapper {
         return cliente;
     }
 
+    public static oo2.grupo19.SistemaTickets.controllers.apirest.dto.ClienteDTO clienteDtoRecordToClienteDto(ClienteDTO clienteDTO){
+        return new oo2.grupo19.SistemaTickets.controllers.apirest.dto.ClienteDTO(
+            clienteDTO.getNombre(),
+            clienteDTO.getApellido(),
+            clienteDTO.getContacto().getEmail()
+        );
+    }
+
+    public static Set<oo2.grupo19.SistemaTickets.controllers.apirest.dto.ClienteDTO> clienteListDtoRecordToClienteDtoList(Set<ClienteDTO> lstCliente){
+        return lstCliente == null ? Set.of() : 
+            lstCliente.stream()
+                .map(ClienteMapper::clienteDtoRecordToClienteDto)
+                .collect(Collectors.toSet());
+    }
+
     public static Set<ClienteDTO> mapToClienteDtoSet(List<Cliente> clientes) {
         return clientes == null ? Set.of() : 
             clientes.stream()
