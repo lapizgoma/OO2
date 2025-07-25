@@ -1,6 +1,7 @@
 package oo2.grupo19.SistemaTickets.controllers.apirest;
 
 import lombok.extern.log4j.Log4j2;
+import oo2.grupo19.SistemaTickets.controllers.apirest.dto.PersonaJuridicaCreateRequestRecord;
 import oo2.grupo19.SistemaTickets.dto.EmpleadoDTO;
 import oo2.grupo19.SistemaTickets.dto.EstadoTicketDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketDTO;
@@ -9,15 +10,21 @@ import oo2.grupo19.SistemaTickets.dto.api.LoginRequestDTO;
 import oo2.grupo19.SistemaTickets.dto.mappers.ClienteMapper;
 import oo2.grupo19.SistemaTickets.dto.mappers.EmpleadoMapper;
 import oo2.grupo19.SistemaTickets.dto.mappers.TicketMapper;
+import oo2.grupo19.SistemaTickets.dto.personaJuridica.PersonaJuridicaDTO;
+import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.AlreadyExistsException;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
 import oo2.grupo19.SistemaTickets.services.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
+
 import java.util.Map;
+
 
 @RestController
 @RequestMapping("/api")
@@ -130,7 +137,13 @@ public class RestControllerApi {
     }
 
     @GetMapping("/grupo")
-    public ResponseEntity<?> getPersonaJuridica(@RequestParam String codigo)
+    public ResponseEntity<?> getPersonaJuridica(
+        @Parameter(name = "codigo", 
+               description = "Código interno de la empresa o grupo.", 
+               required = true
+               )
+        @Size(min = PersonaJuridicaDTO.CODIGO_ACCESO_LENGTH, max = PersonaJuridicaDTO.CODIGO_ACCESO_LENGTH, message = "El código debe tener " + PersonaJuridicaDTO.CODIGO_ACCESO_LENGTH + " caracteres.")
+        @Valid @RequestParam String codigo)
     {
         try
         {
@@ -154,4 +167,30 @@ public class RestControllerApi {
                     .body("ERROR al obtener Persona Jurídica: " + e.getMessage());
         }
     }
+
+    @PostMapping("/grupo")
+    public ResponseEntity<?> postMethodName(@RequestBody PersonaJuridicaCreateRequestRecord record) {
+        try
+        {
+            return ResponseEntity.ok(personaJuridicaService.crearPersonaJuridica (record));
+        }
+        catch (AlreadyExistsException e)
+        {
+            log.error("Persona Jurídica ya existe.", e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Persona Jurídica ya existe: " + e.getMessage());
+        }
+        catch (ConstraintViolationException e)
+        {
+            log.error("ERROR de validación", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ERROR de validación: " + e.getMessage());
+        }
+        catch (Exception e)
+        {
+            log.error("ERROR interno del servidor", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("ERROR al obtener Persona Jurídica: " + e.getMessage());
+        }
+    }
+    
 }

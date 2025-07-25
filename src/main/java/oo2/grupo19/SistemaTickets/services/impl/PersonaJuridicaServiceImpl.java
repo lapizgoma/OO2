@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.log4j.Log4j2;
+import oo2.grupo19.SistemaTickets.controllers.apirest.dto.PersonaJuridicaCreateRequestRecord;
+import oo2.grupo19.SistemaTickets.controllers.apirest.dto.PersonaJuridicaResponseRecord;
 import oo2.grupo19.SistemaTickets.dto.mappers.PersonaJuridicaMapper;
 import oo2.grupo19.SistemaTickets.dto.personaJuridica.PersonaJuridicaDTO;
 import oo2.grupo19.SistemaTickets.entities.Cliente;
@@ -124,7 +126,6 @@ public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService
         }
     }
 
-    @Override
     @Transactional
     public PersonaJuridicaDTO crearPersonaJuridica (PersonaJuridicaDTO personaJuridicaDTO)
     {
@@ -151,6 +152,15 @@ public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService
         }
 
         return personaJuridicaDTO;
+    }
+
+    @Transactional
+    public PersonaJuridicaResponseRecord crearPersonaJuridica (PersonaJuridicaCreateRequestRecord record)
+    {
+        return PersonaJuridicaMapper.mapToPersonaJuridicaDtoResponseRecord(
+            crearPersonaJuridica (
+                PersonaJuridicaMapper.mapToPersonaJuridicaDto(record)
+                ));
     }
 
     @Override
