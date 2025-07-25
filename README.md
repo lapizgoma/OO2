@@ -144,3 +144,9 @@ Si prefieres usar Maven:
 5. Selecciona **Environment variables**
 6. Aparecerá el campo **Environment variables**, haz clic en el icono de carpeta
 7. Agrega las variables necesarias y haz clic en **OK**
+
+---
+## Pagina principal para ver la documentacion con swagger
+
+### http://localhost:8080/swagger-ui/index.html#/
+---
