@@ -1,7 +1,6 @@
 package oo2.grupo19.SistemaTickets.controllers.apirest;
 
 import lombok.extern.log4j.Log4j2;
-import oo2.grupo19.SistemaTickets.controllers.apirest.dto.personaJuridica.PersonaJuridicaRequestDTO;
 import oo2.grupo19.SistemaTickets.dto.EmpleadoDTO;
 import oo2.grupo19.SistemaTickets.dto.EstadoTicketDTO;
 import oo2.grupo19.SistemaTickets.dto.TicketDTO;
@@ -131,11 +130,11 @@ public class RestControllerApi {
     }
 
     @GetMapping("/grupo")
-    public ResponseEntity<?> getPersonaJuridica(@Valid @RequestBody PersonaJuridicaRequestDTO param)
+    public ResponseEntity<?> getPersonaJuridica(@RequestParam String codigo)
     {
         try
         {
-            return ResponseEntity.ok(personaJuridicaService.findByCode(param.codigo()));
+            return ResponseEntity.ok(personaJuridicaService.findByCode(codigo));
         }
         catch (NotFoundException e)
         {
