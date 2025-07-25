@@ -60,7 +60,13 @@
                 </div>
             </div>
             <div class="d-flex flex-column gap-2 mt-3">
-                <a th:href="@{/home}" class="btn btn-secondary w-100" role="button">Volver</a>
+                <form th:action="@{/grupo/borrar/{id}(id=${personaJuridicaDTO.codigoAcceso})}" method="post" class="mt-2">
+                    <input type="hidden" name="_method" value="post" />
+                    <button type="submit" class="btn btn-danger w-100">
+                        Eliminar
+                    </button>
+                </form>
+                <a th:href="@{/grupo/lista}" class="btn btn-secondary w-100" role="button">Volver</a>
             </div>
         </div>
     </div>

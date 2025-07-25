@@ -46,26 +46,30 @@
         <div th:if="${personasJuridicas != null && !personasJuridicas.isEmpty()}">
             <div class="d-flex flex-wrap justify-content-center gap-4">
                 <div class="ticket-card-wrapper" th:each="persona : ${personasJuridicas}">
-                    <div class="ticket-card">
-                        <div class="ticket-header">
-                            <h5 class="card-title mb-0"><span th:text="${persona.razonSocial}"></span></h5>
-                        </div>
-                        <div class="ticket-details">
-                            <div class="ticket-detail"><strong>Razón Social:</strong> <span
-                                    th:text="${persona.razonSocial}"></span></div>
-                            <div class="ticket-detail"><strong>CUIT:</strong> <span th:text="${persona.cuit}"></span>
+                    <a th:href="@{'/grupo/ver/' + ${persona.codigoAcceso}}"
+                        style="text-decoration:none; color:inherit;">
+                        <div class="ticket-card">
+                            <div class="ticket-header">
+                                <h5 class="card-title mb-0"><span th:text="${persona.razonSocial}"></span></h5>
                             </div>
-                            <div class="ticket-detail"><strong>Código de Acceso:</strong> <span
-                                    th:text="${persona.codigoAcceso}"></span></div>
-                            <form th:action="@{/grupo/borrar/{id}(id=${persona.codigoAcceso})}" method="post"
-                                class="mt-2">
-                                <input type="hidden" name="_method" value="post" />
-                                <button type="submit" class="btn btn-danger w-100">
-                                    Eliminar
-                                </button>
-                            </form>
+                            <div class="ticket-details">
+                                <div class="ticket-detail"><strong>Razón Social:</strong> <span
+                                        th:text="${persona.razonSocial}"></span></div>
+                                <div class="ticket-detail"><strong>CUIT:</strong> <span
+                                        th:text="${persona.cuit}"></span>
+                                </div>
+                                <div class="ticket-detail"><strong>Código de Acceso:</strong> <span
+                                        th:text="${persona.codigoAcceso}"></span></div>
+                                <form th:action="@{/grupo/borrar/{id}(id=${persona.codigoAcceso})}" method="post"
+                                    class="mt-2">
+                                    <input type="hidden" name="_method" value="post" />
+                                    <button type="submit" class="btn btn-danger w-100">
+                                        Eliminar
+                                    </button>
+                                </form>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
             </div>
         </div>
