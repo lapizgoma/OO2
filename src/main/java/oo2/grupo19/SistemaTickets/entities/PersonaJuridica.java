@@ -36,4 +36,11 @@ public class PersonaJuridica
     @Column(name = "codigo_acceso")
     @Size(min = CODIGO_ACCESO_LENGTH, max = CODIGO_ACCESO_LENGTH, message = "El código de acceso debe tener " + CODIGO_ACCESO_LENGTH + " caracteres")
     private String codigoAcceso;
+
+    private boolean deleted;
+
+    public void darDeBaja()
+    {
+        this.setDeleted(true);
+    }
 }

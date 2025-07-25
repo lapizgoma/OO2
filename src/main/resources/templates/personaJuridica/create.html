@@ -9,6 +9,39 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body class="bg-dark text-white">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/home}">Sistema de Tickets UNLa - Admin</a>
+        <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+        >
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item me-2">
+                    <a class="btn btn-primary" th:href="@{/employee}">Ver Empleados</a>
+                </li>
+                <li class="nav-item me-2">
+                    <a class="btn btn-primary" th:href="@{/home}">Ver Tickets</a>
+                </li>
+                <li class="nav-item">
+                    <form th:action="@{/auth/logout}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-logout">Logout</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+    </nav>
+    
     <div class="container d-flex justify-content-center align-items-center min-vh-100">
         <div class="card p-4" style="width:100%; max-width:500px; background-color:#2D2D2D; border-color:#4A90E2;">
             <h2 class="card-title text-center text-white mb-4">Agregar Persona Jurídica</h2>

@@ -19,6 +19,7 @@ import oo2.grupo19.SistemaTickets.services.IPersonaJuridicaService;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,12 +61,12 @@ public class PersonaJuridicaController
         personaJuridicaService.crearPersonaJuridica (personaJuridicaDTO);
         logger.info("Persona jurídica creada con código: {} por: {}", personaJuridicaDTO.getCodigoAcceso(), authentication.getName());
         // Es necesario mandar el codigo de acceso por la url?
-        return "redirect:/grupo/" + personaJuridicaDTO.getCodigoAcceso ();
+        return "redirect:/grupo/ver/" + personaJuridicaDTO.getCodigoAcceso ();
     }
 
     // El codigo se puede pasar a traves de un redirect y obtenerlo desde ahi, es arriesgado pasar el codigo por url. 
     @PreAuthorize("hasAnyRole('ADMIN')")
-    @GetMapping ("/{code}")
+    @GetMapping ("/ver/{code}")
     public String verPersonaJuridica (@PathVariable String code, Model model) 
     {
         PersonaJuridicaDTO dto = personaJuridicaService.findByCode(code);
@@ -76,7 +77,25 @@ public class PersonaJuridicaController
         return ViewRouteHelper.VIEW_PERSONA_JURIDICA;
     }
 
-    private void validator(Model model,BindingResult result){
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @GetMapping("/lista")
+    public String listPersonasJuridicas(Model model)
+    {
+        Set<PersonaJuridicaDTO> personasJuridicas = personaJuridicaService.findAll ();
+        model.addAttribute ("personasJuridicas", personasJuridicas);
+
+        return ViewRouteHelper.LIST_PERSONA_JURIDICA;
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PostMapping("/borrar/{code}")
+    public String deletePersonaJuridica(@PathVariable String code, Model model)
+    {
+        personaJuridicaService.delete (code);
+        return listPersonasJuridicas (model);
+    }
+
+    private void validator(Model model, BindingResult result){
         Map<String,String> errors = new HashMap<>();
         if(result.hasErrors()){
             result.getFieldErrors().forEach(err ->{
