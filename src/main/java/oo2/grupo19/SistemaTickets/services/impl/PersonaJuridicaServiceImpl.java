@@ -1,5 +1,6 @@
 package oo2.grupo19.SistemaTickets.services.impl;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -8,12 +9,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.log4j.Log4j2;
+import oo2.grupo19.SistemaTickets.controllers.apirest.dto.PersonaJuridicaCreateRequestRecord;
+import oo2.grupo19.SistemaTickets.controllers.apirest.dto.PersonaJuridicaResponseRecord;
 import oo2.grupo19.SistemaTickets.dto.mappers.PersonaJuridicaMapper;
 import oo2.grupo19.SistemaTickets.dto.personaJuridica.PersonaJuridicaDTO;
+import oo2.grupo19.SistemaTickets.entities.Cliente;
 import oo2.grupo19.SistemaTickets.entities.PersonaJuridica;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.AlreadyExistsException;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.InvalidInputException;
 import oo2.grupo19.SistemaTickets.exceptions.StatusCustomExceptions.NotFoundException;
+import oo2.grupo19.SistemaTickets.repositories.ICliente;
 import oo2.grupo19.SistemaTickets.repositories.IPersonaJuridica;
 import oo2.grupo19.SistemaTickets.services.IPersonaJuridicaService;
 
@@ -21,25 +26,44 @@ import oo2.grupo19.SistemaTickets.services.IPersonaJuridicaService;
 @Log4j2
 public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService
 {
-    private final IPersonaJuridica repository;
+    private final IPersonaJuridica personaJuridicaRepository;
+    private final ICliente clienteRepository;
 
-    public PersonaJuridicaServiceImpl(IPersonaJuridica repository)
+    public PersonaJuridicaServiceImpl(IPersonaJuridica personaJuridicaRepository, ICliente clienteRepository)
     {
-        this.repository = repository;
+        this.personaJuridicaRepository = personaJuridicaRepository;
+        this.clienteRepository = clienteRepository;
     }
 
     @Override
     @Transactional
-    public void delete(String id)
+    public void delete(String code)
     {
         try
         {
-            Long personaJuridicaID = Long.parseLong (id);
-            repository.deleteById (personaJuridicaID);
+            if (code == null || code.length () != PersonaJuridicaDTO.CODIGO_ACCESO_LENGTH) 
+            {
+                throw new InvalidInputException("El código de acceso debe tener " + PersonaJuridicaDTO.CODIGO_ACCESO_LENGTH + " caracteres.");
+            }
+
+            PersonaJuridica personaJuridicaEntity = personaJuridicaRepository.findByCodigoAcceso (code).orElseThrow(() -> new NotFoundException ("No hay una Persona Jurídica con ese código :/"));
+
+            List<Cliente> clientesEntities = clienteRepository.findByCodigoPersonaJuridica(code);
+            if (!clientesEntities.isEmpty ()) 
+            {
+                for (Cliente cliente : clientesEntities)
+                {
+                    cliente.setOrganizacion(null);
+                    clienteRepository.save(cliente);
+                }
+            }
+
+            personaJuridicaEntity.darDeBaja ();
+            personaJuridicaRepository.save (personaJuridicaEntity);
         }
         catch (Exception e)
         {
-            throw new NotFoundException ("No se pudo eliminar la Persona Jurídica"+ e.getMessage());
+            throw new NotFoundException ("No se pudo eliminar la Persona Jurídica " + e.getMessage());
         }
     }
 
@@ -49,7 +73,7 @@ public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService
     {
         try
         {
-            return PersonaJuridicaMapper.mapToPersonaJuridicaDtoSet (repository.findAll ());
+            return PersonaJuridicaMapper.mapToPersonaJuridicaDtoSet (personaJuridicaRepository.findAll ());
         }
         catch (Exception e)
         {
@@ -63,7 +87,7 @@ public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService
     {
         try
         {
-            return PersonaJuridicaMapper.mapToPersonaJuridicaDto (repository.findById (id).orElseThrow ());
+            return PersonaJuridicaMapper.mapToPersonaJuridicaDto (personaJuridicaRepository.findById (id).orElseThrow ());
         }
         catch (Exception e)
         {
@@ -88,9 +112,9 @@ public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService
                 throw new InvalidInputException ("El código de acceso debe tener " + PersonaJuridicaDTO.CODIGO_ACCESO_LENGTH + " caracteres.");
             }
 
-            PersonaJuridica personaJuridicaEntity = repository.findByCuit (dto.getCuit ()).orElseThrow (() -> new NotFoundException ("No hay una Persona Jurídica bajo ese CUIT :/"));
+            PersonaJuridica personaJuridicaEntity = personaJuridicaRepository.findByCuit (dto.getCuit ()).orElseThrow (() -> new NotFoundException ("No hay una Persona Jurídica bajo ese CUIT :/"));
 
-            repository.save(PersonaJuridicaMapper.mapToPersonaJuridicaEntity (dto, personaJuridicaEntity));
+            personaJuridicaRepository.save(PersonaJuridicaMapper.mapToPersonaJuridicaEntity (dto, personaJuridicaEntity));
         }
         catch (ConstraintViolationException e)
         {
@@ -102,11 +126,10 @@ public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService
         }
     }
 
-    @Override
     @Transactional
     public PersonaJuridicaDTO crearPersonaJuridica (PersonaJuridicaDTO personaJuridicaDTO)
     {
-        if (!repository.findByCuit (personaJuridicaDTO.getCuit ()).isEmpty ()) 
+        if (!personaJuridicaRepository.findByCuit (personaJuridicaDTO.getCuit ()).isEmpty ()) 
         {
             throw new AlreadyExistsException ("Persona Jurídica bajo ese CUIT ya se encuentra registrada.");
         }
@@ -119,7 +142,7 @@ public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService
         
         try 
         {
-            repository.save (personaJuridicaEntity);
+            personaJuridicaRepository.save (personaJuridicaEntity);
         }
         // En vez de checkear las restricciones de la Entity por duplicado,
         // redireccionamos las Excepciones a nuestro Handler global.
@@ -131,6 +154,15 @@ public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService
         return personaJuridicaDTO;
     }
 
+    @Transactional
+    public PersonaJuridicaResponseRecord crearPersonaJuridica (PersonaJuridicaCreateRequestRecord record)
+    {
+        return PersonaJuridicaMapper.mapToPersonaJuridicaDtoResponseRecord(
+            crearPersonaJuridica (
+                PersonaJuridicaMapper.mapToPersonaJuridicaDto(record)
+                ));
+    }
+
     @Override
     @Transactional(readOnly = true)
     public PersonaJuridicaDTO findByCode (String code) 
@@ -140,9 +172,8 @@ public class PersonaJuridicaServiceImpl implements IPersonaJuridicaService
             throw new InvalidInputException("El código de acceso debe tener " + PersonaJuridicaDTO.CODIGO_ACCESO_LENGTH + " caracteres.");
         }
 
-        PersonaJuridica personaJuridicaEntity = repository.findByCodigoAcceso(code).orElseThrow(() -> new NotFoundException ("No hay una Persona Jurídica con ese código :/"));
+        PersonaJuridica personaJuridicaEntity = personaJuridicaRepository.findByCodigoAcceso(code).orElseThrow(() -> new NotFoundException ("No hay una Persona Jurídica con ese código :/"));
         
         return PersonaJuridicaMapper.mapToPersonaJuridicaDto(personaJuridicaEntity);
     }
-
 }

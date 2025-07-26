@@ -24,6 +24,7 @@ public class ViewRouteHelper {
 
     public static final String FORM_PERSONA_JURIDICA = "personaJuridica/create";
     public static final String VIEW_PERSONA_JURIDICA = "personaJuridica/personaJuridica";
+    public static final String LIST_PERSONA_JURIDICA = "personaJuridica/listPersonasJuridicas";
 
     public static final String TICKET_SUCCESS = "ticket/ticketSuccess";
     public static final String FORM_TICKET = "ticket/formTicket";
