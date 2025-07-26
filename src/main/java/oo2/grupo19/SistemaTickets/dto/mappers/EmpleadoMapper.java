@@ -43,6 +43,17 @@ public final class EmpleadoMapper {
         return empleado;
     }
 
+    public static EmpleadoDTO empleadoDtoRecordToEmpleadoDto(oo2.grupo19.SistemaTickets.controllers.apirest.dto.EmpleadoDTO empleadoDtoRecord){
+        EmpleadoDTO empleadoDTO = new EmpleadoDTO();
+        empleadoDTO.setApellido(empleadoDtoRecord.apellido());
+        empleadoDTO.setNombre(empleadoDtoRecord.nombre());
+        empleadoDTO.setContacto(empleadoDtoRecord.contacto());
+        empleadoDTO.setDni(empleadoDtoRecord.dni());
+        empleadoDTO.setPassword(empleadoDtoRecord.password());
+        empleadoDTO.setRole(empleadoDtoRecord.role());
+        return empleadoDTO;
+    }
+
     public static Set<EmpleadoDTO> mapToEmpleadoDtoSet(List<Empleado> empleados) {
         return empleados == null ? Set.of() : empleados.stream().map(EmpleadoMapper::mapToEmpleadoDto).collect(Collectors.toSet());
     }

@@ -13,5 +13,9 @@ public interface IEmpleado extends JpaRepository<Empleado, Long> {
     List<Empleado> findAllByDeletedFalse();
 
     Optional<Empleado> findByNombre(String nombre);
+
+    Boolean existsByContactoEmail(String email);
+
+    Boolean existsByDni(String dni);
     
 }

@@ -9,12 +9,66 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
-    <h1>Persona Jurídica</h1>
-    <div th:object="${personaJuridicaDTO}">
-        <p>Razón Social: <span th:text="*{razonSocial}">Razón Social</span></p>
-        <p>CUIT: <span th:text="*{cuit}">CUIT</span></p>
-        <p>Código de Acceso: <span th:text="*{codigoAcceso}">Código de Acceso</span></p>
-        <a th:href="@{/home}" class="btn btn-secondary">Volver</a>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/home}">Sistema de Tickets UNLa - Admin</a>
+        <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+        >
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item me-2">
+                    <a class="btn btn-primary" th:href="@{/employee}">Ver Empleados</a>
+                </li>
+                <li class="nav-item me-2">
+                    <a class="btn btn-primary" th:href="@{/home}">Ver Tickets</a>
+                </li>
+                <li class="nav-item">
+                    <form th:action="@{/auth/logout}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-logout">Logout</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+    </nav>
+
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="card p-4" style="width:100%; max-width:500px; background-color:#2D2D2D; border-color:#4A90E2;">
+            <h1 class="card-title text-center text-white mb-4">Persona Jurídica</h1>
+            <div th:object="${personaJuridicaDTO}">
+                <div class="mb-3">
+                    <label for="razonSocial" class="form-label text-white">Razón Social</label>
+                    <p type="text" id="razonSocial" th:text="*{razonSocial}" class="form-control bg-dark text-white" readonly>
+                </div>
+                <div class="mb-3">
+                    <label for="cuit" class="form-label text-white">CUIT</label>
+                    <p type="text" id="cuit" th:text="*{cuit}" class="form-control bg-dark text-white" readonly>
+                </div>
+                <div class="mb-3">
+                    <label for="codigoAcceso" class="form-label text-white">Código de Acceso</label>
+                    <p type="text" id="codigoAcceso" th:text="*{codigoAcceso}" class="form-control bg-dark text-white" readonly>
+                </div>
+            </div>
+            <div class="d-flex flex-column gap-2 mt-3">
+                <form th:action="@{/grupo/borrar/{id}(id=${personaJuridicaDTO.codigoAcceso})}" method="post" class="mt-2">
+                    <input type="hidden" name="_method" value="post" />
+                    <button type="submit" class="btn btn-danger w-100">
+                        Eliminar
+                    </button>
+                </form>
+                <a th:href="@{/grupo/lista}" class="btn btn-secondary w-100" role="button">Volver</a>
+            </div>
+        </div>
     </div>
 </body>
 </html>

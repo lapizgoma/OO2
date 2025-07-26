@@ -69,6 +69,13 @@ public class EmpleadoController {
         if (empleado.getContacto() == null) {
             empleado.setContacto(new ContactoDTO());
         }
+        
+        if(empleadoService.existsByContactoEmail(empleado.getContacto().getEmail()) || empleadoService.existsByDni(empleado.getDni())) {
+            model.addAttribute("rolRepository", roleRepository.findByTypeNot(RoleType.CUSTOMER));
+            buscarMismosDatos(empleado, result);
+            return ViewRouteHelper.EMPLEADO_REGISTER;
+        }
+        
 
         if (result.hasErrors()) {
             model.addAttribute("rolRepository", roleRepository.findByTypeNot(RoleType.CUSTOMER));
@@ -77,7 +84,7 @@ public class EmpleadoController {
         }
 
         empleadoService.save(empleado);
-        logger.info("Empleado registrado exitosamente (ID): {} por {}", empleado.getContacto().getEmail(), auth.getName());
+        logger.info("Empleado registrado exitosamente (EMAIL): {} por {}", empleado.getContacto().getEmail(), auth.getName());
         return ViewRouteHelper.EMPLEADO_REGISTRADO;
     }
 
@@ -89,5 +96,18 @@ public class EmpleadoController {
         empleadoService.delete(empleadoEmail);
         logger.info("Empleado dado de baja: {} por {}", empleadoEmail, auth.getName());
         return ViewRouteHelper.EMPLEADO_BORRADO;
+    }
+
+    private void buscarMismosDatos(EmpleadoDTO empleado, BindingResult result) {
+
+        log.info("Validando datos del empleado: {}", empleado);
+        if(empleadoService.existsByContactoEmail(empleado.getContacto().getEmail())) {
+            result.rejectValue("contacto.email", "error.empleado", "Ya existe un empleado con este email");
+            logger.warn("Intento de registro fallido: Email ya registrado - {}", empleado.getContacto().getEmail());  
+        }
+        if(empleadoService.existsByDni(empleado.getDni())) {
+            result.rejectValue("dni", "error.empleado", "Ya existe un empleado con ese dni");
+            logger.warn("Intento de registro fallido: DNI ya registrado - {}", empleado.getDni());  
+        }
     }
 }

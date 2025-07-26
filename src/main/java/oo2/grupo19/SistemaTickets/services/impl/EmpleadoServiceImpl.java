@@ -107,4 +107,18 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
             throw new NotFoundException("No se ha podido encontrar los empleados activos");
         }
     }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public Boolean existsByContactoEmail(String email) {
+        return empleadoRepository.existsByContactoEmail(email);
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public Boolean existsByDni(String dni) {
+        return empleadoRepository.existsByDni(dni);
+    }
+
+    
 }

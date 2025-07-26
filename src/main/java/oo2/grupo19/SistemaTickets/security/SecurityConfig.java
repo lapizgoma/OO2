@@ -1,4 +1,5 @@
 package oo2.grupo19.SistemaTickets.security;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +21,7 @@ import oo2.grupo19.SistemaTickets.services.impl.UserDetailsServiceImpl;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
-public class SecurityConfig implements WebMvcConfigurer{
+public class SecurityConfig implements WebMvcConfigurer {
 
     @Autowired
     private UserDetailsServiceImpl userDetailsServiceImpl;
@@ -29,12 +30,11 @@ public class SecurityConfig implements WebMvcConfigurer{
     public SecurityFilterChain webSecurity(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                // CORS está deshabilitado porque el front está embebido. Si expones la API, habilita y configura aquí.
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/","/home", "/auth/**", "/css/**", "/images/**", "/api/*").permitAll(); // Solo /home y /auth/* son públicas
-                    auth.anyRequest().authenticated(); // Todo lo demás requiere autenticación
-                    
+                    auth.requestMatchers("/", "/home", "/auth/**", "/css/**", "/images/**", "/api/**",
+                            "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll();
+                    auth.anyRequest().authenticated();
                 })
                 .formLogin(form -> {
                     form.loginPage("/auth/login");
@@ -52,7 +52,6 @@ public class SecurityConfig implements WebMvcConfigurer{
                         .deleteCookies("JSESSIONID")
                         .clearAuthentication(true)
                         .permitAll())
-                // Redirección a /home en caso de acceso denegado
                 .exceptionHandling(ex -> ex.accessDeniedPage("/home"))
                 .build();
     }
@@ -69,14 +68,14 @@ public class SecurityConfig implements WebMvcConfigurer{
     public AuthenticationManager authManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
         authBuilder
-            .userDetailsService(userDetailsServiceImpl)
-            .passwordEncoder(passwordEncoder());
+                .userDetailsService(userDetailsServiceImpl)
+                .passwordEncoder(passwordEncoder());
         return authBuilder.build();
     }
 
     @Bean
     PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Usamos hash seguro
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -84,4 +83,3 @@ public class SecurityConfig implements WebMvcConfigurer{
         return new HiddenHttpMethodFilter();
     }
 }
-
