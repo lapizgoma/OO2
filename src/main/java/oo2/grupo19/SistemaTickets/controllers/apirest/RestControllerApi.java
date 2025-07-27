@@ -55,8 +55,8 @@ public class RestControllerApi {
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO loginRequest) {
         try {
-            if (usuarioService.validarCredenciales(loginRequest.getEmail(), loginRequest.getPassword())) {
-                UsuarioDTO usuario = usuarioService.findByEmail(loginRequest.getEmail());
+            if (usuarioService.validarCredenciales(loginRequest.email(), loginRequest.password())) {
+                UsuarioDTO usuario = usuarioService.findByEmail(loginRequest.email());
                 String role = usuario.getRole();
                     
                 return ResponseEntity.ok(Map.of(
